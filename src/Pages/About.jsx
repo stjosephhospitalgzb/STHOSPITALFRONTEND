@@ -10,7 +10,7 @@ import administratorImg from "../assets/hospitalimage/adminastator.png";
 
 // ─── New Icons (PNG) – Replacing SVGs ────────────────────────────────────
 import icon247Service from "../assets/Icons/Service.png";        // 24/7 Service
-import iconTeamwork from "../assets/Icons/teamwork.png";              // Teamwork
+import iconTeamwork from "../assets/Icons/Teamwork.png";              // Teamwork
 import iconIntegrity from "../assets/Icons/integrity.png";            // Integrity
 import iconExcellence from "../assets/Icons/excellence.png";          // Excellence
 import iconRespect from "../assets/Icons/respect.png";                // Respect
