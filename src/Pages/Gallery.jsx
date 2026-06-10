@@ -7,7 +7,7 @@ import API from "../api";
 // Import social media icons from assets/Icons
 import facebookIcon from "../assets/Icons/facebook.png";
 import twitterIcon from "../assets/Icons/twitter.png";
-import instagramIcon from "../assets/Icons/instagram.png";
+import instagramIcon from "../assets/Icons/Instagram.png";
 import linkedinIcon from "../assets/Icons/linkedin.png";
 import youtubeIcon from "../assets/Icons/youtube.png";
 
