@@ -11,14 +11,14 @@ import administratorImg from "../assets/hospitalimage/adminastator.png";
 // ─── New Icons (PNG) – Replacing SVGs ────────────────────────────────────
 import icon247Service from "../assets/Icons/Service.png";        // 24/7 Service
 import iconTeamwork from "../assets/Icons/Teamwork.png";              // Teamwork
-import iconIntegrity from "../assets/Icons/integrity.png";            // Integrity
+import iconIntegrity from "../assets/Icons/Integrity.png";            // Integrity
 import iconExcellence from "../assets/Icons/excellence.png";          // Excellence
-import iconRespect from "../assets/Icons/respect.png";                // Respect
+import iconRespect from "../assets/Icons/Respect.png";                // Respect
 import iconCompassion from "../assets/Icons/compassion.png";          // Compassion
 import iconInauguration from "../assets/Icons/inauguration.png";      // inauguration
 import iconBuildings from "../assets/Icons/buildings.png";            // buildings
-import iconFoundation from "../assets/Icons/foundation.png";          // Foundation
-import iconLand from "../assets/Icons/land.png";                      // Land
+import iconFoundation from "../assets/Icons/Foundation.png";          // Foundation
+import iconLand from "../assets/Icons/Land.png";                      // Land
 import iconOurCore from "../assets/Icons/Our-Core.png";               // Our-Core
 import iconOurMission from "../assets/Icons/Our-Mission.png";         // Our-Mission
 import iconOurVision from "../assets/Icons/Our-Vision.png";           // Our-Vision
