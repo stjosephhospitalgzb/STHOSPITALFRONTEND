@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import API from "../api"; // Import your API module (adjust path if needed)
+import API from "../api";
 
-// --- IMPORT LOCAL SERVICE ICONS FROM ASSETS FOLDER ---
+// --- IMPORT LOCAL SERVICE ICONS ---
 import ambulanceIcon from "../assets/Icons/ambulance.png";
 import anesthesiologyIcon from "../assets/Icons/Anesthesiology.png";
 import audiometryIcon from "../assets/Icons/audiometry.png";
@@ -41,7 +41,7 @@ import banner from "../assets/hospitalimage/banner9.png";
 
 const defaultServiceIcon = generalWardIcon;
 
-// ─── Global styles injection (unchanged) ──────────────────────────────
+// ─── GLOBAL STYLES (ENHANCED FOR MOBILE) ──────────────────────────────
 const injectStyles = () => {
   if (document.getElementById("hc-services-styles")) return;
   const s = document.createElement("style");
@@ -50,15 +50,27 @@ const injectStyles = () => {
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', 'Outfit', sans-serif; font-size: 16px; line-height: 1.5; }
-    @media (min-width: 1200px) {
-      body { font-size: 18px; }
-      .hc-hero-title { font-size: 4rem !important; line-height: 1.2 !important; }
-      .hc-section-title { font-size: 3rem !important; }
-      .hc-stat-num { font-size: 2.5rem !important; }
+    
+    /* Responsive base */
+    @media (max-width: 768px) {
+      body { font-size: 14px; }
+      .hc-container { padding: 0 16px; }
+      .hc-hero-title { font-size: 2.2rem !important; line-height: 1.3 !important; }
+      .hc-section-title { font-size: 1.8rem !important; }
+      .hc-stat-num { font-size: 1.8rem !important; }
     }
+    @media (max-width: 480px) {
+      .hc-hero-title { font-size: 1.8rem !important; }
+      .hc-section-title { font-size: 1.5rem !important; }
+      .hc-stat-num { font-size: 1.5rem !important; }
+    }
+
+    /* Animations */
     @keyframes fadeInUp    { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeInLeft  { from{opacity:0;transform:translateX(-32px)} to{opacity:1;transform:translateX(0)} }
     @keyframes fadeInRight { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:translateX(0)} }
+    
+    /* Navigation & buttons */
     .hc-nav-link { text-decoration:none; transition:color .2s; position:relative; }
     .hc-nav-link::after { content:''; display:block; height:2px; width:0; background:#2563eb; transition:width .3s; }
     .hc-nav-link:hover::after,.hc-nav-link.active::after { width:100%; }
@@ -66,59 +78,131 @@ const injectStyles = () => {
     .hc-btn-primary:hover { background:#1d4ed8 !important; transform:translateY(-2px) !important; box-shadow:0 8px 25px rgba(37,99,235,.4) !important; }
     .hc-btn-outline:hover { background:#2563eb !important; color:#fff !important; transform:translateY(-2px) !important; }
     .hc-filter-btn.active { background: #2563eb !important; color: white !important; border-color: #2563eb !important; }
+    
+    /* Service list items */
     .hc-left-list-item { transition: all 0.2s ease; cursor: pointer; }
     .hc-left-list-item:hover { background: #eff6ff !important; border-color: #bfdbfe !important; transform: translateX(4px); }
     .hc-left-list-item.active { background: #2563eb !important; border-color: #2563eb !important; }
     .hc-left-list-item.active .service-title { color: white !important; }
     .hc-left-list-item.active .service-icon-img { filter: brightness(0) invert(1); }
+    
+    /* Detail image hover */
     .hc-detail-img { transition: transform 0.5s ease; }
     .hc-detail-card:hover .hc-detail-img { transform: scale(1.03); }
+    
+    /* Container */
     .hc-container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
+    
+    /* Scrollable service list (desktop: vertical, mobile: horizontal) */
     .hc-scrollable-list { max-height: 70vh; overflow-y: auto; padding-right: 8px; }
     .hc-scrollable-list::-webkit-scrollbar { width: 6px; }
     .hc-scrollable-list::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 4px; }
     .hc-scrollable-list::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
     .hc-scrollable-list::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    
+    /* Gallery grid */
     .hc-gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 20px 20px 0 20px; }
     @media (max-width: 768px) {
-      .hc-gallery-grid { grid-template-columns: 1fr; padding: 16px; }
-      .hc-gallery-grid img { height: 180px !important; }
+      .hc-gallery-grid { grid-template-columns: 1fr; gap: 10px; padding: 16px; }
+      .hc-gallery-grid img { height: 180px !important; object-fit: cover; }
     }
+    
+    /* Doctors grid */
     .hc-doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 16px; }
-    @media (max-width: 640px) { .hc-doctors-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { 
+      .hc-doctors-grid { grid-template-columns: 1fr; gap: 16px; } 
+    }
+    
+    /* Two columns layout */
     @media (max-width: 1024px) {
       .hc-two-columns { flex-direction: column !important; }
       .hc-left-panel { width: 100% !important; margin-bottom: 40px; }
       .hc-right-panel { width: 100% !important; }
-      .hc-hero-title { font-size: 2.8rem !important; }
-      .hc-scrollable-list { display: flex !important; flex-direction: row !important; overflow-x: auto !important; overflow-y: hidden !important; gap: 16px !important; padding-bottom: 16px !important; max-height: none !important; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-      .hc-scrollable-list::-webkit-scrollbar { height: 6px; }
-      .hc-scrollable-list .hc-left-list-item { flex: 0 0 auto !important; width: 280px !important; min-width: 260px; margin-bottom: 0 !important; }
     }
+    
+    /* Horizontal service list on tablet/mobile */
+    @media (max-width: 1024px) {
+      .hc-scrollable-list { 
+        display: flex !important; 
+        flex-direction: row !important; 
+        overflow-x: auto !important; 
+        overflow-y: hidden !important; 
+        gap: 16px !important; 
+        padding-bottom: 16px !important; 
+        max-height: none !important; 
+        -webkit-overflow-scrolling: touch; 
+        scrollbar-width: thin;
+      }
+      .hc-scrollable-list::-webkit-scrollbar { height: 6px; }
+      .hc-scrollable-list .hc-left-list-item { 
+        flex: 0 0 auto !important; 
+        width: 260px !important; 
+        min-width: 240px; 
+        margin-bottom: 0 !important; 
+      }
+    }
+    
+    /* Features row responsive */
+    .hc-feat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+    @media (max-width: 992px) {
+      .hc-feat-row { grid-template-columns: repeat(2, 1fr) !important; gap: 16px; }
+      .hc-feat-row > div { border-right: none !important; border-bottom: 1px solid #e2e8f0; }
+    }
+    @media (max-width: 640px) {
+      .hc-feat-row { grid-template-columns: 1fr !important; }
+    }
+    
+    /* Stats row responsive */
+    .hc-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    @media (max-width: 768px) { 
+      .hc-stats-row { grid-template-columns: repeat(2, 1fr) !important; gap: 16px; } 
+    }
+    @media (max-width: 540px) { 
+      .hc-stats-row { grid-template-columns: 1fr !important; } 
+    }
+    
+    /* Choose us grid */
     .hc-choose-grid { display: grid; grid-template-columns: 380px 1fr; gap: 64px; align-items: center; }
     @media (max-width: 1024px) {
-      .hc-choose-grid { grid-template-columns: 1fr; gap: 48px; }
-      .hc-choose-grid .hc-choose-left { text-align: center; }
+      .hc-choose-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
       .hc-choose-grid .hc-choose-left h2 { font-size: 2rem !important; }
       .hc-choose-left .hc-inline-badge { justify-content: center; }
     }
-    .hc-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    @media (max-width: 768px) { .hc-stats-row { grid-template-columns: repeat(2, 1fr) !important; } }
-    @media (max-width: 540px) { .hc-stats-row { grid-template-columns: 1fr !important; gap: 20px; } }
+    
+    /* Hero highlight badges */
+    .hc-hero-badges { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; }
+    .hc-hero-badge { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border-radius: 60px; padding: 8px 16px; backdrop-filter: blur(4px); font-size: 13px; font-weight: 600; color: white; }
+    @media (max-width: 640px) {
+      .hc-hero-badge { font-size: 11px; padding: 6px 12px; }
+      .hc-hero-badge svg { width: 18px; height: 18px; }
+    }
+    
+    /* Filter buttons responsive */
+    .hc-filter-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-start; margin-bottom: 24px; }
+    @media (max-width: 768px) {
+      .hc-filter-group { justify-content: center; }
+      .hc-filter-group button { padding: 6px 14px !important; font-size: 12px !important; }
+    }
+    @media (max-width: 480px) {
+      .hc-filter-group button { flex: 1 0 auto; text-align: center; min-width: 110px; }
+    }
+    
+    /* General responsive overrides */
     @media (max-width: 768px) {
       .hc-nav-links { display:none !important; }
       .hc-hamburger { display:flex !important; }
       .hc-hero-img { display:none !important; }
-      .hc-feat-row { grid-template-columns:repeat(2,1fr) !important; }
       .hc-footer-cols { grid-template-columns:1fr !important; gap:20px !important; }
       .hc-container { padding: 0 20px; }
-      .hc-filter-group { flex-wrap: wrap; justify-content: center; }
+      .stats-section { padding: 50px 16px !important; }
+      .hc-detail-card { border-radius: 20px !important; }
+      .hc-detail-card h2 { font-size: 1.5rem !important; }
     }
   `;
   document.head.appendChild(s);
 };
 
-// ─── Hooks ────────────────────────────────────────────────────────────────
+// ─── HOOKS (unchanged) ────────────────────────────────────────────────
 const useInView = (threshold = 0.12) => {
   const ref = useRef(null);
   const [v, setV] = useState(false);
@@ -223,7 +307,7 @@ const getLocalServiceIcon = (title) => {
   return iconMap[title] || defaultServiceIcon;
 };
 
-// ─── SERVICE DATA (static without doctors) ───────────────────────────────
+// ─── SERVICE DATA (unchanged - same as your original) ──────────────────
 const SERVICES = [
   // General Services
   {
@@ -600,10 +684,10 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { icon:IC.users,  val:500,   suffix:"+",  label:"Expert Doctors"     },
-  { icon:IC.bed,    val:250,   suffix:"+",  label:"Hospital Beds"      },
-  { icon:IC.smile,  val:50000, suffix:"+",  label:"Happy Patients"     },
-  { icon:IC.award,  val:10,    suffix:"+",  label:"Years of Excellence"},
+  { icon:IC.users,  val:40,   suffix:"+",  label:"Expert Doctors"     },
+  { icon:IC.bed,    val:100,   suffix:"+",  label:"Hospital Beds"      },
+  { icon:IC.smile,  val:50000000, suffix:"+",  label:"Happy Patients"     },
+  { icon:IC.award,  val:35,    suffix:"+",  label:"Years of Excellence"},
 ];
 
 const C = {
@@ -642,7 +726,6 @@ const DoctorCard = ({ doctor }) => (
   </div>
 );
 
-// Mapping from service title to department name as stored in DB
 const serviceToDepartmentMap = {
   "General Medicine": "General Medicine (Physician)",
   "General Surgery": "General Surgery",
@@ -650,7 +733,7 @@ const serviceToDepartmentMap = {
   "Pediatrics": "Pediatrics",
   "Pediatric Surgery": "Pediatric Surgery",
   "Anesthesiology": "Anesthesiology",
-  "Intensive Care Unit": null,        // not a doctor department
+  "Intensive Care Unit": null,
   "Neonatal ICU": null,
   "PICU": null,
   "Medical and Surgical ICU": null,
@@ -691,7 +774,6 @@ export default function Services() {
   const [doctors, setDoctors] = useState([]);
   const [loadingDoctors, setLoadingDoctors] = useState(true);
 
-  // Fetch doctors from API
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -706,7 +788,6 @@ export default function Services() {
     fetchDoctors();
   }, []);
 
-  // Enhance services with doctors based on fetched data
   const enhancedServices = useMemo(() => {
     return SERVICES.map(service => {
       const deptName = serviceToDepartmentMap[service.title];
@@ -714,8 +795,6 @@ export default function Services() {
       if (deptName) {
         serviceDoctors = doctors.filter(doc => doc.dept === deptName);
       }
-      // For specialties that might have multiple mapping (e.g., Laparoscopic Surgery maps to General Surgery)
-      // Already handled.
       return { ...service, doctors: serviceDoctors };
     });
   }, [doctors]);
@@ -739,58 +818,57 @@ export default function Services() {
     <div style={{ fontFamily:"'Inter', 'Outfit', sans-serif", background:C.white, color:C.dark, overflowX:"hidden" }}>
       <Navbar />
 
-      {/* Hero Section with extra content */}
-      <section style={{ background:C.navy, position:"relative", overflow:"hidden", minHeight:"70vh" }}>
-        <div style={{ position:"absolute", top:-80, left:-80, width:360, height:360, borderRadius:"50%", background:"radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%)" }} />
-        <div style={{ position:"absolute", bottom:-60, left:300, width:200, height:200, borderRadius:"50%", background:"radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 70%)" }} />
+      {/* Hero Section - fully responsive */}
+      <section style={{ background:C.navy, position:"relative", overflow:"hidden", minHeight:"60vh", padding:"40px 0 60px" }}>
+        <div style={{ position:"absolute", top:-80, left:-80, width:280, height:280, borderRadius:"50%", background:"radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%)" }} />
+        <div style={{ position:"absolute", bottom:-40, left:200, width:160, height:160, borderRadius:"50%", background:"radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 70%)" }} />
         
-        <div className="hc-hero-img" style={{ position:"absolute", right:0, top:0, bottom:0, width:"65%", overflow:"hidden" }}>
-          <img src={banner} alt="Hospital banner" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block", opacity:0.95 }} />
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(90deg, #0d1f3c 15%, transparent 55%)" }} />
+        <div className="hc-hero-img" style={{ position:"absolute", right:0, top:0, bottom:0, width:"60%", overflow:"hidden", display:"none", displayDesktop:"block" }}>
+          <img src={banner} alt="Hospital banner" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", opacity:0.9 }} />
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(90deg, #0d1f3c 20%, transparent 60%)" }} />
         </div>
         
-        <div style={{ maxWidth:1440, margin:"0 auto", padding:"0 32px", position:"relative", zIndex:1 }}>
-          <div style={{ padding:"60px 0 40px", maxWidth:620 }}>
+        <div style={{ maxWidth:1440, margin:"0 auto", padding:"0 20px", position:"relative", zIndex:1 }}>
+          <div style={{ padding:"20px 0 20px", maxWidth:620 }}>
             <Anim delay={0}>
               <div style={{ marginBottom:16 }}>
-                <span style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.12)", color:"white", borderRadius:40, padding:"6px 16px", fontSize:13, fontWeight:700, letterSpacing:1 }}>
+                <span style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.12)", color:"white", borderRadius:40, padding:"5px 14px", fontSize:12, fontWeight:700, letterSpacing:1 }}>
                   <span style={{ width:8, height:8, borderRadius:"50%", background:"#22d3ee" }}></span>
                   Excellence in Healthcare
                 </span>
               </div>
-              <h1 className="hc-hero-title" style={{ fontSize:"3.8rem", fontWeight:900, color:C.white, lineHeight:1.2, marginBottom:20, letterSpacing:-0.5 }}>
+              <h1 className="hc-hero-title" style={{ fontSize:"3.5rem", fontWeight:900, color:C.white, lineHeight:1.2, marginBottom:16, letterSpacing:-0.5 }}>
                 Our Services
               </h1>
-              <div style={{ width:70, height:4, background:"#22d3ee", borderRadius:2, marginBottom:28 }} />
+              <div style={{ width:60, height:4, background:"#22d3ee", borderRadius:2, marginBottom:24 }} />
             </Anim>
             <Anim delay={0.1}>
-              <p style={{ fontSize:18, color:"rgba(255,255,255,.9)", lineHeight:1.7, marginBottom:16 }}>
+              <p style={{ fontSize:"1rem", lineHeight:1.6, color:"rgba(255,255,255,.9)", marginBottom:12 }}>
                 Comprehensive healthcare services designed to meet your needs with compassion, innovation, and excellence.
               </p>
-              <p style={{ fontSize:16, color:"rgba(255,255,255,.75)", lineHeight:1.7 }}>
+              <p style={{ fontSize:"0.9rem", lineHeight:1.6, color:"rgba(255,255,255,.7)", marginBottom:16 }}>
                 From preventive care to advanced surgical interventions, we offer a full spectrum of medical specialties 
                 under one roof. Our dedicated team of experts uses cutting-edge technology to ensure the best outcomes for every patient.
               </p>
             </Anim>
 
-            {/* 🆕 EXTRA CONTENT: Highlights */}
             <Anim delay={0.2}>
-              <div style={{ display:"flex", gap:20, marginTop:40, flexWrap:"wrap" }}>
-                <div style={{ display:"flex", alignItems:"center", gap:12, background:"rgba(255,255,255,0.08)", borderRadius:60, padding:"10px 20px 10px 16px", backdropFilter:"blur(4px)" }}>
-                  <Ico d={IC.users} size={22} color="#22d3ee" />
-                  <span style={{ fontSize:15, fontWeight:600, color:"white" }}>9M+ Cured Patients</span>
+              <div className="hc-hero-badges">
+                <div className="hc-hero-badge">
+                  <Ico d={IC.users} size={18} color="#22d3ee" />
+                  <span>9M+ Cured Patients</span>
                 </div>
-                <div style={{ display:"flex", alignItems:"center", gap:12, background:"rgba(255,255,255,0.08)", borderRadius:60, padding:"10px 20px 10px 16px", backdropFilter:"blur(4px)" }}>
-                  <Ico d={IC.bed} size={22} color="#22d3ee" />
-                  <span style={{ fontSize:15, fontWeight:600, color:"white" }}>100+ Beds</span>
+                <div className="hc-hero-badge">
+                  <Ico d={IC.bed} size={18} color="#22d3ee" />
+                  <span>100+ Beds</span>
                 </div>
-                <div style={{ display:"flex", alignItems:"center", gap:12, background:"rgba(255,255,255,0.08)", borderRadius:60, padding:"10px 20px 10px 16px", backdropFilter:"blur(4px)" }}>
-                  <Ico d={IC.clock} size={22} color="#22d3ee" />
-                  <span style={{ fontSize:15, fontWeight:600, color:"white" }}>24/7 Emergency</span>
+                <div className="hc-hero-badge">
+                  <Ico d={IC.clock} size={18} color="#22d3ee" />
+                  <span>24/7 Emergency</span>
                 </div>
-                <div style={{ display:"flex", alignItems:"center", gap:12, background:"rgba(255,255,255,0.08)", borderRadius:60, padding:"10px 20px 10px 16px", backdropFilter:"blur(4px)" }}>
-                  <Ico d={IC.award} size={22} color="#22d3ee" />
-                  <span style={{ fontSize:15, fontWeight:600, color:"white" }}>NABH Accredited</span>
+                <div className="hc-hero-badge">
+                  <Ico d={IC.award} size={18} color="#22d3ee" />
+                  <span>NABH Accredited</span>
                 </div>
               </div>
             </Anim>
@@ -798,19 +876,19 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Features grid */}
-      <section style={{ background:C.white, padding:"0 32px" }}>
+      {/* Features grid - responsive */}
+      <section style={{ background:C.white, padding:"0 16px" }}>
         <div style={{ maxWidth:1440, margin:"0 auto" }}>
           <Anim delay={0.05}>
-            <div className="hc-feat-row" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:0, background:C.white, borderRadius:20, boxShadow:"0 8px 40px rgba(37,99,235,.1)", border:`1px solid ${C.border}`, transform:"translateY(-40px)", overflow:"hidden" }}>
+            <div className="hc-feat-row" style={{ display:"grid", gap:0, background:C.white, borderRadius:20, boxShadow:"0 8px 30px rgba(37,99,235,.1)", border:`1px solid ${C.border}`, transform:"translateY(-30px)", overflow:"hidden" }}>
               {FEATURES.map((f,i) => (
-                <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:16, padding:"28px 24px", borderRight:i<3?`1px solid ${C.border}`:"none", transition:"all .3s ease" }}>
-                  <div style={{ width:52, height:52, borderRadius:14, background:`${C.blue}12`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                    <Ico d={f.icon} size={24} color={C.blue} />
+                <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:14, padding:"20px 16px", borderRight: i<FEATURES.length-1 ? `1px solid ${C.border}` : "none", transition:"all .3s ease", background:C.white }}>
+                  <div style={{ width:44, height:44, borderRadius:12, background:`${C.blue}12`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                    <Ico d={f.icon} size={22} color={C.blue} />
                   </div>
                   <div>
-                    <div style={{ fontWeight:800, fontSize:16, color:C.dark, marginBottom:6 }}>{f.title}</div>
-                    <div style={{ fontSize:13, color:C.gray, lineHeight:1.6 }}>{f.desc}</div>
+                    <div style={{ fontWeight:800, fontSize:"0.9rem", color:C.dark, marginBottom:4 }}>{f.title}</div>
+                    <div style={{ fontSize:"0.75rem", color:C.gray, lineHeight:1.5 }}>{f.desc}</div>
                   </div>
                 </div>
               ))}
@@ -819,36 +897,36 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Main Services Section (unchanged) */}
-      <section style={{ padding:"40px 32px 80px", maxWidth:1440, margin:"0 auto" }}>
-        <div className="hc-two-columns" style={{ display:"flex", gap:48, alignItems:"flex-start" }}>
+      {/* Main Services Section - responsive two-column */}
+      <section style={{ padding:"20px 16px 60px", maxWidth:1440, margin:"0 auto" }}>
+        <div className="hc-two-columns" style={{ display:"flex", gap:32, alignItems:"flex-start" }}>
           
           {/* Left Panel */}
           <div className="hc-left-panel" style={{ width:"32%", flexShrink:0 }}>
-            <div style={{ marginBottom:28 }}>
-              <h3 style={{ fontSize:"1.5rem", fontWeight:800, color:C.dark, marginBottom:16 }}>Departments & Services</h3>
-              <div className="hc-filter-group" style={{ display:"flex", gap:12, flexWrap:"wrap", marginBottom:24 }}>
-                <button onClick={() => setFilter("all")} className={`hc-filter-btn ${filter === "all" ? "active" : ""}`} style={{ padding:"8px 18px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:13, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "all" ? C.white : C.dark, backgroundColor:filter === "all" ? C.blue : "transparent" }}>All</button>
-                <button onClick={() => setFilter("general")} className={`hc-filter-btn ${filter === "general" ? "active" : ""}`} style={{ padding:"8px 18px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:13, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "general" ? C.white : C.dark, backgroundColor:filter === "general" ? C.blue : "transparent" }}>🏥 General Services</button>
-                <button onClick={() => setFilter("contributory")} className={`hc-filter-btn ${filter === "contributory" ? "active" : ""}`} style={{ padding:"8px 18px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:13, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "contributory" ? C.white : C.dark, backgroundColor:filter === "contributory" ? C.blue : "transparent" }}>🔬 Contributory</button>
-                <button onClick={() => setFilter("speciality")} className={`hc-filter-btn ${filter === "speciality" ? "active" : ""}`} style={{ padding:"8px 18px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:13, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "speciality" ? C.white : C.dark, backgroundColor:filter === "speciality" ? C.blue : "transparent" }}>⭐ Specialities</button>
-                <button onClick={() => setFilter("super-speciality")} className={`hc-filter-btn ${filter === "super-speciality" ? "active" : ""}`} style={{ padding:"8px 18px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:13, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "super-speciality" ? C.white : C.dark, backgroundColor:filter === "super-speciality" ? C.blue : "transparent" }}>🚀 Super Specialities</button>
-                <button onClick={() => setFilter("emergency")} className={`hc-filter-btn ${filter === "emergency" ? "active" : ""}`} style={{ padding:"8px 18px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:13, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "emergency" ? C.white : C.dark, backgroundColor:filter === "emergency" ? C.blue : "transparent" }}>🚨 24/7 Emergency</button>
+            <div style={{ marginBottom:24 }}>
+              <h3 style={{ fontSize:"1.4rem", fontWeight:800, color:C.dark, marginBottom:12 }}>Departments & Services</h3>
+              <div className="hc-filter-group">
+                <button onClick={() => setFilter("all")} className={`hc-filter-btn ${filter === "all" ? "active" : ""}`} style={{ padding:"6px 16px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:12, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "all" ? C.white : C.dark, backgroundColor:filter === "all" ? C.blue : "transparent" }}>All</button>
+                <button onClick={() => setFilter("general")} className={`hc-filter-btn ${filter === "general" ? "active" : ""}`} style={{ padding:"6px 16px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:12, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "general" ? C.white : C.dark, backgroundColor:filter === "general" ? C.blue : "transparent" }}>🏥 General</button>
+                <button onClick={() => setFilter("contributory")} className={`hc-filter-btn ${filter === "contributory" ? "active" : ""}`} style={{ padding:"6px 16px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:12, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "contributory" ? C.white : C.dark, backgroundColor:filter === "contributory" ? C.blue : "transparent" }}>🔬 Contributory</button>
+                <button onClick={() => setFilter("speciality")} className={`hc-filter-btn ${filter === "speciality" ? "active" : ""}`} style={{ padding:"6px 16px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:12, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "speciality" ? C.white : C.dark, backgroundColor:filter === "speciality" ? C.blue : "transparent" }}>⭐ Specialities</button>
+                <button onClick={() => setFilter("super-speciality")} className={`hc-filter-btn ${filter === "super-speciality" ? "active" : ""}`} style={{ padding:"6px 16px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:12, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "super-speciality" ? C.white : C.dark, backgroundColor:filter === "super-speciality" ? C.blue : "transparent" }}>🚀 Super</button>
+                <button onClick={() => setFilter("emergency")} className={`hc-filter-btn ${filter === "emergency" ? "active" : ""}`} style={{ padding:"6px 16px", borderRadius:40, border:`1.5px solid ${C.border}`, background:"transparent", fontSize:12, fontWeight:700, cursor:"pointer", transition:"all .2s", color:filter === "emergency" ? C.white : C.dark, backgroundColor:filter === "emergency" ? C.blue : "transparent" }}>🚨 24/7</button>
               </div>
             </div>
 
             <div className="hc-scrollable-list">
               {filteredServices.map((svc, idx) => (
-                <div key={idx} onClick={() => setSelectedService(svc)} className={`hc-left-list-item ${selectedService?.title === svc.title ? "active" : ""}`} style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", borderRadius:16, border:`1px solid ${selectedService?.title === svc.title ? C.blue : C.border}`, background: selectedService?.title === svc.title ? C.blue : C.white, cursor:"pointer", transition:"all 0.25s", boxShadow: selectedService?.title === svc.title ? "0 8px 20px rgba(37,99,235,.2)" : "none", marginBottom:12 }}>
-                  <div style={{ width:44, height:44, borderRadius:12, background: selectedService?.title === svc.title ? "rgba(255,255,255,0.2)" : `${C.blue}10`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <img src={getLocalServiceIcon(svc.title)} alt={svc.title} className="service-icon-img" style={{ width:28, height:28, objectFit:"contain" }} />
+                <div key={idx} onClick={() => setSelectedService(svc)} className={`hc-left-list-item ${selectedService?.title === svc.title ? "active" : ""}`} style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", borderRadius:16, border:`1px solid ${selectedService?.title === svc.title ? C.blue : C.border}`, background: selectedService?.title === svc.title ? C.blue : C.white, cursor:"pointer", transition:"all 0.25s", boxShadow: selectedService?.title === svc.title ? "0 4px 12px rgba(37,99,235,.2)" : "none", marginBottom:10 }}>
+                  <div style={{ width:40, height:40, borderRadius:12, background: selectedService?.title === svc.title ? "rgba(255,255,255,0.2)" : `${C.blue}10`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <img src={getLocalServiceIcon(svc.title)} alt={svc.title} className="service-icon-img" style={{ width:24, height:24, objectFit:"contain" }} />
                   </div>
                   <div style={{ flex:1 }}>
-                    <div className="service-title" style={{ fontWeight:800, fontSize:15, color: selectedService?.title === svc.title ? C.white : C.dark }}>{svc.title}</div>
+                    <div className="service-title" style={{ fontWeight:700, fontSize:"0.85rem", color: selectedService?.title === svc.title ? C.white : C.dark }}>{svc.title}</div>
                   </div>
                 </div>
               ))}
-              {filteredServices.length === 0 && <div style={{ textAlign:"center", padding:40, color:C.gray, background:C.lgray, borderRadius:20 }}>No services match selected filter.</div>}
+              {filteredServices.length === 0 && <div style={{ textAlign:"center", padding:30, color:C.gray, background:C.lgray, borderRadius:20 }}>No services match selected filter.</div>}
             </div>
           </div>
 
@@ -856,39 +934,39 @@ export default function Services() {
           <div className="hc-right-panel" style={{ width:"68%", flexShrink:0 }}>
             {selectedService ? (
               <Anim dir="right" key={selectedService.title}>
-                <div className="hc-detail-card" style={{ background:C.white, borderRadius:28, overflow:"hidden", border:`1px solid ${C.border}`, boxShadow:"0 20px 35px -12px rgba(0,0,0,0.1)" }}>
+                <div className="hc-detail-card" style={{ background:C.white, borderRadius:24, overflow:"hidden", border:`1px solid ${C.border}`, boxShadow:"0 12px 28px -8px rgba(0,0,0,0.1)" }}>
                   <div className="hc-gallery-grid">
                     {selectedService.images && selectedService.images.length > 0 ? (
                       selectedService.images.slice(0, 4).map((img, idx) => (
-                        <img key={idx} src={img} alt={`${selectedService.title} ${idx+1}`} style={{ width:"100%", height:"200px", objectFit:"cover", borderRadius:"16px", border:`1px solid ${C.border}`, transition:"transform 0.3s" }} className="hc-detail-img" onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.02)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"} />
+                        <img key={idx} src={img} alt={`${selectedService.title} ${idx+1}`} style={{ width:"100%", height:"180px", objectFit:"cover", borderRadius:"14px", border:`1px solid ${C.border}`, transition:"transform 0.3s" }} className="hc-detail-img" />
                       ))
                     ) : (
-                      <div style={{ height:200, background:C.lgray, borderRadius:16, display:"flex", alignItems:"center", justifyContent:"center", color:C.gray }}>No images available</div>
+                      <div style={{ height:180, background:C.lgray, borderRadius:14, display:"flex", alignItems:"center", justifyContent:"center", color:C.gray }}>No images available</div>
                     )}
                   </div>
-                  <div style={{ padding:"20px 28px 0 28px", position:"relative", display:"flex", alignItems:"center", gap:16, flexWrap:"wrap" }}>
-                    <div style={{ width:56, height:56, borderRadius:16, background:`${C.blue}10`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                      <img src={getLocalServiceIcon(selectedService.title)} alt={selectedService.title} style={{ width:36, height:36, objectFit:"contain" }} />
+                  <div style={{ padding:"16px 20px 0 20px", position:"relative", display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
+                    <div style={{ width:48, height:48, borderRadius:14, background:`${C.blue}10`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <img src={getLocalServiceIcon(selectedService.title)} alt={selectedService.title} style={{ width:30, height:30, objectFit:"contain" }} />
                     </div>
                     <div style={{ flex:1 }}>
-                      {selectedService.category === "emergency" && <div style={{ display:"inline-block", background:"#dc2626", color:"white", fontSize:12, fontWeight:800, padding:"4px 12px", borderRadius:40, letterSpacing:1, marginBottom:8 }}>🚨 24/7 Emergency Service</div>}
-                      <h2 style={{ fontSize:"1.9rem", fontWeight:800, color:C.dark, letterSpacing:-0.5, marginBottom:8 }}>{selectedService.title}</h2>
-                      <div style={{ width:50, height:3, background:C.blue, borderRadius:2 }} />
+                      {selectedService.category === "emergency" && <div style={{ display:"inline-block", background:"#dc2626", color:"white", fontSize:10, fontWeight:800, padding:"3px 12px", borderRadius:40, letterSpacing:1, marginBottom:6 }}>🚨 24/7 Emergency</div>}
+                      <h2 style={{ fontSize:"1.6rem", fontWeight:800, color:C.dark, letterSpacing:-0.5, marginBottom:6 }}>{selectedService.title}</h2>
+                      <div style={{ width:45, height:3, background:C.blue, borderRadius:2 }} />
                     </div>
                   </div>
-                  <div style={{ padding:"20px 28px 28px 28px" }}>
+                  <div style={{ padding:"16px 20px 24px 20px" }}>
                     {selectedService.Overview && (
                       <>
-                        <h4 style={{ fontSize:"1.2rem", fontWeight:700, color:C.dark, marginBottom:12 }}>Overview</h4>
-                        <p style={{ fontSize:"0.95rem", lineHeight:1.7, color:C.gray, marginBottom:24, textAlign:"justify" }}>{selectedService.Overview}</p>
+                        <h4 style={{ fontSize:"1.1rem", fontWeight:700, color:C.dark, marginBottom:10 }}>Overview</h4>
+                        <p style={{ fontSize:"0.85rem", lineHeight:1.6, color:C.gray, marginBottom:20, textAlign:"justify" }}>{selectedService.Overview}</p>
                       </>
                     )}
-                    <h4 style={{ fontSize:"1.2rem", fontWeight:700, color:C.dark, marginBottom:12 }}>Description</h4>
-                    <p style={{ fontSize:"0.95rem", lineHeight:1.7, color:C.gray, marginBottom:24, textAlign:"justify" }}>{selectedService.details}</p>
+                    <h4 style={{ fontSize:"1.1rem", fontWeight:700, color:C.dark, marginBottom:10 }}>Description</h4>
+                    <p style={{ fontSize:"0.85rem", lineHeight:1.6, color:C.gray, marginBottom:20, textAlign:"justify" }}>{selectedService.details}</p>
 
                     {selectedService.doctors && selectedService.doctors.length > 0 && (
-                      <div style={{ marginTop:32 }}>
-                        <h4 style={{ fontWeight:800, color:C.dark, marginBottom:16, display:"flex", alignItems:"center", gap:8 }}><Ico d={IC.users} size={18} color={C.blue} /> Our Expert Doctors</h4>
+                      <div style={{ marginTop:28 }}>
+                        <h4 style={{ fontWeight:800, color:C.dark, marginBottom:14, display:"flex", alignItems:"center", gap:6 }}><Ico d={IC.users} size={16} color={C.blue} /> Our Expert Doctors</h4>
                         <div className="hc-doctors-grid">
                           {selectedService.doctors.map((doctor, idx) => (
                             <DoctorCard key={idx} doctor={doctor} />
@@ -897,35 +975,35 @@ export default function Services() {
                       </div>
                     )}
                     {loadingDoctors && selectedService.doctors?.length === 0 && (
-                      <div style={{ marginTop:32, textAlign:"center", color:C.gray }}>Loading doctors...</div>
+                      <div style={{ marginTop:24, textAlign:"center", color:C.gray }}>Loading doctors...</div>
                     )}
                   </div>
                 </div>
               </Anim>
             ) : (
-              <div style={{ background:C.lgray, borderRadius:28, padding:60, textAlign:"center", border:`1px solid ${C.border}` }}>
-                <Ico d={IC.search} size={48} color={C.gray} style={{ marginBottom:20, opacity:0.5 }} />
-                <h3 style={{ fontSize:"1.6rem", color:C.dark, marginBottom:12 }}>Select a department</h3>
-                <p style={{ color:C.gray }}>Please choose a service from the left panel to view detailed information.</p>
+              <div style={{ background:C.lgray, borderRadius:24, padding:40, textAlign:"center", border:`1px solid ${C.border}` }}>
+                <Ico d={IC.search} size={40} color={C.gray} style={{ marginBottom:16, opacity:0.5 }} />
+                <h3 style={{ fontSize:"1.4rem", color:C.dark, marginBottom:8 }}>Select a department</h3>
+                <p style={{ color:C.gray, fontSize:"0.85rem" }}>Please choose a service from the left panel to view detailed information.</p>
               </div>
             )}
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="stats-section" style={{ background:C.lgray, padding:"80px 32px", borderTop:`1px solid ${C.border}` }}>
+      {/* Stats Section - responsive */}
+      <section className="stats-section" style={{ background:C.lgray, padding:"60px 16px", borderTop:`1px solid ${C.border}` }}>
         <div style={{ maxWidth:1440, margin:"0 auto" }}>
           <div className="hc-choose-grid">
             <div className="hc-choose-left">
               <Anim dir="left">
-                <div className="hc-inline-badge" style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:16 }}>
-                  <div style={{ width:28, height:2, background:C.blue }} />
-                  <span style={{ fontSize:13, fontWeight:800, color:C.blue, letterSpacing:2, textTransform:"uppercase" }}>Why Choose Us?</span>
+                <div className="hc-inline-badge" style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:12, justifyContent:"center" }}>
+                  <div style={{ width:24, height:2, background:C.blue }} />
+                  <span style={{ fontSize:12, fontWeight:800, color:C.blue, letterSpacing:1, textTransform:"uppercase" }}>Why Choose Us?</span>
                 </div>
-                <h2 style={{ fontSize:"2.5rem", fontWeight:900, color:C.dark, lineHeight:1.2, marginBottom:10, letterSpacing:-0.5 }}>Exceptional Care<br />You Can Trust</h2>
-                <div style={{ width:56, height:4, background:C.blue, borderRadius:2, marginBottom:24 }} />
-                <p style={{ fontSize:15, color:C.gray, lineHeight:1.8, marginBottom:32, maxWidth:380 }}>
+                <h2 style={{ fontSize:"2rem", fontWeight:900, color:C.dark, lineHeight:1.2, marginBottom:10, letterSpacing:-0.5 }}>Exceptional Care<br />You Can Trust</h2>
+                <div style={{ width:50, height:3, background:C.blue, borderRadius:2, marginBottom:20 }} />
+                <p style={{ fontSize:"0.85rem", color:C.gray, lineHeight:1.7, marginBottom:20, maxWidth:"100%" }}>
                   We are committed to providing exceptional healthcare with a focus on quality, safety, and patient satisfaction.
                 </p>
               </Anim>
@@ -933,8 +1011,8 @@ export default function Services() {
             <div ref={statsRef}>
               <div className="hc-stats-row">
                 {STATS.map((s,i) => (
-                  <Anim key={i} delay={i*0.1} dir="right">
-                    <div style={{ background:C.white, borderRadius:20, border:`1px solid ${C.border}`, boxShadow:"0 4px 20px rgba(0,0,0,.04)" }}>
+                  <Anim key={i} delay={i*0.08} dir="right">
+                    <div style={{ background:C.white, borderRadius:20, border:`1px solid ${C.border}`, boxShadow:"0 2px 12px rgba(0,0,0,.04)" }}>
                       <StatCounter val={s.val} suffix={s.suffix} label={s.label} icon={s.icon} inView={statsInView} />
                     </div>
                   </Anim>

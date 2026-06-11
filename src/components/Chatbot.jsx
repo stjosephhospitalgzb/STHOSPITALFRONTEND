@@ -215,7 +215,7 @@ const Chatbot = () => {
     setQuickReplyButtons([]);
     setShowPostMessageOptions(false);
     setMessages([]);
-    const welcomePlain = "Hello! I'm your Virtual Nurse 💜 How can I help you today? Feel free to click on any option below or type your question.";
+    const welcomePlain = "Hello! I'm your AI. KALYANI💜 How can I help you today? Feel free to click on any option below or type your question.";
     addBotMessageWithTyping(welcomePlain, false);
   };
 
@@ -551,7 +551,7 @@ const Chatbot = () => {
     addMessage("user", inputText.trim());
     setInputText("");
     addBotMessageWithTyping(
-      "👋 Hello! I'm your Virtual Nurse 💜. I'm here to help with your healthcare queries. You can select an option below or simply type your question. Need urgent assistance? Our support team is available 24×7 at +91 7827-908-598.",
+      "👋 Hello! I'm your AI. KALYANI 💜. I'm here to help with your healthcare queries. You can select an option below or simply type your question. Need urgent assistance? Our support team is available 24×7 at +91 7827-908-598.",
       false
     );
   };
@@ -613,13 +613,7 @@ const Chatbot = () => {
   if (!isOpen) {
     return (
       <div className="chatbot-toggle-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
-        {/* Initial welcoming popup (appears on load) */}
-        {showInitialPopup && (
-          <div className="initial-popup">
-            Hey how can I help you today? 💬
-            <div className="initial-popup-arrow"></div>
-          </div>
-        )}
+      
         <button 
           className="chatbot-toggle-btn highlight-toggle" 
           onClick={handleOpenChat} 
@@ -643,9 +637,7 @@ const Chatbot = () => {
             }} 
           />
         </button>
-        <span className="chatbot-tooltip">
-          Hey how can I help you today? 💬
-        </span>
+     
       </div>
     );
   }
@@ -670,7 +662,7 @@ const Chatbot = () => {
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0, flexShrink: 1 }}>
             <img src={nurseAvatar} alt="Nurse" style={{ width: isMobile ? "28px" : "36px", height: isMobile ? "28px" : "36px", borderRadius: "50%", objectFit: "cover", border: "1px solid white", flexShrink: 0 }} />
             <span style={{ whiteSpace: isExtraSmall ? "nowrap" : "normal", overflow: "hidden", textOverflow: "ellipsis", fontSize: isExtraSmall ? "0.75rem" : "inherit" }}>
-              {isExtraSmall ? "AI Nurse" : "Hello I'm AI.Virtual Nurse"}
+              {isExtraSmall ? "AI. KALYANI" : "Hello I'm AI. KALYANI"}
             </span>
           </div>
           <div style={{ display: "flex", gap: isExtraSmall ? "4px" : "10px", alignItems: "center", flexShrink: 0 }}>

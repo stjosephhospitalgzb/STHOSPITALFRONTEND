@@ -939,13 +939,38 @@ const Home = () => {
     "https://img.magnific.com/free-photo/closeup-smiling-young-beautiful-indian-woman_1262-2261.jpg?semt=ais_hybrid&w=740&q=80",
   ];
 
-  const statsData = [
-    { icon: icons.clock, label: "Bed Capacity", sub: "100+ beds", val: "100+" },
-    { icon: icons.heartbeat, label: "Cured Patients", sub: "9M+ successfully treated", val: "9M+" },
-    { icon: icons.tech, label: "Medical Apparatus", sub: "110+ advanced units", val: "110+" },
-    { icon: icons.stethoscope, label: "Dialysis Unit", sub: "State-of-the-art", val: "5+" },
-    { icon: icons.user, label: "Expert Doctors", sub: "40+ highly qualified", val: "40+" },
-  ];
+ const statsData = [
+  { 
+    icon: icons.clock, 
+    label: "Bed Capacity", 
+    sub: "Modern and spacious inpatient beds", 
+    val: "100+" 
+  },
+  { 
+    icon: icons.heartbeat, 
+    label: "Cured Patients", 
+    sub: "Successfully treated and recovered lives", 
+    val: "9M+" 
+  },
+  { 
+    icon: icons.tech, 
+    label: "Medical Apparatus", 
+    sub: "Advanced and high-tech equipment units", 
+    val: "110+" 
+  },
+  { 
+    icon: icons.stethoscope, 
+    label: "Dialysis Unit", 
+    sub: "State-of-the-art renal care stations", 
+    val: "5+" 
+  },
+  { 
+    icon: icons.user, 
+    label: "Expert Doctors", 
+    sub: "Highly qualified specialists on duty", 
+    val: "40+" 
+  },
+];
 
   const services = [
     { icon: cardiologyIcon, title: "Cardiology", desc: "Our cardiology services include evaluation and management of conditions such as hypertension, coronary artery disease, heart rhythm disorders, and heart failure. " },
