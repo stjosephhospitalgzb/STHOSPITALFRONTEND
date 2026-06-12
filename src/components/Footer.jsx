@@ -1,4 +1,12 @@
 import React, { useEffect } from "react";
+// Import the hostel logo image from your assets folder
+import hostelLogo from "../assets/logo.jpg";
+// Import social media icons as images
+import facebookIcon from "../assets/Icons/facebook.png";
+import twitterIcon from "../assets/Icons/twitter.png";
+import instagramIcon from "../assets/Icons/Instagram.png";
+import linkedinIcon from "../assets/Icons/linkedin.png";
+import youtubeIcon from "../assets/Icons/youtube.png";
 
 // ─── Icon paths (same as used in other pages) ────────────────────────────────
 const IC = {
@@ -24,11 +32,11 @@ const Ico = ({ d, size = 20, color = "currentColor", fill = "none" }) => (
 // ─── Color palette ──────────────────────────────────────────────────────────
 const C = {
   blue:  "#2563eb",
-  navy:  "#0d1f3c",   // darker background for footer
+  navy:  "#0d1f3c",
   white: "#ffffff",
 };
 
-// ─── Style injection for heartbeat animation + responsive breakpoints ───────
+// ─── Style injection: heartbeat, responsive grid, left alignment ────────────
 const injectFooterStyles = () => {
   if (document.getElementById("hc-footer-styles")) return;
   const style = document.createElement("style");
@@ -41,15 +49,59 @@ const injectFooterStyles = () => {
     .footer-heartbeat svg {
       animation: heartbeat 2s ease-in-out infinite;
     }
+
+    /* Responsive grid – 4 → 2 → 1 column */
     @media (max-width: 1024px) {
       .footer-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 32px !important; }
     }
     @media (max-width: 768px) {
-      .footer-grid { grid-template-columns: 1fr !important; text-align: center; }
-      .footer-contact-row, .footer-social-row { justify-content: center !important; }
-      .footer-links { justify-content: center !important; }
-      .footer-bottom { flex-direction: column; text-align: center; }
+      .footer-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
     }
+
+    /* Keep everything left-aligned on all screen sizes */
+    .footer-grid > div {
+      text-align: left;
+    }
+
+    /* Social icons row: left-aligned on all screens */
+    .footer-social-row {
+      justify-content: flex-start !important;
+    }
+
+    /* Bottom bar: left-aligned, wrap properly */
+    .footer-bottom {
+      flex-direction: row !important;
+      justify-content: space-between !important;
+      text-align: left !important;
+    }
+    @media (max-width: 768px) {
+      .footer-bottom {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+      }
+    }
+
+    /* Map container styling */
+    .footer-map-container {
+      margin-top: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .footer-map-container iframe {
+      width: 100%;
+      height: 200px;
+      border: 0;
+      display: block;
+    }
+    @media (min-width: 768px) {
+      .footer-map-container iframe {
+        height: 250px;
+      }
+    }
+
+    /* Link and icon styles */
     .footer-link {
       color: rgba(255,255,255,.55);
       text-decoration: none;
@@ -112,7 +164,7 @@ export default function Footer() {
       </div>
 
       <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 1 }}>
-        {/* Main footer grid – 4 columns on desktop, 2 on tablet, 1 on mobile */}
+        {/* Main footer grid – responsive columns via CSS */}
         <div className="footer-grid" style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
@@ -122,18 +174,18 @@ export default function Footer() {
         }}>
           {/* Column 1: Brand & Tagline */}
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-              <div style={{
-                width: 40,
-                height: 40,
-                borderRadius: 12,
-                background: C.blue,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-                <Ico d={IC.cross} size={20} color={C.white} />
-              </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+              <img 
+                src={hostelLogo}
+                alt="Hostel Logo"
+                style={{
+                  width: 80,
+                  height: 80,
+                  objectFit: "contain",
+                  borderRadius: 8,
+                  padding: 4,
+                }}
+              />
               <div>
                 <h3 style={{
                   fontSize: "1.3rem",
@@ -141,8 +193,9 @@ export default function Footer() {
                   color: C.white,
                   lineHeight: 1.2,
                   letterSpacing: -0.3,
-                }}>ST. JOSEPH'S</h3>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", letterSpacing: 1 }}>HOSPITAL</div>
+                  margin: 0,
+                }}>ST. JOSEPH'S HOSPITAL GHAZIABAD</h3>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", letterSpacing: 1 }}></div>
               </div>
             </div>
             <p style={{
@@ -213,7 +266,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 4: Office, Map, Social Links */}
+          {/* Column 4: Office Contact, Map, Social Links */}
           <div>
             <h4 style={{ fontSize: 16, fontWeight: 800, color: C.white, marginBottom: 20, letterSpacing: -0.2 }}>Office Contact</h4>
             <div style={{ marginBottom: 20 }}>
@@ -221,35 +274,33 @@ export default function Footer() {
               <a href="mailto:sjhospital.tpa@gmail.com" className="footer-link" style={{ fontSize: 13 }}>sjhospital.tpa@gmail.com</a>
             </div>
 
-            <div style={{ marginBottom: 20 }}>
-              <a
-                href="https://maps.google.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="footer-link"
-                style={{ fontSize: 13, display: "inline-flex", alignItems: "center", gap: 8 }}
-              >
-                <Ico d={IC.location} size={14} color="rgba(255,255,255,.6)" />
-                View on Google Maps
-              </a>
+            {/* Embedded Google Map */}
+            <div className="footer-map-container">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500.2407662005257!2d77.41091687601781!3d28.6824435818113!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cf1dfe7c7fead%3A0x12d59852c4390cad!2sST%20JOSEPH&#39;S%20HOSPITAL!5e0!3m2!1sen!2sin!4v1781157922265!5m2!1sen!2sin" 
+                title="St. Joseph's Hospital Location Map"
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
             </div>
 
-            <h4 style={{ fontSize: 16, fontWeight: 800, color: C.white, marginBottom: 16, letterSpacing: -0.2 }}>Follow Us On</h4>
+            <h4 style={{ fontSize: 16, fontWeight: 800, color: C.white, marginBottom: 16, marginTop: 20, letterSpacing: -0.2 }}>Follow Us On</h4>
             <div className="footer-social-row" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <a href="https://www.youtube.com/@STJOSEPHSHOSPITAL" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <Ico d={IC.youtube} size={18} color={C.white} />
+                <img src={youtubeIcon} alt="YouTube" width={18} height={18} style={{ objectFit: "contain" }} />
               </a>
               <a href="https://www.linkedin.com/in/st-joseph-s-hospital-7423652a7/" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <Ico d={IC.linkedin} size={18} color={C.white} />
+                <img src={linkedinIcon} alt="LinkedIn" width={18} height={18} style={{ objectFit: "contain" }} />
               </a>
               <a href="https://www.facebook.com/profile.php?id=100077486113772" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <Ico d={IC.facebook} size={18} color={C.white} />
+                <img src={facebookIcon} alt="Facebook" width={18} height={18} style={{ objectFit: "contain" }} />
+              </a>
+              <a href="https://www.instagram.com/stjosephshospitalghaziabad" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
+                <img src={instagramIcon} alt="Instagram" width={18} height={18} style={{ objectFit: "contain" }} />
               </a>
               <a href="https://wa.me/917827908598" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
                 <Ico d={IC.whatsapp} size={18} color={C.white} />
-              </a>
-              <a href="https://www.instagram.com/stjosephshospitalghaziabad" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <Ico d={IC.instagram} size={18} color={C.white} />
               </a>
             </div>
           </div>
@@ -268,7 +319,7 @@ export default function Footer() {
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.4)" }}>
             © 2026 St. Joseph's Hospital. All Rights Reserved.
           </div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)", textAlign: "center" }}>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>
             Designed and Developed by: IT Department, St. Joseph's Hospital, Ghaziabad.
           </div>
         </div>

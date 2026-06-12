@@ -648,7 +648,7 @@ export default function Doctors() {
         <div style={{ position: "absolute", bottom: -60, left: 300, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 70%)", zIndex: 0 }} />
 
         <div className="hc-hero-right-image">
-          <img src={banner8} alt="Doctors at St. Joseph's Hospital" />
+          <img src={banner8} alt="Doctors at St. Joseph's Hospital Ghaziabad" />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, #0d1f3c 15%, transparent 55%)" }} />
         </div>
 

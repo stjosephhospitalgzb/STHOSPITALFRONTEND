@@ -909,28 +909,28 @@ const Home = () => {
   };
 
   // Hero content for 4 slides
-  const heroContent = {
-    0: {
-      pillText: "Advanced Care. Compassionate Heart.",
-      title: "Healthcare<br />Reimagined for<br /><span style='background: linear-gradient(90deg, #fff, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>a Better Tomorrow</span>",
-      description: "We combine cutting-edge technology, world-class specialists, and compassionate care to deliver exceptional health outcomes.",
-    },
-    1: {
-      pillText: "Precision Imaging & AI Diagnostics",
-      title: "Next-Gen<br />Radiology.<br /><span style='background: linear-gradient(90deg, #fff, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>Ultra-Fast. Accurate.</span>",
-      description: "State-of-the-art 3T MRI, CT, PET-CT and AI-powered reporting for early detection and precise diagnoses. Expert radiologists, faster results.",
-    },
-    2: {
-      pillText: "Advanced Surgical Care",
-      title: "Precision.<br />Safety.<br /><span style='background: linear-gradient(90deg, #fff, #a5f3fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>Faster Recovery</span>",
-      description: "State-of-the-art operating theaters, robotic‑assisted surgery, and expert surgical teams for the best outcomes.",
-    },
-    3: {
-      pillText: "Emergency & Trauma Care",
-      title: "24/7 Emergency.<br />Rapid Response.<br /><span style='background: linear-gradient(90deg, #fff, #fbcfe8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>When Seconds Count</span>",
-      description: "Level 1 trauma center, advanced life support, and a dedicated team of emergency physicians ready to provide immediate, life-saving care around the clock.",
-    }
-  };
+const heroContent = {
+  0: {
+    pillText: "Trusted Healthcare Excellence.",
+    title: "Caring for Life. Advancing Health Every Day",
+    description: "Experience comprehensive healthcare backed by expert doctors, advanced medical technology, and patient-centered care designed to support your well-being at every stage of life.",
+  },
+  1: {
+    pillText: "Patient First. Always.",
+    title: "Healing with Compassion, Excellence, and Trust",
+    description: "We are committed to delivering personalized healthcare experiences through quality treatment, ethical practices, and compassionate support for every patient.",
+  },
+  2: {
+    pillText: "Specialized Medical & Surgical Care",
+    title: "Expertise You Trust. Outcomes You Deserve",
+    description: "Our experienced specialists provide advanced medical and surgical treatments using the latest techniques to ensure safer procedures and faster recovery.",
+  },
+  3: {
+    pillText: "Emergency & Critical Care",
+    title: "24×7 Emergency Support When Every Moment Matters",
+    description: "Round-the-clock emergency services, critical care units, advanced life support systems, and dedicated medical professionals ready to respond immediately.",
+  },
+};
 
   const indianFaces = [
     "https://img.magnific.com/free-photo/indian-woman-posing-cute-stylish-outfit-camera-smiling_482257-122351.jpg",
@@ -1887,7 +1887,7 @@ const Home = () => {
                       <Icon d={icons.mail} size={24} color={blue} />
                     </div>
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: 16, color: dark }}>Email</div>
+                      <div style={{ fontWeight: 800, fontSize: 16, color: dark }}>Admin Email</div>
                       <div style={{ fontSize: 14, color: gray }}>stjosephgzb@rediffmail.com</div>
                     </div>
                   </div>

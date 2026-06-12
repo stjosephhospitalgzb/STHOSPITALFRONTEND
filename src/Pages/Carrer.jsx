@@ -60,106 +60,6 @@ const getDepartmentIcon = (department) => {
   }
 };
 
-const footerStyles = {
-  container: { backgroundColor: "#0f172a", color: "#e2e8f0", marginTop: "40px" },
-  inner: { maxWidth: "1280px", margin: "0 auto", padding: "48px 32px 32px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "40px" },
-  brand: { flex: "1", minWidth: "200px" },
-  logo: { fontSize: "36px", display: "block", marginBottom: "12px" },
-  brandName: { fontSize: "20px", fontWeight: "700", color: "#fff", display: "block" },
-  tagline: { fontSize: "13px", color: "#94a3b8", marginTop: "8px" },
-  links: { display: "flex", flexWrap: "wrap", gap: "48px" },
-  linkGroup: { display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" },
-  copyright: { textAlign: "center", borderTop: "1px solid #1e293b", padding: "20px 20px", fontSize: "12px", color: "#64748b" },
-};
-
-const s = {
-  page: { fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", color: "#1a1a2e", backgroundColor: "#ffffff", overflowX: "hidden", scrollBehavior: "smooth" },
-  heroSection: { background: "#0d1f3c", position: "relative", overflow: "hidden", minHeight: "70vh" },
-  heroDeco: { position: "absolute", zIndex: 0, borderRadius: "50%", background: "radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%)" },
-  heroRightImage: { position: "absolute", right: 0, top: 0, bottom: 0, width: "65%", overflow: "hidden" },
-  heroImage: { width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", opacity: 0.95 },
-  heroImageOverlay: { position: "absolute", inset: 0, background: "linear-gradient(90deg, #0d1f3c 15%, transparent 55%)" },
-  heroContainer: { position: "relative", zIndex: 2, maxWidth: "1280px", margin: "0 auto", padding: "0 32px" },
-  heroContent: { maxWidth: "620px", padding: "60px 0 80px" },
-  heroPill: { display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.12)", color: "white", borderRadius: 40, padding: "6px 16px", fontSize: 13, fontWeight: 700, letterSpacing: 1, marginBottom: 16 },
-  heroPillDot: { width: 8, height: 8, borderRadius: "50%", background: "#22d3ee" },
-  heroTitle: { fontSize: "clamp(2rem, 8vw, 3.8rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.2, marginBottom: 20, letterSpacing: -0.5 },
-  heroUnderline: { width: 70, height: 4, background: "#22d3ee", borderRadius: 2, marginBottom: 28 },
-  heroSubtitle: { fontSize: "clamp(0.9rem, 4vw, 1.2rem)", color: "rgba(255,255,255,0.9)", lineHeight: 1.5, marginBottom: 16 },
-  heroDesc: { fontSize: "clamp(0.85rem, 3.5vw, 1rem)", color: "rgba(255,255,255,0.75)", lineHeight: 1.6, marginBottom: 24 },
-  heroBtns: { display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 32, justifyContent: "flex-start" },
-  btnPrimary: { display: "inline-flex", alignItems: "center", gap: 8, background: "#2563eb", color: "#fff", border: "none", borderRadius: 40, padding: "12px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "all .3s ease" },
-  btnOutline: { display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: "#fff", border: "2px solid #fff", borderRadius: 40, padding: "10px 22px", fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "all .3s ease" },
-  teamBadge: { display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" },
-  avatarStack: { display: "flex" },
-  avatar: { width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #fff", backgroundColor: "#475569", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", marginLeft: "-8px", boxShadow: "0 2px 6px rgba(0,0,0,0.1)" },
-  teamText: { fontSize: "13px" },
-  teamNum: { fontWeight: "800", color: "#fff" },
-  teamLabel: { color: "#cbd5e1" },
-
-  jobsSection: { maxWidth: "1280px", margin: "0 auto", padding: "48px 20px" },
-  jobsEyebrow: { fontSize: "11px", fontWeight: "700", color: "#facc15", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "4px", display: "flex", alignItems: "center", gap: "8px" },
-  jobsTitle: { fontSize: "clamp(24px, 6vw, 36px)", fontWeight: "800", color: "#0f172a", marginBottom: "20px" },
-  jobsSectionHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "12px" },
-  viewAllLink: { display: "flex", alignItems: "center", gap: "6px", color: "#2563eb", fontSize: "13px", fontWeight: "600", cursor: "pointer" },
-  searchBar: { display: "flex", gap: "12px", marginBottom: "32px", flexWrap: "wrap" },
-  searchInput: { flex: "2", minWidth: "180px", padding: "12px 16px", border: "1px solid #e2e8f0", borderRadius: "40px", fontSize: "14px", outline: "none" },
-  selectInput: { flex: "1", minWidth: "130px", padding: "12px 16px", border: "1px solid #e2e8f0", borderRadius: "40px", fontSize: "14px", color: "#334155", backgroundColor: "#fff" },
-  searchBtn: { backgroundColor: "#2563eb", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "40px", fontSize: "14px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" },
-
-  jobsGrid: { display: "grid", gap: "20px", gridTemplateColumns: "1fr" },
-  jobCard: { backgroundColor: "#fff", borderRadius: "20px", border: "1px solid #eef2ff", overflow: "hidden", transition: "all 0.25s", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" },
-  cardHeader: { padding: "16px 20px 12px 20px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" },
-  cardIcon: { width: "48px", height: "48px", borderRadius: "16px", backgroundColor: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center" },
-  cardBadge: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" },
-  categoryBadge: { backgroundColor: "#e0e7ff", color: "#1e40af", padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "600" },
-  dateBadge: { fontSize: "11px", color: "#64748b" },
-  cardBody: { padding: "16px 20px" },
-  jobTitle: { fontSize: "18px", fontWeight: "800", color: "#0f172a", marginBottom: "12px" },
-  detailsGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" },
-  detailItem: { fontSize: "13px", color: "#475569", wordBreak: "break-word" },
-  detailLabel: { fontWeight: "600", color: "#0f172a", marginRight: "6px" },
-  description: { fontSize: "13px", color: "#64748b", lineHeight: "1.5", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #f1f5f9" },
-  cardFooter: { padding: "14px 20px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #f1f5f9", backgroundColor: "#fafcff", flexWrap: "wrap", gap: "12px" },
-  deptType: { fontSize: "12px", color: "#64748b" },
-  applyBtn: { backgroundColor: "transparent", color: "#2563eb", border: "2px solid #2563eb", padding: "6px 20px", borderRadius: "40px", fontSize: "13px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" },
-
-  // NEW: Application form two-column layout styles
-  applicationSection: { maxWidth: "1280px", margin: "32px auto 0", padding: "32px 20px" },
-  appGrid: { display: "grid", gap: "32px", gridTemplateColumns: "1fr 1fr" },
-  formCard: { backgroundColor: "#fff", borderRadius: "24px", padding: "28px 24px 24px", boxShadow: "0 8px 30px rgba(0,0,0,0.06)", border: "1px solid #eef2ff" },
-  infoCard: { backgroundColor: "#fff", borderRadius: "24px", padding: "28px 24px 32px", boxShadow: "0 8px 30px rgba(0,0,0,0.06)", border: "1px solid #eef2ff" },
-  sectionTitle: { fontSize: "clamp(20px, 4vw, 26px)", fontWeight: "800", color: "#0f172a", marginBottom: "12px" },
-  formIframe: { width: "100%", minHeight: "700px", border: "none", borderRadius: "16px" },
-  contactCardGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "16px", marginBottom: "24px" },
-  contactCard: { border: "1px solid #eef2ff", borderRadius: "20px", padding: "20px", transition: "all 0.25s" },
-  contactIconBox: { width: "44px", height: "44px", borderRadius: "14px", backgroundColor: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "14px", fontSize: "22px" },
-  contactTitle: { fontWeight: "800", fontSize: "15px", color: "#0f172a", marginBottom: "8px" },
-  contactText: { fontSize: "13px", color: "#475569", lineHeight: "1.5" },
-  stepBox: { backgroundColor: "#f8fafc", borderRadius: "18px", padding: "20px", marginTop: "20px" },
-  stepTitle: { fontWeight: "800", fontSize: "15px", color: "#0f172a", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" },
-
-  // Values & Testimonials
-  bottomSection: { maxWidth: "1280px", margin: "0 auto", padding: "0 20px 60px", display: "flex", gap: "40px", alignItems: "flex-start", flexWrap: "wrap" },
-  valuesBlock: { flex: "1", minWidth: "200px" },
-  sectionEyebrow: { fontSize: "11px", fontWeight: "700", color: "#facc15", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" },
-  valuesList: { marginTop: "24px", display: "flex", flexDirection: "column", gap: "24px" },
-  valueItem: { display: "flex", alignItems: "flex-start", gap: "16px", flexWrap: "wrap" },
-  valueIcon: { width: "48px", height: "48px", borderRadius: "20px", backgroundColor: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", flexShrink: "0" },
-  valueTitle: { fontSize: "16px", fontWeight: "700", color: "#0f172a", marginBottom: "6px" },
-  valueDesc: { fontSize: "13px", color: "#64748b", lineHeight: "1.4" },
-  testimonialsBlock: { flex: "2", minWidth: "240px" },
-  testimonialsGrid: { display: "grid", gap: "20px", gridTemplateColumns: "1fr", marginTop: "24px" },
-  testimonialCard: { backgroundColor: "#fff", borderRadius: "24px", padding: "24px", border: "1px solid #eef2ff" },
-  testimonialQuote: { fontSize: "14px", color: "#1e293b", lineHeight: "1.6", marginBottom: "20px", fontStyle: "italic" },
-  testimonialAuthor: { display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap" },
-  testimonialAvatar: { width: "52px", height: "52px", borderRadius: "50%", backgroundColor: "#e0e7ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px" },
-  testimonialName: { fontSize: "15px", fontWeight: "700", color: "#0f172a" },
-  testimonialRole: { fontSize: "13px", color: "#64748b" },
-  testimonialYears: { fontSize: "12px", color: "#2563eb", fontWeight: "600", marginTop: "4px" },
-};
-
-// Google Form embed URL (using the provided link with embedded=true for cleaner display)
 const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSduGPszjqpKRlPrXf5LiTwVRT4n6Xf7hBY-NJGiJuL9oGqOpA/viewform?embedded=true";
 
 export default function HealthCareCareersPage() {
@@ -169,6 +69,10 @@ export default function HealthCareCareersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("All Departments");
   const [heroAnimated, setHeroAnimated] = useState(false);
+
+  // Modal state
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -213,7 +117,8 @@ export default function HealthCareCareersPage() {
         .card-header { flex-direction: column; align-items: flex-start; }
         .card-badge { align-items: flex-start; }
         .details-grid { grid-template-columns: 1fr; gap: 8px; }
-        .apply-btn { width: 100%; text-align: center; }
+        .apply-btn, .readmore-btn { width: 100%; text-align: center; }
+        .card-footer { flex-direction: column; align-items: stretch; }
         .values-list { align-items: center; }
         .value-item { flex-direction: column; align-items: center; text-align: center; }
         .testimonial-card { text-align: center; }
@@ -223,17 +128,92 @@ export default function HealthCareCareersPage() {
       .btn-primary:hover { background-color: #1d4ed8 !important; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,.4); }
       .btn-outline:hover { background-color: #2563eb !important; color: #fff !important; transform: translateY(-2px); border-color: #2563eb !important; }
       .job-card:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1); }
-      .apply-btn:hover { background-color: #2563eb; color: white; transform: translateY(-2px); }
+      .apply-btn:hover, .readmore-btn:hover { background-color: #2563eb; color: white; transform: translateY(-2px); }
       .contact-card:hover { transform: translateY(-3px); border-color: #bfdbfe !important; box-shadow: 0 12px 24px rgba(0,0,0,0.05); }
+      
+      /* Modal styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.75);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+      }
+      .modal-container {
+        background: white;
+        border-radius: 32px;
+        max-width: 700px;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        animation: modalFadeIn 0.2s ease-out;
+      }
+      @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.96); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      .modal-header {
+        padding: 24px 28px 16px;
+        border-bottom: 1px solid #eef2ff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        background: white;
+        border-radius: 32px 32px 0 0;
+      }
+      .modal-body {
+        padding: 24px 28px 32px;
+      }
+      .modal-close {
+        background: #f1f5f9;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .modal-close:hover {
+        background: #e2e8f0;
+        transform: scale(1.05);
+      }
+      @media (max-width: 640px) {
+        .modal-container { max-width: 95%; }
+        .modal-header, .modal-body { padding: 20px; }
+      }
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
   }, []);
 
-  // Scroll to application form when "Apply Now" is clicked
   const handleApply = () => {
+    setShowModal(false);
     const formSection = document.getElementById('application-form-section');
     if (formSection) formSection.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const openModal = (job) => {
+    setSelectedJob(job);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedJob(null);
   };
 
   const departments = ["All Departments", "Medical", "Nursing", "Non-Medical"];
@@ -252,8 +232,91 @@ export default function HealthCareCareersPage() {
   };
 
   const jobsGridStyle = {
-    ...s.jobsGrid,
+    display: "grid",
+    gap: "20px",
     gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(360px, 1fr))"
+  };
+
+  // Styles object (keeping the original s constant but we'll override where needed)
+  const s = {
+    page: { fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", color: "#1a1a2e", backgroundColor: "#ffffff", overflowX: "hidden", scrollBehavior: "smooth" },
+    heroSection: { background: "#0d1f3c", position: "relative", overflow: "hidden", minHeight: "70vh" },
+    heroDeco: { position: "absolute", zIndex: 0, borderRadius: "50%", background: "radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%)" },
+    heroRightImage: { position: "absolute", right: 0, top: 0, bottom: 0, width: "65%", overflow: "hidden" },
+    heroImage: { width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", opacity: 0.95 },
+    heroImageOverlay: { position: "absolute", inset: 0, background: "linear-gradient(90deg, #0d1f3c 15%, transparent 55%)" },
+    heroContainer: { position: "relative", zIndex: 2, maxWidth: "1280px", margin: "0 auto", padding: "0 32px" },
+    heroContent: { maxWidth: "620px", padding: "60px 0 80px" },
+    heroPill: { display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.12)", color: "white", borderRadius: 40, padding: "6px 16px", fontSize: 13, fontWeight: 700, letterSpacing: 1, marginBottom: 16 },
+    heroPillDot: { width: 8, height: 8, borderRadius: "50%", background: "#22d3ee" },
+    heroTitle: { fontSize: "clamp(2rem, 8vw, 3.8rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.2, marginBottom: 20, letterSpacing: -0.5 },
+    heroUnderline: { width: 70, height: 4, background: "#22d3ee", borderRadius: 2, marginBottom: 28 },
+    heroSubtitle: { fontSize: "clamp(0.9rem, 4vw, 1.2rem)", color: "rgba(255,255,255,0.9)", lineHeight: 1.5, marginBottom: 16 },
+    heroDesc: { fontSize: "clamp(0.85rem, 3.5vw, 1rem)", color: "rgba(255,255,255,0.75)", lineHeight: 1.6, marginBottom: 24 },
+    heroBtns: { display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 32, justifyContent: "flex-start" },
+    btnPrimary: { display: "inline-flex", alignItems: "center", gap: 8, background: "#2563eb", color: "#fff", border: "none", borderRadius: 40, padding: "12px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "all .3s ease" },
+    btnOutline: { display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: "#fff", border: "2px solid #fff", borderRadius: 40, padding: "10px 22px", fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "all .3s ease" },
+    teamBadge: { display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" },
+    avatarStack: { display: "flex" },
+    avatar: { width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #fff", backgroundColor: "#475569", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", marginLeft: "-8px", boxShadow: "0 2px 6px rgba(0,0,0,0.1)" },
+    teamText: { fontSize: "13px" },
+    teamNum: { fontWeight: "800", color: "#fff" },
+    teamLabel: { color: "#cbd5e1" },
+    jobsSection: { maxWidth: "1280px", margin: "0 auto", padding: "48px 20px" },
+    jobsEyebrow: { fontSize: "11px", fontWeight: "700", color: "#facc15", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "4px", display: "flex", alignItems: "center", gap: "8px" },
+    jobsTitle: { fontSize: "clamp(24px, 6vw, 36px)", fontWeight: "800", color: "#0f172a", marginBottom: "20px" },
+    jobsSectionHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "12px" },
+    viewAllLink: { display: "flex", alignItems: "center", gap: "6px", color: "#2563eb", fontSize: "13px", fontWeight: "600", cursor: "pointer" },
+    searchBar: { display: "flex", gap: "12px", marginBottom: "32px", flexWrap: "wrap" },
+    searchInput: { flex: "2", minWidth: "180px", padding: "12px 16px", border: "1px solid #e2e8f0", borderRadius: "40px", fontSize: "14px", outline: "none" },
+    selectInput: { flex: "1", minWidth: "130px", padding: "12px 16px", border: "1px solid #e2e8f0", borderRadius: "40px", fontSize: "14px", color: "#334155", backgroundColor: "#fff" },
+    searchBtn: { backgroundColor: "#2563eb", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "40px", fontSize: "14px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" },
+    jobCard: { backgroundColor: "#fff", borderRadius: "20px", border: "1px solid #eef2ff", overflow: "hidden", transition: "all 0.25s", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" },
+    cardHeader: { padding: "16px 20px 12px 20px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" },
+    cardIcon: { width: "48px", height: "48px", borderRadius: "16px", backgroundColor: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center" },
+    cardBadge: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" },
+    categoryBadge: { backgroundColor: "#e0e7ff", color: "#1e40af", padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "600" },
+    dateBadge: { fontSize: "11px", color: "#64748b" },
+    cardBody: { padding: "16px 20px" },
+    jobTitle: { fontSize: "18px", fontWeight: "800", color: "#0f172a", marginBottom: "12px" },
+    detailsGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" },
+    detailItem: { fontSize: "13px", color: "#475569", wordBreak: "break-word" },
+    detailLabel: { fontWeight: "600", color: "#0f172a", marginRight: "6px" },
+    description: { fontSize: "13px", color: "#64748b", lineHeight: "1.5", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #f1f5f9" },
+    cardFooter: { padding: "14px 20px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #f1f5f9", backgroundColor: "#fafcff", flexWrap: "wrap", gap: "12px" },
+    deptType: { fontSize: "12px", color: "#64748b" },
+    applyBtn: { backgroundColor: "transparent", color: "#2563eb", border: "2px solid #2563eb", padding: "6px 20px", borderRadius: "40px", fontSize: "13px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" },
+    readmoreBtn: { backgroundColor: "transparent", color: "#475569", border: "2px solid #cbd5e1", padding: "6px 20px", borderRadius: "40px", fontSize: "13px", fontWeight: "500", cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s" },
+    applicationSection: { maxWidth: "1280px", margin: "32px auto 0", padding: "32px 20px" },
+    appGrid: { display: "grid", gap: "32px", gridTemplateColumns: "1fr 1fr" },
+    formCard: { backgroundColor: "#fff", borderRadius: "24px", padding: "28px 24px 24px", boxShadow: "0 8px 30px rgba(0,0,0,0.06)", border: "1px solid #eef2ff" },
+    infoCard: { backgroundColor: "#fff", borderRadius: "24px", padding: "28px 24px 32px", boxShadow: "0 8px 30px rgba(0,0,0,0.06)", border: "1px solid #eef2ff" },
+    sectionTitle: { fontSize: "clamp(20px, 4vw, 26px)", fontWeight: "800", color: "#0f172a", marginBottom: "12px" },
+    formIframe: { width: "100%", minHeight: "700px", border: "none", borderRadius: "16px" },
+    contactCardGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "16px", marginBottom: "24px" },
+    contactCard: { border: "1px solid #eef2ff", borderRadius: "20px", padding: "20px", transition: "all 0.25s" },
+    contactIconBox: { width: "44px", height: "44px", borderRadius: "14px", backgroundColor: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "14px", fontSize: "22px" },
+    contactTitle: { fontWeight: "800", fontSize: "15px", color: "#0f172a", marginBottom: "8px" },
+    contactText: { fontSize: "13px", color: "#475569", lineHeight: "1.5" },
+    stepBox: { backgroundColor: "#f8fafc", borderRadius: "18px", padding: "20px", marginTop: "20px" },
+    stepTitle: { fontWeight: "800", fontSize: "15px", color: "#0f172a", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" },
+    bottomSection: { maxWidth: "1280px", margin: "0 auto", padding: "0 20px 60px", display: "flex", gap: "40px", alignItems: "flex-start", flexWrap: "wrap" },
+    valuesBlock: { flex: "1", minWidth: "200px" },
+    sectionEyebrow: { fontSize: "11px", fontWeight: "700", color: "#facc15", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" },
+    valuesList: { marginTop: "24px", display: "flex", flexDirection: "column", gap: "24px" },
+    valueItem: { display: "flex", alignItems: "flex-start", gap: "16px", flexWrap: "wrap" },
+    valueIcon: { width: "48px", height: "48px", borderRadius: "20px", backgroundColor: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", flexShrink: 0 },
+    valueTitle: { fontSize: "16px", fontWeight: "700", color: "#0f172a", marginBottom: "6px" },
+    valueDesc: { fontSize: "13px", color: "#64748b", lineHeight: "1.4" },
+    testimonialsBlock: { flex: "2", minWidth: "240px" },
+    testimonialsGrid: { display: "grid", gap: "20px", gridTemplateColumns: "1fr", marginTop: "24px" },
+    testimonialCard: { backgroundColor: "#fff", borderRadius: "24px", padding: "24px", border: "1px solid #eef2ff" },
+    testimonialQuote: { fontSize: "14px", color: "#1e293b", lineHeight: "1.6", marginBottom: "20px", fontStyle: "italic" },
+    testimonialAuthor: { display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap" },
+    testimonialAvatar: { width: "52px", height: "52px", borderRadius: "50%", backgroundColor: "#e0e7ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px" },
+    testimonialName: { fontSize: "15px", fontWeight: "700", color: "#0f172a" },
+    testimonialRole: { fontSize: "13px", color: "#64748b" },
+    testimonialYears: { fontSize: "12px", color: "#2563eb", fontWeight: "600", marginTop: "4px" },
   };
 
   return (
@@ -344,7 +407,7 @@ export default function HealthCareCareersPage() {
                     />
                   </div>
                   <div className="card-badge" style={s.cardBadge}>
-                    <span style={s.categoryBadge}>{job.category || "Medical"}</span>
+                    <span style={s.categoryBadge}>{job.category }</span>
                     <span style={s.dateBadge}>Posted: {formatDate(job.postedDate)}</span>
                   </div>
                 </div>
@@ -367,9 +430,14 @@ export default function HealthCareCareersPage() {
                     <div>{job.department}</div>
                     <div style={{ fontSize: "11px", color: "#94a3b8" }}>{job.type}</div>
                   </div>
-                  <button className="apply-btn" style={s.applyBtn} onClick={handleApply}>
-                    Apply Now →
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                    <button className="readmore-btn" style={s.readmoreBtn} onClick={() => openModal(job)}>
+                      Read More
+                    </button>
+                    <button className="apply-btn" style={s.applyBtn} onClick={handleApply}>
+                      Apply Now →
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -377,10 +445,9 @@ export default function HealthCareCareersPage() {
         )}
       </section>
 
-      {/* NEW: Application Section with Embedded Google Form (like ContactUs page) */}
+      {/* Application Section with Google Form */}
       <section id="application-form-section" style={s.applicationSection}>
         <div className="application-grid" style={s.appGrid}>
-          {/* Left column: Google Form iframe */}
           <div style={s.formCard}>
             <h2 style={s.sectionTitle}>📄 Apply for a Position</h2>
             <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "24px" }}>
@@ -398,14 +465,11 @@ export default function HealthCareCareersPage() {
               Loading…
             </iframe>
           </div>
-
-          {/* Right column: Contact info and application steps */}
           <div style={s.infoCard}>
             <h2 style={s.sectionTitle}>📋 Application Process</h2>
             <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "24px" }}>
               Complete the two-step process to ensure your application is received.
             </p>
-
             <div className="contact-card-grid" style={s.contactCardGrid}>
               <div className="contact-card" style={s.contactCard}>
                 <div style={s.contactIconBox}>📝</div>
@@ -428,7 +492,6 @@ export default function HealthCareCareersPage() {
                 <div style={s.contactText}>Shortlisted candidates will be contacted for an interview within 7–10 business days.</div>
               </div>
             </div>
-
             <div style={s.stepBox}>
               <div style={s.stepTitle}>
                 <span>📧</span> Resume Submission Details
@@ -482,7 +545,43 @@ export default function HealthCareCareersPage() {
         </div>
       </section>
 
-      <Footer/>
+      <Footer />
+
+      {/* Modal Popup for Read More */}
+      {showModal && selectedJob && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#0f172a", margin: 0 }}>{selectedJob.title}</h3>
+              <button className="modal-close" onClick={closeModal}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "20px" }}>
+                <span style={{ backgroundColor: "#e0e7ff", color: "#1e40af", padding: "4px 12px", borderRadius: "24px", fontSize: "12px", fontWeight: "600" }}>{selectedJob.category || "Medical"}</span>
+                <span style={{ backgroundColor: "#f1f5f9", color: "#475569", padding: "4px 12px", borderRadius: "24px", fontSize: "12px" }}>{selectedJob.department}</span>
+                <span style={{ backgroundColor: "#f1f5f9", color: "#475569", padding: "4px 12px", borderRadius: "24px", fontSize: "12px" }}>{selectedJob.type}</span>
+                <span style={{ backgroundColor: "#f1f5f9", color: "#475569", padding: "4px 12px", borderRadius: "24px", fontSize: "12px" }}>Posted: {formatDate(selectedJob.postedDate)}</span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "24px", borderBottom: "1px solid #eef2ff", paddingBottom: "20px" }}>
+                <div><strong>🎓 Qualification:</strong><br/>{selectedJob.qualification || "Not specified"}</div>
+                <div><strong>👥 Vacancies:</strong><br/>{selectedJob.vacancies || 1}</div>
+                <div><strong>⏱️ Experience:</strong><br/>{selectedJob.experience}</div>
+                <div><strong>📍 Location:</strong><br/>{selectedJob.location || "Not specified"}</div>
+              </div>
+
+              <div style={{ marginBottom: "28px" }}>
+                <strong style={{ fontSize: "16px", display: "block", marginBottom: "10px" }}>📋 Full Description</strong>
+                <p style={{ fontSize: "14px", lineHeight: "1.6", color: "#334155" }}>{selectedJob.description || "No description provided."}</p>
+              </div>
+
+              <button style={{ ...s.applyBtn, width: "100%", padding: "12px", fontSize: "15px", marginTop: "8px" }} onClick={handleApply}>
+                Apply Now →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -21,7 +21,7 @@ import Chatbot from "./components/Chatbot";
 import ParamedicalGalleryManager from "./components/ParamedicalGalleryManager.jsx";
 
 // Replace with your actual numbers
-const AMBULANCE_PHONE = "+911234567890";
+const AMBULANCE_PHONE = "+919910878137";
 const EMERGENCY_PHONE = "+911234567890";
 
 // Ambulance Button (only ambulance icon + text)

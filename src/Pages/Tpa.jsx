@@ -542,6 +542,13 @@ export default function TpaService() {
     window.location.href = "/services";
   };
 
+  // Ambulance contact numbers
+  const ambulanceNumbers = ["9910878137", "85100075051"];
+
+  const handleCallAmbulance = (number) => {
+    window.location.href = `tel:${number}`;
+  };
+
   // Images for trust badge (first three URLs provided)
   const trustImages = [
     "https://t4.ftcdn.net/jpg/06/13/28/69/360_F_613286945_BJ7rUxmhftMxfNtyyfnwDwuD2CxK8YQM.jpg",
@@ -772,7 +779,7 @@ export default function TpaService() {
           </div>
           <div style={{ marginTop: "24px", padding: "12px", background: "#fee2e2", borderRadius: "10px", borderLeft: "4px solid #dc2626", textAlign: "center" }}>
             <p style={{ margin: 0, fontSize: "12px", fontWeight: 600, color: "#991b1b" }}>
-              Note: In case of denial, St. Joseph's Hospital won't be responsible for anything.
+              Note: In case of denial, St. Joseph's Hospital Ghaziabad won't be responsible for anything.
             </p>
           </div>
         </div>
@@ -801,19 +808,56 @@ export default function TpaService() {
         </div>
       </section>
 
-      {/* ── CTA BANNER ── */}
+      {/* ── CTA BANNER (AMBULANCE ASSISTANCE) ── */}
       <section style={{ background: "linear-gradient(90deg,#1a56db,#1e40af)", padding: "28px 0" }}>
         <div style={containerStyle}>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 20, justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16, flex: "1 1 200px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16, flex: "1 1 240px" }}>
               <div style={{ fontSize: 42 }}>🚑</div>
-              <div style={{ color: "#fff" }}><div style={{ fontWeight: 800, fontSize: "clamp(14px,2vw,18px)" }}>Need Immediate Assistance?</div><div style={{ fontSize: 12, opacity: 0.85 }}></div></div>
+              <div style={{ color: "#fff" }}>
+                <div style={{ fontWeight: 800, fontSize: "clamp(14px,2vw,18px)" }}>Need Immediate Ambulance Assistance?</div>
+                <div style={{ fontSize: 12, opacity: 0.85, marginTop: 4 }}>
+                  Call us 24/7 for emergency ambulance service
+                </div>
+              </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flex: "0 1 auto" }}>
-              <span style={{ fontSize: 24 }}>📞</span>
-              <div style={{ color: "#fff" }}><div style={{ fontWeight: 900, fontSize: "clamp(16px,2vw,22px)" }}>+1 234 567 8900</div><div style={{ fontSize: 11, opacity: 0.7 }}>24/7 Emergency Support</div></div>
+            <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", flex: "1 1 auto" }}>
+              {ambulanceNumbers.map((number, idx) => (
+                <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 22 }}>📞</span>
+                  <div style={{ color: "#fff" }}>
+                    <div style={{ fontWeight: 900, fontSize: "clamp(14px,2vw,20px)", letterSpacing: "0.5px" }}>{number}</div>
+                    <div style={{ fontSize: 10, opacity: 0.7 }}>Ambulance Helpline</div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <button style={{ background: "#fff", color: "#1a56db", border: "none", borderRadius: 10, padding: "10px 28px", fontSize: 13, fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 20px rgba(0,0,0,0.2)", flexShrink: 0 }}>Call Now</button>
+            <button
+              onClick={() => handleCallAmbulance(ambulanceNumbers[0])}
+              style={{
+                background: "#fff",
+                color: "#1a56db",
+                border: "none",
+                borderRadius: 10,
+                padding: "12px 32px",
+                fontSize: 14,
+                fontWeight: 800,
+                cursor: "pointer",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                flexShrink: 0,
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#f0f9ff";
+                e.currentTarget.style.transform = "scale(1.02)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#fff";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              Call Ambulance Now →
+            </button>
           </div>
         </div>
       </section>

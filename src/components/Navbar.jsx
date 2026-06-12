@@ -507,7 +507,7 @@ export default function Navbar() {
               <img src={logo} alt="Hospital Logo" style={logoImgStyle} />
               <div>
                 <div style={logoNameStyle}>ST. JOSEPH'S</div>
-                <div style={logoSubStyle}>Hospital</div>
+                <div style={logoSubStyle}>Hospital Ghaziabad</div>
               </div>
             </Link>
 
