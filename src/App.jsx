@@ -20,18 +20,21 @@ import TpaService from "./Pages/Tpa.jsx";
 import Chatbot from "./components/Chatbot";
 import ParamedicalGalleryManager from "./components/ParamedicalGalleryManager.jsx";
 
-// Replace with your actual numbers
-const AMBULANCE_PHONE = "+919910878137";
-const EMERGENCY_PHONE = "+911234567890";
+// ==================== CORRECTED PHONE NUMBERS ====================
+// Ambulance numbers (as used in ContactUs page)
+const AMBULANCE_PRIMARY = "+919910878137";   // 9910878137
+const AMBULANCE_SECONDARY = "+9185100075051"; // 85100075051 (if needed)
+// Emergency / Hospital helpline (24/7)
+const EMERGENCY_PHONE = "+917827908598";     // from ContactUs: +91 7827-908-598
 
-// Ambulance Button (only ambulance icon + text)
+// Ambulance Button (calls primary ambulance number)
 const AmbulanceButton = () => {
   return (
     <a
-      href={`tel:${AMBULANCE_PHONE}`}
+      href={`tel:${AMBULANCE_PRIMARY}`}
       className="right-action-btn ambulance-btn"
       aria-label="Call Ambulance"
-      title="Ambulance"
+      title="Ambulance - 24/7"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +61,7 @@ const AmbulanceButton = () => {
   );
 };
 
-// Emergency Button (phone icon + text)
+// Emergency Button (calls hospital emergency helpline)
 const EmergencyButton = () => {
   return (
     <a
@@ -99,7 +102,7 @@ function App() {
   const token = localStorage.getItem('adminToken');
 
   const ProtectedRoute = ({ children }) => {
-    return token ? children : <Navigate to="/admin/login" />;
+    return token ? children : <Navigate to="/admin-login" />;
   };
 
   return (
@@ -117,13 +120,12 @@ function App() {
         <Route path="/tpaservices" element={<TpaService />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
-          <Route index element={<AdminStats />} />
+          <Route index element={<AdminDoctors />} />
           <Route path="doctors" element={<AdminDoctors />} />
           <Route path="gallery" element={<AdminGallery />} />
           <Route path="careers" element={<AdminCareers />} />
           <Route path="news" element={<AdminNews />} />
           <Route path="paramedical-gallery" element={<ParamedicalGalleryManager />} />
-
         </Route>
       </Routes>
 
@@ -213,8 +215,7 @@ function App() {
           }
         }
 
-        /* Chatbot toggle button (left side) – already present in Chatbot component, 
-           but we ensure it doesn't conflict */
+        /* Chatbot toggle button (left side) – ensure no conflict */
         .chatbot-toggle-btn {
           position: fixed;
           left: 20px;

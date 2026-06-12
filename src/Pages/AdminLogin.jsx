@@ -22,7 +22,7 @@ const AdminLogin = () => {
       });
 
       localStorage.setItem("adminToken", data.token);
-      navigate("/admin");
+      navigate("/admin/doctors");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
