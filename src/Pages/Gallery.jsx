@@ -6,7 +6,7 @@ import API from "../api";
 
 // Import social media icons from assets/Icons
 import facebookIcon from "../assets/Icons/facebook.png";
-import twitterIcon from "../assets/Icons/twitter.png";
+import whatsappIcon  from "../assets/Icons/whatsappIcon.png";
 import instagramIcon from "../assets/Icons/Instagram.png";
 import linkedinIcon from "../assets/Icons/linkedin.png";
 import youtubeIcon from "../assets/Icons/youtube.png";
@@ -37,11 +37,11 @@ const categories = [
 
 // Social media links with imported icons
 const socialLinks = [
-  { icon: facebookIcon, name: "Facebook", url: "https://facebook.com/yourhospital" },
-  { icon: twitterIcon, name: "Twitter", url: "https://twitter.com/yourhospital" },
-  { icon: instagramIcon, name: "Instagram", url: "https://instagram.com/yourhospital" },
-  { icon: linkedinIcon, name: "LinkedIn", url: "https://linkedin.com/company/yourhospital" },
-  { icon: youtubeIcon, name: "YouTube", url: "https://youtube.com/yourhospital" },
+  { icon: facebookIcon, name: "Facebook", url: "https://www.facebook.com/profile.php?id=100077486113772" },
+  { icon: whatsappIcon, name: "WhatsApp", url: "https://wa.me/917827908598" },
+  { icon: instagramIcon, name: "Instagram", url: "https://instagram.com/yourhospital" }, // Update if you have a valid Instagram link
+  { icon: linkedinIcon, name: "LinkedIn", url: "https://www.linkedin.com/in/st-joseph-s-hospital-7423652a7/" },
+  { icon: youtubeIcon, name: "YouTube", url: "https://www.youtube.com/@STJOSEPHSHOSPITAL" },
 ];
 
 // Helper SVG icon

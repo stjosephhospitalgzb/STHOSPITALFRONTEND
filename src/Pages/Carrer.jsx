@@ -20,37 +20,6 @@ function useIsMobile() {
   return isMobile;
 }
 
-const values = [
-  { icon: "❤️", title: "Compassion", desc: "We care with empathy and respect." },
-  { icon: "🏅", title: "Excellence", desc: "We strive for the highest standards." },
-  { icon: "🛡️", title: "Integrity", desc: "We act with honesty and transparency." },
-  { icon: "👥", title: "Teamwork", desc: "We achieve more together." },
-];
-
-const testimonials = [
-  {
-    quote: '"HealthCare Hospital has given me the platform to grow, learn, and make a real difference in people\'s lives."',
-    name: "Dr. Neha Sharma",
-    role: "Cardiologist",
-    years: "5 Years with Us",
-    avatar: "👩‍⚕️",
-  },
-  {
-    quote: '"The supportive environment and amazing team here make every day fulfilling and inspiring."',
-    name: "Rahul Verma",
-    role: "Senior Nurse",
-    years: "4 Years with Us",
-    avatar: "👨‍⚕️",
-  },
-  {
-    quote: '"State-of-the-art facilities and continuous learning opportunities keep me motivated every single day."',
-    name: "Dr. Meera Krishnamurthy",
-    role: "Oncology Lead",
-    years: "7 Years with Us",
-    avatar: "👩‍⚕️",
-  },
-];
-
 const getDepartmentIcon = (department) => {
   switch (department) {
     case "Medical": return medicalIcon;
@@ -61,6 +30,14 @@ const getDepartmentIcon = (department) => {
 };
 
 const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSduGPszjqpKRlPrXf5LiTwVRT4n6Xf7hBY-NJGiJuL9oGqOpA/viewform?embedded=true";
+
+// Hero badge images (provided URLs)
+const heroAvatarImages = [
+  "https://plus.unsplash.com/premium_photo-1682089787056-9ac0c78a2ac2?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW5kaWFuJTIwcGVvcGxlfGVufDB8fDB8fHww",
+  "https://images.unsplash.com/flagged/photo-1571367034861-e6729ad9c2d5?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW5kaWFuJTIwcGVvcGxlfGVufDB8fDB8fHww",
+  "https://media.istockphoto.com/id/179011088/photo/indian-doctor.jpg?s=612x612&w=0&k=20&c=EwRn1EWy79prCtdo8yHM6hvCVVcaKTznVBpVURPJxt4=",
+  "https://elements-resized.envatousercontent.com/envato-dam-assets-production/EVA/TRX/c4/01/4e/05/9d/v1_E11/E113UHX8.jpg?w=500&cf_fit=scale-down&mark-alpha=18&mark=https%3A%2F%2Felements-assets.envato.com%2Fstatic%2Fwatermark4.png&q=85&format=auto&s=2a04d46caa3768ac97737b79f842fc57e6ab3f11dd02a2e34e34202160272653"
+];
 
 export default function HealthCareCareersPage() {
   const isMobile = useIsMobile();
@@ -119,10 +96,6 @@ export default function HealthCareCareersPage() {
         .details-grid { grid-template-columns: 1fr; gap: 8px; }
         .apply-btn, .readmore-btn { width: 100%; text-align: center; }
         .card-footer { flex-direction: column; align-items: stretch; }
-        .values-list { align-items: center; }
-        .value-item { flex-direction: column; align-items: center; text-align: center; }
-        .testimonial-card { text-align: center; }
-        .testimonial-author { justify-content: center; }
         .link-group { align-items: center; }
       }
       .btn-primary:hover { background-color: #1d4ed8 !important; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,.4); }
@@ -237,7 +210,6 @@ export default function HealthCareCareersPage() {
     gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(360px, 1fr))"
   };
 
-  // Styles object (keeping the original s constant but we'll override where needed)
   const s = {
     page: { fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", color: "#1a1a2e", backgroundColor: "#ffffff", overflowX: "hidden", scrollBehavior: "smooth" },
     heroSection: { background: "#0d1f3c", position: "relative", overflow: "hidden", minHeight: "70vh" },
@@ -258,7 +230,8 @@ export default function HealthCareCareersPage() {
     btnOutline: { display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: "#fff", border: "2px solid #fff", borderRadius: 40, padding: "10px 22px", fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "all .3s ease" },
     teamBadge: { display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" },
     avatarStack: { display: "flex" },
-    avatar: { width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #fff", backgroundColor: "#475569", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", marginLeft: "-8px", boxShadow: "0 2px 6px rgba(0,0,0,0.1)" },
+    avatar: { width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #fff", backgroundColor: "#475569", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", marginLeft: "-8px", boxShadow: "0 2px 6px rgba(0,0,0,0.1)", overflow: "hidden" },
+    avatarImg: { width: "100%", height: "100%", objectFit: "cover" },
     teamText: { fontSize: "13px" },
     teamNum: { fontWeight: "800", color: "#fff" },
     teamLabel: { color: "#cbd5e1" },
@@ -300,23 +273,6 @@ export default function HealthCareCareersPage() {
     contactText: { fontSize: "13px", color: "#475569", lineHeight: "1.5" },
     stepBox: { backgroundColor: "#f8fafc", borderRadius: "18px", padding: "20px", marginTop: "20px" },
     stepTitle: { fontWeight: "800", fontSize: "15px", color: "#0f172a", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" },
-    bottomSection: { maxWidth: "1280px", margin: "0 auto", padding: "0 20px 60px", display: "flex", gap: "40px", alignItems: "flex-start", flexWrap: "wrap" },
-    valuesBlock: { flex: "1", minWidth: "200px" },
-    sectionEyebrow: { fontSize: "11px", fontWeight: "700", color: "#facc15", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" },
-    valuesList: { marginTop: "24px", display: "flex", flexDirection: "column", gap: "24px" },
-    valueItem: { display: "flex", alignItems: "flex-start", gap: "16px", flexWrap: "wrap" },
-    valueIcon: { width: "48px", height: "48px", borderRadius: "20px", backgroundColor: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", flexShrink: 0 },
-    valueTitle: { fontSize: "16px", fontWeight: "700", color: "#0f172a", marginBottom: "6px" },
-    valueDesc: { fontSize: "13px", color: "#64748b", lineHeight: "1.4" },
-    testimonialsBlock: { flex: "2", minWidth: "240px" },
-    testimonialsGrid: { display: "grid", gap: "20px", gridTemplateColumns: "1fr", marginTop: "24px" },
-    testimonialCard: { backgroundColor: "#fff", borderRadius: "24px", padding: "24px", border: "1px solid #eef2ff" },
-    testimonialQuote: { fontSize: "14px", color: "#1e293b", lineHeight: "1.6", marginBottom: "20px", fontStyle: "italic" },
-    testimonialAuthor: { display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap" },
-    testimonialAvatar: { width: "52px", height: "52px", borderRadius: "50%", backgroundColor: "#e0e7ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px" },
-    testimonialName: { fontSize: "15px", fontWeight: "700", color: "#0f172a" },
-    testimonialRole: { fontSize: "13px", color: "#64748b" },
-    testimonialYears: { fontSize: "12px", color: "#2563eb", fontWeight: "600", marginTop: "4px" },
   };
 
   return (
@@ -354,8 +310,10 @@ export default function HealthCareCareersPage() {
               </div>
               <div className="careers-hero-badge" style={s.teamBadge}>
                 <div style={s.avatarStack}>
-                  {["👩‍⚕️", "👨‍⚕️", "👩‍⚕️", "👨‍⚕️"].map((a, i) => (
-                    <div key={i} style={{ ...s.avatar, marginLeft: i === 0 ? "0" : "-8px" }}>{a}</div>
+                  {heroAvatarImages.map((imgUrl, i) => (
+                    <div key={i} style={{ ...s.avatar, marginLeft: i === 0 ? "0" : "-8px" }}>
+                      <img src={imgUrl} alt="team member" style={s.avatarImg} />
+                    </div>
                   ))}
                 </div>
                 <div style={s.teamText}>
@@ -407,7 +365,7 @@ export default function HealthCareCareersPage() {
                     />
                   </div>
                   <div className="card-badge" style={s.cardBadge}>
-                    <span style={s.categoryBadge}>{job.category }</span>
+                    <span style={s.categoryBadge}>{job.category}</span>
                     <span style={s.dateBadge}>Posted: {formatDate(job.postedDate)}</span>
                   </div>
                 </div>
@@ -484,7 +442,7 @@ export default function HealthCareCareersPage() {
               <div className="contact-card" style={s.contactCard}>
                 <div style={s.contactIconBox}>📞</div>
                 <div style={s.contactTitle}>Need Help?</div>
-                <div style={s.contactText}>Call our HR team at <strong>+91 7827 908 598</strong> (Mon–Sat, 10 AM – 5 PM)</div>
+                <div style={s.contactText}>Call our team at <strong>+91 7827 908 598</strong> (Mon–Sat, 10 AM – 3 PM)</div>
               </div>
               <div className="contact-card" style={s.contactCard}>
                 <div style={s.contactIconBox}>💼</div>
@@ -504,43 +462,6 @@ export default function HealthCareCareersPage() {
                 ⚠️ Please ensure you complete <strong>both steps</strong> (form + email) for your application to be considered complete.
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Values + Testimonials */}
-      <section style={s.bottomSection}>
-        <div style={s.valuesBlock}>
-          <div style={s.sectionEyebrow}>Our Values</div>
-          <div className="values-list" style={s.valuesList}>
-            {values.map((v, i) => (
-              <div key={i} className="value-item" style={s.valueItem}>
-                <div style={s.valueIcon}>{v.icon}</div>
-                <div>
-                  <div style={s.valueTitle}>{v.title}</div>
-                  <div style={s.valueDesc}>{v.desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div style={s.testimonialsBlock}>
-          <div style={s.sectionEyebrow}>What Our Team Says</div>
-          <div style={s.testimonialsGrid}>
-            {testimonials.map((t, i) => (
-              <div key={i} className="testimonial-card" style={s.testimonialCard}>
-                <div style={s.testimonialQuote}>{t.quote}</div>
-                <div style={s.testimonialAuthor}>
-                  <div style={s.testimonialAvatar}>{t.avatar}</div>
-                  <div>
-                    <div style={s.testimonialName}>{t.name}</div>
-                    <div style={s.testimonialRole}>{t.role}</div>
-                    <div style={s.testimonialYears}>{t.years}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

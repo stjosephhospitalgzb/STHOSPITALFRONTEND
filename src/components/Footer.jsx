@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import hostelLogo from "../assets/logo.jpg";
 // Import social media icons as images
 import facebookIcon from "../assets/Icons/facebook.png";
-import twitterIcon from "../assets/Icons/twitter.png";
+import whatsappIcon from "../assets/Icons/whatsappIcon.png";
 import instagramIcon from "../assets/Icons/Instagram.png";
 import linkedinIcon from "../assets/Icons/linkedin.png";
 import youtubeIcon from "../assets/Icons/youtube.png";
@@ -286,23 +286,23 @@ export default function Footer() {
             </div>
 
             <h4 style={{ fontSize: 16, fontWeight: 800, color: C.white, marginBottom: 16, marginTop: 20, letterSpacing: -0.2 }}>Follow Us On</h4>
-            <div className="footer-social-row" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <a href="https://www.youtube.com/@STJOSEPHSHOSPITAL" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <img src={youtubeIcon} alt="YouTube" width={18} height={18} style={{ objectFit: "contain" }} />
-              </a>
-              <a href="https://www.linkedin.com/in/st-joseph-s-hospital-7423652a7/" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <img src={linkedinIcon} alt="LinkedIn" width={18} height={18} style={{ objectFit: "contain" }} />
-              </a>
-              <a href="https://www.facebook.com/profile.php?id=100077486113772" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <img src={facebookIcon} alt="Facebook" width={18} height={18} style={{ objectFit: "contain" }} />
-              </a>
-              <a href="https://www.instagram.com/stjosephshospitalghaziabad" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <img src={instagramIcon} alt="Instagram" width={18} height={18} style={{ objectFit: "contain" }} />
-              </a>
-              <a href="https://wa.me/917827908598" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
-                <Ico d={IC.whatsapp} size={18} color={C.white} />
-              </a>
-            </div>
+         <div className="footer-social-row" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+  <a href="https://www.youtube.com/@STJOSEPHSHOSPITAL" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
+    <img src={youtubeIcon} alt="YouTube" width={18} height={18} style={{ objectFit: "contain" }} />
+  </a>
+  <a href="https://www.linkedin.com/in/st-joseph-s-hospital-7423652a7/" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
+    <img src={linkedinIcon} alt="LinkedIn" width={18} height={18} style={{ objectFit: "contain" }} />
+  </a>
+  <a href="https://www.facebook.com/profile.php?id=100077486113772" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
+    <img src={facebookIcon} alt="Facebook" width={18} height={18} style={{ objectFit: "contain" }} />
+  </a>
+  <a href="https://www.instagram.com/stjosephshospitalghaziabad" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
+    <img src={instagramIcon} alt="Instagram" width={18} height={18} style={{ objectFit: "contain" }} />
+  </a>
+  <a href="https://wa.me/917827908598" target="_blank" rel="noopener noreferrer" className="footer-social-icon">
+    <Ico icon={IC.whatsapp} size={18} color={C.white} />
+  </a>
+</div>
           </div>
         </div>
 

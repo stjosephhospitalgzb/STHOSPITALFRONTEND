@@ -1489,22 +1489,35 @@ export default function HealthCareInstitutePage() {
 
       {/* CTA STRIP with Contact & Address */}
       <section style={styles.ctaStrip} className="scroll-reveal">
-        <div style={ctaStripLayout}>
-          <div style={ctaLeftLayout}>
-            <div style={styles.ctaIconWrap}>📞</div>
-            <div>
-              <div style={styles.ctaTitle}>Have Questions? Contact Our Admission Office</div>
-              <div style={styles.ctaDesc}>
-                📞 +91 95827-39411 | +91 78279-08615 | ✉️ stjosephparamedicalgzb@gmail.com<br />
-                🏥 Address: Mariam Nagar, Meerut Road, Ghaziabad, UP 201003
-              </div>
-            </div>
-          </div>
-          <button className="cta-btn" style={styles.ctaBtn} onClick={() => window.location.href = "mailto:stjosephparamedicalgzb@gmail.com"}>
-            Email Us →
-          </button>
+  <div style={ctaStripLayout}>
+    <div style={ctaLeftLayout}>
+      <div style={styles.ctaIconWrap}>📞</div>
+      <div>
+        <div style={styles.ctaTitle}>Have Questions? Contact Our Admission Office</div>
+        <div style={styles.ctaDesc}>
+          📞 +91 95827-39411 | +91 78279-08615 | ✉️ stjosephparamedicalgzb@gmail.com<br />
+          🏥 Address: Mariam Nagar, Meerut Road, Ghaziabad, UP 201003
         </div>
-      </section>
+      </div>
+    </div>
+    <div style={{ display: 'flex', gap: '12px' }}>
+      <button 
+        className="cta-btn" 
+        style={styles.ctaBtn} 
+        onClick={() => window.location.href = "tel:+919582739411"}
+      >
+        📞 Call Us →
+      </button>
+      <button 
+        className="cta-btn" 
+        style={{ ...styles.ctaBtn, backgroundColor: '#ffffff' }} 
+        onClick={() => window.location.href = "mailto:stjosephparamedicalgzb@gmail.com"}
+      >
+        ✉️ Email Us →
+      </button>
+    </div>
+  </div>
+</section>
 
       <Footer />
     </div>

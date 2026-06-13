@@ -684,7 +684,7 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { icon:IC.users,  val:40,   suffix:"+",  label:"Expert Doctors"     },
+  { icon:IC.users,  val:50,   suffix:"+",  label:"Expert Doctors"     },
   { icon:IC.bed,    val:100,   suffix:"+",  label:"Hospital Beds"      },
   { icon:IC.smile,  val:50000000, suffix:"+",  label:"Happy Patients"     },
   { icon:IC.award,  val:35,    suffix:"+",  label:"Years of Excellence"},

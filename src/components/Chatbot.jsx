@@ -28,7 +28,7 @@ const Chatbot = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isExtraSmall, setIsExtraSmall] = useState(false);
   const [showPostMessageOptions, setShowPostMessageOptions] = useState(false);
-  const [showInitialPopup, setShowInitialPopup] = useState(true); // NEW: popup on load
+  const [showInitialPopup, setShowInitialPopup] = useState(true);
 
   const [doctors, setDoctors] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -272,9 +272,7 @@ const Chatbot = () => {
     setShowPostMessageOptions(false);
     addMessage("user", "Take Appointment");
 
-    // Bot message asking how to proceed
     addBotMessageWithTyping("How would you like to proceed?", false);
-    // Set quick reply buttons for Online Appointment and Find the Doctor
     setQuickReplyButtons([
       {
         label: "💻 Online Appointment",
@@ -292,7 +290,6 @@ const Chatbot = () => {
           stopAndFinalizeTyping(true);
           setQuickReplyButtons([]);
           addMessage("user", "Find the Doctor");
-          // Trigger the doctor timing flow (same as Doctors Timing button)
           handleDoctorsTiming();
         }
       }
@@ -356,11 +353,11 @@ const Chatbot = () => {
       return;
     }
     const docButtons = doctorsInDept.map(doc => ({
-      label: `${doc.name} (${doc.dept})`,
+      label: `${doc.name} (${doc.dept})${doc.roomNo ? ` - Room: ${doc.roomNo}` : ''}`,
       action: () => handleDoctorTimingSelect(doc)
     }));
     setQuickReplyButtons(docButtons);
-    addBotMessageWithTyping(`Here are the doctors in ${dept}. Click on a doctor to see their OPD timings:`, false);
+    addBotMessageWithTyping(`Here are the doctors in ${dept}. Click on a doctor to see their OPD timings and room number:`, false);
   };
 
   const handleDoctorTimingSelect = (doctor) => {
@@ -368,7 +365,8 @@ const Chatbot = () => {
     setShowPostMessageOptions(false);
     addMessage("user", doctor.name);
     let timingText = doctor.opdTimings || "Timings not available. Please contact reception.";
-    const response = `👨‍⚕️ **${doctor.name}** (${doctor.dept})\n\n🕐 **OPD Timings:** ${timingText}\n\nFor an appointment, please call our helpline or use the online booking portal.`;
+    let roomText = doctor.roomNo ? `\n\n📍 **Room Number:** ${doctor.roomNo}` : "";
+    const response = `👨‍⚕️ **${doctor.name}** (${doctor.dept})\n\n🕐 **OPD Timings:** ${timingText}${roomText}\n\nFor an appointment,  use the online booking portal.`;
     addBotMessageWithTyping(response, false);
     resetDoctorTimingFlow();
   };
@@ -392,11 +390,11 @@ const Chatbot = () => {
 
   const showAllDoctorsList = () => {
     const allDoctorButtons = doctors.map(doc => ({
-      label: `${doc.name} (${doc.dept})`,
+      label: `${doc.name} (${doc.dept})${doc.roomNo ? ` - Room: ${doc.roomNo}` : ''}`,
       action: () => handleDoctorTimingSelect(doc)
     }));
     setQuickReplyButtons(allDoctorButtons);
-    addBotMessageWithTyping("Please select a doctor to see their OPD timings:", false);
+    addBotMessageWithTyping("Please select a doctor to see their OPD timings and room number:", false);
   };
 
   const resetDoctorTimingFlow = () => {
@@ -508,10 +506,10 @@ const Chatbot = () => {
   ];
 
   const botAnswers = {
-    "About Hospital": "🏥 St. Joseph's Hospital, Ghaziabad, is a leading **NABH-accredited multi-specialty healthcare institution** dedicated to providing compassionate, ethical, affordable, and high-quality medical care. Established in 1990 and inspired by the vision of **Servant of God Rev. Fr. Joseph Panjikaran**, the hospital combines advanced medical technology with a patient-centered approach to healing.\n\nWith a team of **40+ highly qualified doctors**, modern infrastructure, and **100+ bed capacity**, St. Joseph's Hospital Ghaziabad offers comprehensive healthcare services across **10 General Services, 6 Contributory Departments, 8 Specialities, 8 Super Specialities, and 24/7 Emergency Care across 4 critical units**. The hospital remains committed to serving all sections of society, especially the poor and marginalized, while delivering excellence in healthcare.\n\n**Our Vision:** Be an angel of consolation to extend the compassionate love of Christ to bring about healing and wholeness.\n\n**Our Mission:**\n- To provide ethical, affordable, and quality healthcare.\n- To ensure preventive, promotive, curative, and rehabilitative care.\n- To serve all patients with dignity, compassion, and respect.\n- To give special attention to the poor and marginalized.\n\n**Our Core Values:** Respect for Life, Deliver Compassionate Care, Patient-Focused Service, Teamwork, Ethics and Integrity.\n\n**Hospital Highlights:**\n- 40+ Expert Doctors\n- 100+ Bed Capacity\n- 9M+ Patients Treated\n- 110+ Medical Apparatus\n- 5+ Dialysis Units\n- 10 General Services\n- 6 Contributory Departments\n- 8 Specialities\n- 8 Super Specialities\n- 24/7 Emergency Services across 4 dedicated emergency units\n\nFor more than three decades, St. Joseph's Hospital Ghaziabad has remained a trusted center of healing, combining medical excellence with compassion, faith, and a commitment to improving the health and well-being of every patient.",
+    "About Hospital": "🏥 St. Joseph's Hospital, Ghaziabad, is a leading **NABH-accredited multi-specialty healthcare institution** dedicated to providing compassionate, ethical, affordable, and high-quality medical care. Established in 1990 and inspired by the vision of **Servant of God Rev. Fr. Joseph Panjikaran**, the hospital combines advanced medical technology with a patient-centered approach to healing.\n\nWith a team of **40+ highly qualified doctors**, modern infrastructure, and **100+ bed capacity**, St. Joseph's Hospital Ghaziabad offers comprehensive healthcare services across **10 General Services, 6 Contributory Departments, 8 Specialities, 8 Super Specialities, and 24/7 Emergency Care across 4 critical units**. The hospital remains committed to serving all sections of society, especially the poor and marginalized, while delivering excellence in healthcare.\n\n**Our Vision:** Be an angel of consolation to extend the compassionate love of Christ to bring about healing and wholeness.\n\n**Our Mission:**\n- To provide ethical, affordable, and quality healthcare.\n- To ensure preventive, promotive, curative, and rehabilitative care.\n- To serve all patients with dignity, compassion, and respect.\n- To give special attention to the poor and marginalized.\n\n**Our Core Values:** Respect for Life, Deliver Compassionate Care, Patient-Focused Service, Teamwork, Ethics and Integrity.\n\n**Hospital Highlights:**\n- 50+ Expert Doctors\n- 100+ Bed Capacity\n- 9M+ Patients Treated\n- 110+ Medical Apparatus\n- 5+ Dialysis Units\n- 10 General Services\n- 6 Contributory Departments\n- 8 Specialities\n- 8 Super Specialities\n- 24/7 Emergency Services across 4 dedicated emergency units\n\nFor more than three decades, St. Joseph's Hospital Ghaziabad has remained a trusted center of healing, combining medical excellence with compassion, faith, and a commitment to improving the health and well-being of every patient.",
     "TPA Services": "🛡️ St. Joseph's Hospital Ghaziabad provides cashless hospitalization facilities through a wide network of leading Insurance Companies and Third-Party Administrators (TPAs). Our dedicated TPA Desk assists patients with pre-authorization, claim processing, and cashless admission procedures to ensure a smooth and hassle-free experience.\n\n**Empanelled Insurance & TPA Partners:**\nAditya Birla Health Insurance, Bharat Electronics Limited (BEL), Chola MS General Insurance, Family Health Plan Insurance TPA (FHPL), Generali Central Insurance (Former Future Generali), Good Health TPA, HDFC ERGO General Insurance, Health India Insurance TPA, ICICI Lombard General Insurance, IndusInd General Insurance, Manipal Cigna Health Insurance, Magma General Insurance, MD India TPA, Med-Save Health Insurance TPA, Navi General Insurance, Niva Bupa Health Insurance, Paramount Health Services TPA, Park Mediclaim TPA, SBI General Insurance, Star Health & Allied Insurance, Tata AIG General Insurance, Universal Sompo General Insurance, Vidal Health TPA, Volo Health Insurance TPA.\n\n**TPA Contact:**\n📧 TPA Email: tpa@stjosephshospitalghaziabad.com\n📞 TPA Help Desk: Contact Hospital TPA Desk\n\n**Cashless TPA Procedure:**\n1. Submit your Insurance Card, Aadhaar Card, and PAN Card at the TPA Desk after admission.\n2. The hospital TPA team will verify your policy and submit the cashless authorization request to your insurance company/TPA.\n3. Once approval is received, eligible expenses will be covered as per policy terms.\n4. Any non-payable items, consumables, or excluded investigations must be paid by the patient.\n5. If the insurance company declines the claim, the patient will be responsible for the full hospital bill.",
     "Contact Info": "📞 **St. Joseph's Hospital Ghaziabad – Contact Information**\n\n**Emergency & General Enquiries**\n📱 Cell No: +91 7827-908-598, +91 7827-908-595\n☎️ Phone No: 0120-2871146, 0120-2872246\n\n**Patient Enquiries**\n📧 sjhospital.tpa@gmail.com (TPA Desk)\n📧 stjosephgzb@rediffmail.com (Admin Office)\n\n**Hospital Address**\n🏥 ST. JOSEPH'S HOSPITAL\"\nMeerut Rd, Mariam Nagar, Sewa Nagar, Ghaziabad, Uttar Pradesh 201003\n\n**Office Contact**\n📧 sjhospital.tpa@gmail.com",
-    "Services": "🤲 Our Services:\n\n🏥 General Services:\n• General Medicine\n• General Surgery\n• Gynecology & Obstetrics\n• Pediatrics\n• Pediatric Surgery\n• Anesthesiology\n• ICU, NICU & PICU\n• Medical & Surgical ICU\n\n🔬 Diagnostic & Contributory Services:\n• Pathology\n• X-Ray, ECG & 2D Echo\n• Ultrasound\n• Mammography\n• CT Scan\n• EEG, EMG & NCV\n\n🩺 Speciality Services:\n• ENT\n• Orthopedics\n• Dental Care\n• Dermatology\n• Skin & VD\n• Cardiology\n• Oncology\n• Psychiatry\n\n⚕️ Super Speciality Services:\n• Uro Surgery\n• Laparoscopic Surgery\n• Plastic Surgery\n• Neuro Surgery\n• Nephrology\n• Neurology\n• Dialysis\n• Physiotherapy\n\n🚑 24/7 Emergency & Support:\n• Emergency Services\n• Pharmacy\n• Billing Services\n• Counseling\n\n👨‍⚕️ 40+ Expert Doctors | 🛏️ 100+ Beds | 🏥 NABH Accredited Hospital",
+    "Services": "🤲 Our Services:\n\n🏥 General Services:\n• General Medicine\n• General Surgery\n• Gynecology & Obstetrics\n• Pediatrics\n• Pediatric Surgery\n• Anesthesiology\n• ICU, NICU & PICU\n• Medical & Surgical ICU\n\n🔬 Diagnostic & Contributory Services:\n• Pathology\n• X-Ray, ECG & 2D Echo\n• Ultrasound\n• Mammography\n• CT Scan\n• EEG, EMG & NCV\n\n🩺 Speciality Services:\n• ENT\n• Orthopedics\n• Dental Care\n• Dermatology\n• Skin & VD\n• Cardiology\n• Oncology\n• Psychiatry\n\n⚕️ Super Speciality Services:\n• Uro Surgery\n• Laparoscopic Surgery\n• Plastic Surgery\n• Neuro Surgery\n• Nephrology\n• Neurology\n• Dialysis\n• Physiotherapy\n\n🚑 24/7 Emergency & Support:\n• Emergency Services\n• Pharmacy\n• Billing Services\n• Counseling\n\n👨‍⚕️ 50+ Expert Doctors | 🛏️ 100+ Beds | 🏥 NABH Accredited Hospital",
      "Paramedical Institute": "🎓 **St. Joseph's Paramedical Institute, Ghaziabad** (est. 2020), run by the Medical Sisters of St. Joseph, provides quality healthcare education with practical training, ethical values, and compassionate care. The institute is recognized by the Uttar Pradesh State Medical Faculty, Lucknow (Letter No. 1504/71-4-2020-N-8/2016, dated 20 Nov 2020).\n\n📚 **Course Offered:** Diploma in Medical Laboratory Technology (DMLT)\n⏳ **Duration:** 2 Years\n\n✅ **Eligibility:** 10+2 (Physics, Chemistry & Biology) with minimum 40% marks, age 17 years or above.\n\n📝 **Admission Process:** Application forms are available at the institute office or can be downloaded from www.stjosephhospitalgzb.com. Admission is based on an entrance examination conducted in July.\n\n📄 **Required Documents:** 10th & 12th mark sheets/certificates, Aadhaar Card, caste/residence/income certificates (if applicable), Transfer Certificate, character certificate, medical fitness certificate, and passport-size photographs.\n\n🏥 Over 100 students have successfully completed training and are serving in hospitals and healthcare institutions. For admission details and fee information, please contact the institute office."  };
   const defaultAnswer = "💜 I'm here to help with hospital-related queries. Please use the buttons above for specific information, or contact our front desk at 1800-123-HEAL.";
 
@@ -613,7 +611,12 @@ const Chatbot = () => {
   if (!isOpen) {
     return (
       <div className="chatbot-toggle-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
-      
+        {showInitialPopup && (
+          <div className="initial-popup">
+            💬 Need help? Chat with AI. KALYANI!
+            <div className="initial-popup-arrow"></div>
+          </div>
+        )}
         <button 
           className="chatbot-toggle-btn highlight-toggle" 
           onClick={handleOpenChat} 
@@ -637,7 +640,9 @@ const Chatbot = () => {
             }} 
           />
         </button>
-     
+        <div className="chatbot-tooltip">
+          💬 Chat with us!
+        </div>
       </div>
     );
   }

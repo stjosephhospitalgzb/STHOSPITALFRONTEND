@@ -385,6 +385,10 @@ const injectStyles = () => {
         padding: 6px 14px;
         font-size: 12px;
       }
+      /* Stack OPD and Room No vertically on mobile in modal */
+      .hc-modal-timing-grid {
+        grid-template-columns: 1fr !important;
+      }
     }
   `;
   document.head.appendChild(s);
@@ -493,7 +497,7 @@ const C = {
   border: "#e2e8f0",
 };
 
-// ─── Modal Component (with external booking link) ───────────────────────
+// ─── Modal Component (with external booking link and Room No side by side) ───────────────────────
 const DoctorModal = ({ doctor, onClose }) => {
   useEffect(() => {
     const handleEsc = (e) => { if (e.key === "Escape") onClose(); };
@@ -530,12 +534,31 @@ const DoctorModal = ({ doctor, onClose }) => {
             </div>
           </div>
 
-          <div style={{ marginBottom: 28, background: C.lgray, borderRadius: 16, padding: "16px 20px", border: `1px solid ${C.border}` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <Ico d={IC.time} size={18} color={C.blue} />
-              <h4 style={{ fontWeight: 800, fontSize: 18, color: C.dark, margin: 0 }}>OPD Timings</h4>
+          {/* OPD Timings and Room Number Side by Side */}
+          <div className="hc-modal-timing-grid" style={{ 
+            marginBottom: 28, 
+            display: "grid", 
+            gridTemplateColumns: "1fr 1fr", 
+            gap: 20,
+            background: C.lgray, 
+            borderRadius: 16, 
+            padding: "16px 20px", 
+            border: `1px solid ${C.border}`
+          }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <Ico d={IC.time} size={18} color={C.blue} />
+                <h4 style={{ fontWeight: 800, fontSize: 18, color: C.dark, margin: 0 }}>OPD Timings</h4>
+              </div>
+              <p style={{ fontSize: 15, color: C.dark, fontWeight: 500 }}>{doctor.opdTimings}</p>
             </div>
-            <p style={{ fontSize: 15, color: C.dark, fontWeight: 500 }}>{doctor.opdTimings}</p>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <Ico d={IC.location} size={18} color={C.blue} />
+                <h4 style={{ fontWeight: 800, fontSize: 18, color: C.dark, margin: 0 }}>Room Number</h4>
+              </div>
+              <p style={{ fontSize: 15, color: C.dark, fontWeight: 500 }}>{doctor.roomNo || "Not assigned"}</p>
+            </div>
           </div>
 
           <div style={{ marginBottom: 28 }}>
@@ -675,16 +698,16 @@ export default function Doctors() {
               {/* ✨ TRUST BADGES ONLY (kept) ✨ */}
               <div className="hc-badge-group">
                 <span className="hc-trust-badge">
-                  <Ico d={IC.check} size={14} color="#22d3ee" /> 40+ Expert Doctors
+                  <Ico d={IC.check} size={14} color="#22d3ee" /> 50+ Expert Doctors
                 </span>
                 <span className="hc-trust-badge">
                   <Ico d={IC.verified} size={14} color="#22d3ee" /> 100% Verified Profiles
                 </span>
                 <span className="hc-trust-badge">
-                  <Ico d={IC.heart} size={14} color="#22d3ee" /> 1 Lakh+ Happy Patients
+                  <Ico d={IC.heart} size={14} color="#22d3ee" /> 8M+  Happy Patients
                 </span>
                 <span className="hc-trust-badge">
-                  <Ico d={IC.star} size={14} color="#ffc107" fill="#ffc107" /> 4.9/5 Patient Rating
+                  <Ico d={IC.star} size={14} color="#ffc107" fill="#ffc107" /> 4.6/5 Patient Rating
                 </span>
               </div>
 
@@ -849,6 +872,11 @@ export default function Doctors() {
                           <div style={{ fontSize: 13, color: C.gray, marginBottom: 8, fontWeight: 600 }}>
                             <span style={{ color: C.dark, fontWeight: 800 }}>{doc.exp}</span> Years Experience
                           </div>
+                          {doc.roomNo && (
+                            <div style={{ fontSize: 12, color: C.blue, fontWeight: 600, marginBottom: 12 }}>
+                              📍 {doc.roomNo}
+                            </div>
+                          )}
                           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
                             <Ico d={IC.star} size={14} color="#f59e0b" fill="#f59e0b" />
                             <span style={{ fontWeight: 800, fontSize: 14, color: C.dark }}>{doc.rating}</span>
@@ -895,7 +923,7 @@ export default function Doctors() {
             <div className="hc-divider" style={{ width: 1, height: 90, background: C.border, flexShrink: 0 }} />
             <div className="hc-stats-container" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", flex: 1, gap: 24 }}>
               {[
-                { icon: IC.users, val: "40+", label: "Expert Doctors" },
+                { icon: IC.users, val: "50+", label: "Expert Doctors" },
                 { icon: IC.award, val: "20+", label: "Specializations" },
                 { icon: IC.heart, val: "5M+", label: "Happy Patients" },
                 { icon: IC.star, val: "35+", label: "Years of Excellence" },

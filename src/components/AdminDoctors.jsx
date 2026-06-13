@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import API from '../api';
+import * as XLSX from 'xlsx'; // ✅ For Excel export
 
 const AdminDoctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -22,9 +23,10 @@ const AdminDoctors = () => {
     reviews: '0',
     about: '',
     opdTimings: '',
+    roomNo: '',
   });
 
-  // ✅ Updated department list (matching the public Doctors page)
+  // Department list (matching the public Doctors page)
   const departments = [
     "Gynecology",
     "Emergency ",
@@ -59,7 +61,7 @@ const AdminDoctors = () => {
     fetchDoctors();
   }, []);
 
-  // ✅ FIXED: useMemo for filtered doctors (reactive to search & filter)
+  // Filtered doctors based on search & department filter
   const filteredDoctors = useMemo(() => {
     let filtered = doctors;
     if (searchTerm.trim()) {
@@ -106,8 +108,8 @@ const AdminDoctors = () => {
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!form.name || !form.dept || !form.exp || !form.opdTimings || !form.about) {
-      setErrorMsg('Please fill all required fields.');
+    if (!form.name || !form.dept || !form.exp || !form.opdTimings || !form.about || !form.roomNo) {
+      setErrorMsg('Please fill all required fields (including Room No).');
       setSubmitting(false);
       return;
     }
@@ -144,7 +146,7 @@ const AdminDoctors = () => {
     setEditingId(null);
     setForm({
       name: '', qual: '', dept: '', exp: '', rating: '4.5', reviews: '0',
-      about: '', opdTimings: ''
+      about: '', opdTimings: '', roomNo: ''
     });
     setImageFile(null);
     setImagePreview('');
@@ -161,6 +163,7 @@ const AdminDoctors = () => {
       reviews: doc.reviews,
       about: doc.about,
       opdTimings: doc.opdTimings,
+      roomNo: doc.roomNo || '',
     });
     setImagePreview(doc.img);
     setImageFile(null);
@@ -180,12 +183,40 @@ const AdminDoctors = () => {
     }
   };
 
-  // ✅ Mobile-responsive styles (using CSS-in-JS with media queries via style object? Better to use className? 
-  // But to keep it simple, we'll use responsive objects with window width detection)
-  // For better responsiveness we add inline media queries via CSS-in-JS style tags? Let's use a style tag.
-  // Alternatively, we can use Tailwind classes or styled-components. Here I'll add a <style> block for true responsive.
+  // ✅ EXPORT TO EXCEL function – exports current filtered doctors
+  const exportToExcel = () => {
+    if (filteredDoctors.length === 0) {
+      setErrorMsg('No doctors to export.');
+      setTimeout(() => setErrorMsg(''), 2000);
+      return;
+    }
 
-  // I'll attach a style tag once using useEffect for media queries
+    // Prepare data for Excel: Full Name, Qualifications, Department, Experience, OPD Timings, Room No
+    const exportData = filteredDoctors.map(doc => ({
+      'Full Name': doc.name || '',
+      'Qualifications': doc.qual || '',
+      'Department': doc.dept || '',
+      'Experience (years)': doc.exp || '',
+      'OPD Timings': doc.opdTimings || '',
+      'Room No': doc.roomNo || 'Not assigned',
+    }));
+
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    // Auto-size columns (basic approach: set column widths)
+    const maxWidths = [20, 30, 25, 15, 25, 15];
+    worksheet['!cols'] = maxWidths.map(w => ({ wch: w }));
+
+    // Create workbook and trigger download
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Doctors');
+    XLSX.writeFile(workbook, `doctors_export_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
+    
+    setSuccessMsg('Excel export completed!');
+    setTimeout(() => setSuccessMsg(''), 3000);
+  };
+
+  // Responsive styles injection (unchanged)
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -239,7 +270,7 @@ const AdminDoctors = () => {
     return () => style.remove();
   }, []);
 
-  // Styles object (base)
+  // Styles object
   const styles = {
     container: { maxWidth: '1400px', margin: '0 auto', padding: '1rem', fontFamily: "'Inter', system-ui, sans-serif" },
     heading: { fontSize: '1.8rem', marginBottom: '1rem', color: '#1f2937', fontWeight: 'bold' },
@@ -255,6 +286,7 @@ const AdminDoctors = () => {
     imagePreview: { width: '80px', height: '80px', objectFit: 'cover', borderRadius: '12px', marginTop: '8px', border: '1px solid #e5e7eb' },
     buttonPrimary: { backgroundColor: '#3b82f6', color: 'white', padding: '0.6rem 1.2rem', border: 'none', borderRadius: '40px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.9rem', transition: '0.2s' },
     buttonSecondary: { backgroundColor: '#6b7280', marginLeft: '0.5rem' },
+    buttonExcel: { backgroundColor: '#10b981', color: 'white', padding: '0.6rem 1.2rem', border: 'none', borderRadius: '40px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.9rem', transition: '0.2s', marginLeft: '0.5rem' },
     filters: { display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' },
     searchInput: { flex: 2, minWidth: '200px', padding: '0.6rem 1rem', borderRadius: '40px', border: '1px solid #cbd5e1', fontSize: '0.9rem' },
     filterSelect: { padding: '0.6rem 1rem', borderRadius: '40px', border: '1px solid #cbd5e1', backgroundColor: 'white', cursor: 'pointer' },
@@ -310,6 +342,10 @@ const AdminDoctors = () => {
             <input style={styles.input} value={form.opdTimings} onChange={(e) => setForm({...form, opdTimings: e.target.value})} placeholder="Mon-Fri: 9am-1pm" required />
           </div>
           <div style={styles.inputGroup}>
+            <label style={styles.label}>Room No *</label>
+            <input style={styles.input} value={form.roomNo} onChange={(e) => setForm({...form, roomNo: e.target.value})} placeholder="e.g., Room 201, Block A" required />
+          </div>
+          <div style={styles.inputGroup}>
             <label style={styles.label}>Profile Image</label>
             <input type="file" accept="image/*" onChange={handleImageChange} />
             {imagePreview && <img src={imagePreview} alt="Preview" style={styles.imagePreview} />}
@@ -346,6 +382,10 @@ const AdminDoctors = () => {
         <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>
           {filteredDoctors.length} doctor{filteredDoctors.length !== 1 && 's'} found
         </span>
+        {/* ✅ Export to Excel button */}
+        <button onClick={exportToExcel} style={styles.buttonExcel}>
+          📎 Export to Excel
+        </button>
       </div>
 
       {loading ? (
@@ -361,6 +401,7 @@ const AdminDoctors = () => {
                 <th style={styles.th}>Exp</th>
                 <th style={styles.th}>Rating</th>
                 <th style={styles.th}>OPD Timings</th>
+                <th style={styles.th}>Room No</th>
                 <th style={styles.th}>Actions</th>
               </tr>
             </thead>
@@ -379,6 +420,19 @@ const AdminDoctors = () => {
                   <td style={styles.td}>⭐ {doc.rating} ({doc.reviews})</td>
                   <td style={styles.td}>{doc.opdTimings}</td>
                   <td style={styles.td}>
+                    <span style={{ 
+                      display: 'inline-block', 
+                      background: '#e0e7ff', 
+                      color: '#4338ca', 
+                      padding: '4px 8px', 
+                      borderRadius: '20px', 
+                      fontSize: '0.75rem', 
+                      fontWeight: 'bold' 
+                    }}>
+                      {doc.roomNo || 'Not assigned'}
+                    </span>
+                  </td>
+                  <td style={styles.td}>
                     <div className="admin-doctors-action-btns" style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
                       <button onClick={() => editDoctor(doc)} style={{...styles.actionBtn, ...styles.editBtn}}>Edit</button>
                       <button onClick={() => handleDelete(doc._id)} style={{...styles.actionBtn, ...styles.deleteBtn}}>Delete</button>
@@ -388,7 +442,7 @@ const AdminDoctors = () => {
               ))}
               {filteredDoctors.length === 0 && (
                 <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+                  <td colSpan="8" style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
                     No doctors match your filters.
                   </td>
                 </tr>

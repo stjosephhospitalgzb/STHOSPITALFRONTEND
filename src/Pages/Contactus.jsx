@@ -97,6 +97,25 @@ const injectStyles = () => {
       .hc-stat-num { font-size: 1.5rem !important; }
       .hc-stat-item div[style*="font-size: 13px"] { font-size: 11px !important; }
     }
+
+    /* Ambulance section responsive */
+    .ambulance-section {
+      background: linear-gradient(90deg, #1a56db, #1e40af);
+    }
+    @media (max-width: 768px) {
+      .ambulance-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px !important;
+      }
+      .ambulance-numbers {
+        justify-content: center;
+      }
+      .ambulance-call-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   `;
   document.head.appendChild(s);
 };
@@ -246,7 +265,7 @@ const REACH_CARDS = [
 // ─── Statistics (valid icons) ─────────────────────────────────────────────────
 const STATS = [
   { icon: IC.users, val: "9M+", label: "Happy Patients" },
-  { icon: IC.user, val: "40+", label: "Expert Doctors" },
+  { icon: IC.user, val: "50+", label: "Expert Doctors" },
   { icon: IC.award, val: "35+", label: "Years of Excellence" },
   { icon: IC.steth, val: "8+", label: "Medical Specialties" },
   { icon: IC.call24, val: "24/7", label: "Emergency Support" },
@@ -254,6 +273,9 @@ const STATS = [
 
 // ─── Google Form URL (replace with actual public form URL) ─────────────────────
 const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScA8zm9fcEhj1Z7KmIH_pwNkjq3FpF8Qk0HF3JwJClmOmJyjw/viewform?embedded=true";
+
+// ─── Ambulance numbers (from TPA component) ────────────────────────────────────
+const ambulanceNumbers = ["9910878137", "85100075051"];
 
 // ─── Main Component ─────────────────────────────────────────────────────────────
 export default function ContactUs() {
@@ -270,6 +292,10 @@ export default function ContactUs() {
     background: C.blue, color: C.white, border: "none", borderRadius: 40,
     padding: "12px 24px", fontSize: 14, fontWeight: 700,
     cursor: "pointer", transition: "all .3s ease", fontFamily: "'Nunito',sans-serif",
+  };
+
+  const handleCallAmbulance = (number) => {
+    window.location.href = `tel:${number}`;
   };
 
   return (
@@ -404,7 +430,68 @@ export default function ContactUs() {
         </div>
       </section>
 
-      {/* ══ MAP + FAQ ════════════════════════════════════════════════════════════ */}
+      {/* ══ NEW: AMBULANCE ASSISTANCE SECTION (from TPA component) ═══════════════ */}
+      <section className="ambulance-section" style={{ background: "linear-gradient(90deg,#1a56db,#1e40af)", padding: "32px 20px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 8px" }}>
+          <div className="ambulance-flex" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 20, justifyContent: "space-between" }}>
+            {/* Left icon + text */}
+            <div style={{ display: "flex", alignItems: "center", gap: 16, flex: "1 1 240px" }}>
+              <div style={{ fontSize: 42 }}>🚑</div>
+              <div style={{ color: "#fff" }}>
+                <div style={{ fontWeight: 800, fontSize: "clamp(14px,2vw,18px)" }}>Need Immediate Ambulance Assistance?</div>
+                <div style={{ fontSize: 12, opacity: 0.85, marginTop: 4 }}>Call us 24/7 for emergency ambulance service</div>
+              </div>
+            </div>
+
+            {/* Phone numbers */}
+            <div className="ambulance-numbers" style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", flex: "1 1 auto" }}>
+              {ambulanceNumbers.map((number, idx) => (
+                <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 22 }}>📞</span>
+                  <div style={{ color: "#fff" }}>
+                    <div style={{ fontWeight: 900, fontSize: "clamp(14px,2vw,20px)", letterSpacing: "0.5px" }}>{number}</div>
+                    <div style={{ fontSize: 10, opacity: 0.7 }}>Ambulance Helpline</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Call button */}
+            <button
+              className="ambulance-call-btn"
+              onClick={() => handleCallAmbulance(ambulanceNumbers[0])}
+              style={{
+                background: "#fff",
+                color: "#1a56db",
+                border: "none",
+                borderRadius: 40,
+                padding: "12px 28px",
+                fontSize: 14,
+                fontWeight: 800,
+                cursor: "pointer",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                flexShrink: 0,
+                transition: "all 0.2s ease",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#f0f9ff";
+                e.currentTarget.style.transform = "scale(1.02)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#fff";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              Call Ambulance Now <Ico d={IC.arrow} size={16} color="#1a56db" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ MAP + FAQ (Ambulance section placed above FAQ as requested) ═══════════ */}
       <section style={{ padding: "60px 20px", background: C.white }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 8px" }}>
           <div className="hc-map-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>

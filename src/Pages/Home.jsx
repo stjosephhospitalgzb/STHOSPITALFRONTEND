@@ -596,13 +596,34 @@ const DoctorModal = ({ doctor, onClose }) => {
               </div>
             </div>
           </div>
-          <div style={{ marginBottom: 28, background: "#f8fafc", borderRadius: 16, padding: "16px 20px", border: "1px solid #e2e8f0" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <Icon d={icons.clock} size={18} color="#2563eb" />
-              <h4 style={{ fontWeight: 800, fontSize: 18, color: "#0f172a", margin: 0 }}>OPD Timings</h4>
+          
+          {/* OPD Timings and Room Number Side by Side */}
+          <div style={{ 
+            marginBottom: 28, 
+            display: "grid", 
+            gridTemplateColumns: "1fr 1fr", 
+            gap: 20,
+            background: "#f8fafc", 
+            borderRadius: 16, 
+            padding: "16px 20px", 
+            border: "1px solid #e2e8f0"
+          }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <Icon d={icons.clock} size={18} color="#2563eb" />
+                <h4 style={{ fontWeight: 800, fontSize: 18, color: "#0f172a", margin: 0 }}>OPD Timings</h4>
+              </div>
+              <p style={{ fontSize: 15, color: "#0f172a", fontWeight: 500 }}>{doctor.opdTimings || "Mon - Sat: 9:00 AM - 5:00 PM"}</p>
             </div>
-            <p style={{ fontSize: 15, color: "#0f172a", fontWeight: 500 }}>{doctor.opdTimings || "Mon - Sat: 9:00 AM - 5:00 PM"}</p>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <Icon d={icons.mapPin} size={18} color="#2563eb" />
+                <h4 style={{ fontWeight: 800, fontSize: 18, color: "#0f172a", margin: 0 }}>Room Number</h4>
+              </div>
+              <p style={{ fontSize: 15, color: "#0f172a", fontWeight: 500 }}>{doctor.roomNo || "Not assigned"}</p>
+            </div>
           </div>
+          
           <div style={{ marginBottom: 28 }}>
             <h4 style={{ fontWeight: 800, fontSize: 20, marginBottom: 14, color: "#0f172a" }}>About</h4>
             <p style={{ fontSize: 16, color: "#64748b", lineHeight: 1.7 }}>{doctor.about || "Experienced specialist dedicated to providing exceptional patient care with compassion and expertise."}</p>
@@ -626,7 +647,7 @@ const Home = () => {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeApptDept, setActiveApptDept] = useState("");
-  const [activeApptDoc, setActiveApptDoc] = useState("");
+  const [activeApptDocId, setActiveApptDocId] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [doctors, setDoctors] = useState([]);
@@ -690,24 +711,24 @@ const Home = () => {
 
         const mapping = {};
         depts.forEach(dept => {
-          mapping[dept] = data.filter(doc => doc.dept === dept).map(doc => doc.name);
+          mapping[dept] = data.filter(doc => doc.dept === dept);
         });
         setDepartmentDoctors(mapping);
       } catch (error) {
         console.error("Error fetching doctors:", error);
         const fallbackDoctors = [
-          { name: "Dr. Ananya Sharma", role: "Cardiologist", qual: "MD, DM Cardiology", exp: 12, rating: 4.9, reviews: 328, img: "https://randomuser.me/api/portraits/women/44.jpg", dept: "Cardiology", about: "Expert cardiologist with special interest in interventional cardiology.", opdTimings: "Mon, Wed, Fri: 10am - 1pm" },
-          { name: "Dr. Rahul Verma", role: "Neurologist", qual: "MD, DM Neurology", exp: 15, rating: 4.8, reviews: 256, img: "https://randomuser.me/api/portraits/men/32.jpg", dept: "Neurology", about: "Expert neurologist specializing in stroke and epilepsy.", opdTimings: "Tue, Thu, Sat: 11am - 2pm" },
-          { name: "Dr. Arjun Mehta", role: "Orthopedic Surgeon", qual: "MS Orthopedics", exp: 10, rating: 4.7, reviews: 189, img: "https://randomuser.me/api/portraits/men/45.jpg", dept: "Orthopedics", about: "Specialist in joint replacement and sports injuries.", opdTimings: "Mon - Sat: 9am - 5pm" },
-          { name: "Dr. Priya Nair", role: "Pediatrician", qual: "MD Pediatrics", exp: 9, rating: 4.9, reviews: 412, img: "https://randomuser.me/api/portraits/women/68.jpg", dept: "Pediatrics", about: "Compassionate care for children of all ages.", opdTimings: "Mon, Thu, Fri: 9am - 12pm" },
-          { name: "Dr. Suresh Kumar", role: "Gynecologist", qual: "MD Obstetrics & Gynecology", exp: 14, rating: 4.8, reviews: 298, img: "https://randomuser.me/api/portraits/men/52.jpg", dept: "Gynecology", about: "Expert in women's health and maternity care.", opdTimings: "Mon - Sat: 10am - 4pm" },
+          { _id: "1", name: "Dr. Ananya Sharma", role: "Cardiologist", qual: "MD, DM Cardiology", exp: 12, rating: 4.9, reviews: 328, img: "https://randomuser.me/api/portraits/women/44.jpg", dept: "Cardiology", about: "Expert cardiologist with special interest in interventional cardiology.", opdTimings: "Mon, Wed, Fri: 10am - 1pm", roomNo: "Room 201" },
+          { _id: "2", name: "Dr. Rahul Verma", role: "Neurologist", qual: "MD, DM Neurology", exp: 15, rating: 4.8, reviews: 256, img: "https://randomuser.me/api/portraits/men/32.jpg", dept: "Neurology", about: "Expert neurologist specializing in stroke and epilepsy.", opdTimings: "Tue, Thu, Sat: 11am - 2pm", roomNo: "Room 305" },
+          { _id: "3", name: "Dr. Arjun Mehta", role: "Orthopedic Surgeon", qual: "MS Orthopedics", exp: 10, rating: 4.7, reviews: 189, img: "https://randomuser.me/api/portraits/men/45.jpg", dept: "Orthopedics", about: "Specialist in joint replacement and sports injuries.", opdTimings: "Mon - Sat: 9am - 5pm", roomNo: "Room 112" },
+          { _id: "4", name: "Dr. Priya Nair", role: "Pediatrician", qual: "MD Pediatrics", exp: 9, rating: 4.9, reviews: 412, img: "https://randomuser.me/api/portraits/women/68.jpg", dept: "Pediatrics", about: "Compassionate care for children of all ages.", opdTimings: "Mon, Thu, Fri: 9am - 12pm", roomNo: "Room 108" },
+          { _id: "5", name: "Dr. Suresh Kumar", role: "Gynecologist", qual: "MD Obstetrics & Gynecology", exp: 14, rating: 4.8, reviews: 298, img: "https://randomuser.me/api/portraits/men/52.jpg", dept: "Gynecology", about: "Expert in women's health and maternity care.", opdTimings: "Mon - Sat: 10am - 4pm", roomNo: "Room 156" },
         ];
         setDoctors(fallbackDoctors);
         const depts = [...new Set(fallbackDoctors.map(doc => doc.dept))];
         setDepartmentsList(depts);
         const mapping = {};
         depts.forEach(dept => {
-          mapping[dept] = fallbackDoctors.filter(doc => doc.dept === dept).map(doc => doc.name);
+          mapping[dept] = fallbackDoctors.filter(doc => doc.dept === dept);
         });
         setDepartmentDoctors(mapping);
       } finally {
@@ -720,11 +741,11 @@ const Home = () => {
 
   // Function to handle "Find a Doctor" button click - opens modal if doctor selected
   const handleFindDoctor = () => {
-    if (!activeApptDept || !activeApptDoc) {
+    if (!activeApptDept || !activeApptDocId) {
       alert("Please select both department and doctor.");
       return;
     }
-    const doctorObj = doctors.find(d => d.name === activeApptDoc && (d.dept === activeApptDept || d.department === activeApptDept));
+    const doctorObj = doctors.find(d => d._id === activeApptDocId);
     if (doctorObj) {
       setSelectedDoctor(doctorObj);
     } else {
@@ -968,7 +989,7 @@ const heroContent = {
     icon: icons.user, 
     label: "Expert Doctors", 
     sub: "Highly qualified specialists on duty", 
-    val: "40+" 
+    val: "50+" 
   },
 ];
 
@@ -1425,7 +1446,7 @@ const heroContent = {
         </div>
       </section>
 
-      {/* FIND A DOCTOR SECTION */}
+      {/* FIND A DOCTOR SECTION - UPDATED WITH ROOM NO */}
       <section style={{ ...sectionPy, background: lgray, paddingTop: "64px", paddingBottom: "64px" }}>
         <div style={container}>
           <div className="hc-appt-grid" style={{ display: "grid", gridTemplateColumns: "340px 1fr 320px", gap: 32, alignItems: "stretch" }}>
@@ -1444,7 +1465,7 @@ const heroContent = {
                     </div>
                     <select
                       value={activeApptDept}
-                      onChange={e => { setActiveApptDept(e.target.value); setActiveApptDoc(""); }}
+                      onChange={e => { setActiveApptDept(e.target.value); setActiveApptDocId(""); }}
                       style={{
                         width: "100%", padding: "12px 16px 12px 44px",
                         border: "1.5px solid #e2e8f0", borderRadius: 12,
@@ -1464,8 +1485,8 @@ const heroContent = {
                       <Icon d={icons.user} size={18} color={gray} />
                     </div>
                     <select
-                      value={activeApptDoc}
-                      onChange={e => setActiveApptDoc(e.target.value)}
+                      value={activeApptDocId}
+                      onChange={e => setActiveApptDocId(e.target.value)}
                       disabled={!activeApptDept}
                       style={{
                         width: "100%", padding: "12px 16px 12px 44px",
@@ -1475,7 +1496,11 @@ const heroContent = {
                       }}
                     >
                       <option value="">Select Doctor</option>
-                      {activeApptDept && departmentDoctors[activeApptDept]?.map(doc => <option key={doc} value={doc}>{doc}</option>)}
+                      {activeApptDept && departmentDoctors[activeApptDept]?.map(doc => (
+                        <option key={doc._id} value={doc._id}>
+                          {doc.name} {doc.roomNo ? `(Room: ${doc.roomNo})` : ''}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -1734,6 +1759,11 @@ const heroContent = {
                         <Icon d={icons.clock} size={14} color={gray} />
                         {d.exp} Years Experience
                       </div>
+                      {d.roomNo && (
+                        <div style={{ fontSize: 12, color: blue, fontWeight: 600, marginBottom: 12 }}>
+                          📍 {d.roomNo}
+                        </div>
+                      )}
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
                         <Icon d={icons.star} size={14} color="#f59e0b" fill="#f59e0b" />
                         <span style={{ fontWeight: 800, fontSize: 14, color: dark }}>{d.rating || 4.8}</span>
