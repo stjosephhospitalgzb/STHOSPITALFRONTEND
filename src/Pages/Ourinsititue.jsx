@@ -5,6 +5,17 @@ import Navbar from "../components/Navbar";
 import bannerImg from "../assets/Insititue/banner1.png";
 import API from "../api"; // Adjust path if your api.js is elsewhere (e.g., "../services/api")
 
+// Import local images for DMLT program modules
+import hematologyImg from "../assets/Insititue/lab1.JPG";
+import microbiologyImg from "../assets/Insititue/lab2.JPG";
+import bloodBankImg from "../assets/Insititue/lab3.JPG";
+
+// Import facility images
+import labFacilityImg from "../assets/Insititue/lab4.JPG";
+import libraryFacilityImg from "../assets/Insititue/libray1.jpg";
+import classroomFacilityImg from "../assets/Insititue/classroom1.JPG";
+import Institutebulding from "../assets/Insititue/insititute1.jpg";
+
 // Import PDF file for application form
 import applicationFormPdf from "../assets/application_form.pdf";
 
@@ -469,6 +480,47 @@ const styles = {
     borderTop: "1px solid #f1f5f9",
   },
 
+  // ── FACILITIES SECTION (NEW) ─────────────────────────────────
+  facilities: {
+    backgroundColor: "#ffffff",
+  },
+  facilitiesGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+    gap: "30px",
+    marginTop: "20px",
+  },
+  facilityCard: {
+    background: "#fff",
+    borderRadius: "24px",
+    overflow: "hidden",
+    boxShadow: "0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02)",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    cursor: "pointer",
+  },
+  facilityImg: {
+    width: "100%",
+    height: "220px",
+    objectFit: "cover",
+    display: "block",
+    transition: "transform 0.5s ease",
+  },
+  facilityBody: {
+    padding: "20px",
+    textAlign: "center",
+  },
+  facilityTitle: {
+    fontSize: "20px",
+    fontWeight: "800",
+    color: "#0f172a",
+    marginBottom: "8px",
+  },
+  facilityDesc: {
+    fontSize: "13px",
+    color: "#5b6e8c",
+    lineHeight: "1.6",
+  },
+
   // ── ADMISSION SECTION ─────────────────────────────────────────
   admission: {
     borderRadius: "28px",
@@ -703,6 +755,62 @@ const styles = {
     transition: "all 0.25s ease",
   },
 
+  // ── MODAL / POPUP STYLES ──────────────────────────────────────
+  modalOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    backdropFilter: "blur(8px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999,
+    transition: "all 0.2s ease",
+  },
+  modalContent: {
+    position: "relative",
+    maxWidth: "90vw",
+    maxHeight: "90vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalImage: {
+    maxWidth: "100%",
+    maxHeight: "90vh",
+    objectFit: "contain",
+    borderRadius: "16px",
+    boxShadow: "0 25px 40px -12px rgba(0, 0, 0, 0.5)",
+    border: "2px solid rgba(255,255,255,0.2)",
+  },
+  modalCloseBtn: {
+    position: "absolute",
+    top: "20px",
+    right: "20px",
+    background: "white",
+    border: "none",
+    fontSize: "28px",
+    width: "48px",
+    height: "48px",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    color: "#0f172a",
+    fontWeight: "bold",
+    transition: "transform 0.2s ease, background-color 0.2s ease",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
+    zIndex: 10000,
+  },
+  modalCloseBtnHover: {
+    transform: "scale(1.05)",
+    backgroundColor: "#f1f5f9",
+  },
+
   // ── INNER CONTAINER ──
   innerContainer: (isMobile) => ({
     maxWidth: 1440,
@@ -748,28 +856,33 @@ const styles = {
   },
 };
 
-// Updated data arrays based on St. Joseph's Paramedical Institute
-const programHighlights = [
+// Updated data arrays based on St. Joseph's Paramedical Institute with LOCAL images
+
+// Facilities data
+const facilitiesData = [
   {
-    title: "Hematology & Clinical Chemistry",
-    duration: "Core Module",
-    desc: "Comprehensive training in blood analysis, chemical diagnostics, and lab instrumentation.",
-    imgUrl: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&h=400&fit=crop",
-    alt: "Hematology lab analysis",
+    title: "Modern Laboratories",
+    desc: "Well-maintained laboratories designed to support comprehensive practical training in medical laboratory sciences.",
+    imgUrl: labFacilityImg,
+    alt: "Advanced laboratory at St. Joseph's",
   },
   {
-    title: "Microbiology & Immunology",
-    duration: "Core Module",
-    desc: "Study of pathogens, culture techniques, serology, and immune response diagnostics.",
-    imgUrl: "https://images.unsplash.com/photo-1581595219315-b187dd3c2e7a?w=600&h=400&fit=crop",
-    alt: "Microscope and samples",
+    title: "Institute Building",
+    desc: "Modern campus with advanced laboratories, classrooms, library, and student facilities.",
+    imgUrl: Institutebulding,
+    alt: "Institute Building"
   },
   {
-    title: "Blood Banking & Histopathology",
-    duration: "Core Module",
-    desc: "Hands-on training in blood component separation, cross-matching, and tissue analysis.",
-    imgUrl: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&h=400&fit=crop",
-    alt: "Blood banking equipment",
+    title: "Central Library",
+    desc: "Well-stocked library with medical textbooks, journals, digital resources, and a quiet study area for students.",
+    imgUrl: libraryFacilityImg,
+    alt: "Library at St. Joseph's Institute",
+  },
+  {
+    title: "Smart Classrooms",
+    desc: "Air-conditioned, tech-enabled classrooms with audio-visual aids to enhance learning and student engagement.",
+    imgUrl: classroomFacilityImg,
+    alt: "Classroom at St. Joseph's Institute",
   },
 ];
 
@@ -789,6 +902,8 @@ const whyFeatures = [
   { icon: "🤝", label: "Holistic Development Focus" },
   { icon: "🎓", label: "Merit-based Scholarships" },
   { icon: "🏘️", label: "Safe Girls Hostel" },
+  { icon: "📚", label: "Well-stocked Library" },
+  { icon: "🔬", label: "Modern Lab Equipment" },
 ];
 
 function useIsMobile() {
@@ -840,6 +955,21 @@ export default function HealthCareInstitutePage() {
   const [galleryLoading, setGalleryLoading] = useState(true);
   const [galleryError, setGalleryError] = useState(false);
   const [galleryFilter, setGalleryFilter] = useState("All");
+  
+  // --- Modal / Popup state ---
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedImage]);
 
   // Fetch gallery images from backend
   useEffect(() => {
@@ -865,7 +995,7 @@ export default function HealthCareInstitutePage() {
       : galleryImages.filter((img) => img.category === galleryFilter);
 
   const containerPadding = styles.innerContainer(isMobile);
-  
+
   const statsBarLayout = {
     ...containerPadding,
     display: "flex",
@@ -876,7 +1006,7 @@ export default function HealthCareInstitutePage() {
     paddingBottom: isMobile ? "32px" : "36px",
     flexDirection: isMobile ? "column" : "row",
   };
-  
+
   const aboutLayout = {
     ...containerPadding,
     display: "flex",
@@ -887,19 +1017,19 @@ export default function HealthCareInstitutePage() {
     paddingBottom: isMobile ? "40px" : "60px",
     flexDirection: isMobile ? "column" : "row",
   };
-  
+
   const aboutStatsGrid = {
     ...styles.aboutStats,
     gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "1fr 1fr",
     gap: isMobile ? "16px" : "28px",
   };
-  
+
   const whyRightGrid = {
     ...styles.whyRight,
     gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(auto-fill, minmax(150px, 1fr))",
     gap: isMobile ? "20px" : "32px",
   };
-  
+
   const admissionInnerLayout = {
     display: "flex",
     gap: isMobile ? "32px" : "40px",
@@ -907,14 +1037,14 @@ export default function HealthCareInstitutePage() {
     flexWrap: "wrap",
     padding: isMobile ? "28px 20px" : "56px 56px",
   };
-  
+
   const stepsRowLayout = {
     ...styles.stepsRow,
     flexDirection: isMobile ? "column" : "row",
     gap: isMobile ? "20px" : "8px",
     alignItems: isMobile ? "stretch" : "flex-start",
   };
-  
+
   const ctaStripLayout = {
     ...containerPadding,
     display: "flex",
@@ -927,14 +1057,14 @@ export default function HealthCareInstitutePage() {
     flexDirection: isMobile ? "column" : "row",
     textAlign: isMobile ? "center" : "left",
   };
-  
+
   const ctaLeftLayout = {
     ...styles.ctaLeft,
     flexDirection: isMobile ? "column" : "row",
     textAlign: isMobile ? "center" : "left",
     gap: isMobile ? "12px" : "20px",
   };
-  
+
   const scrollToPrograms = () => {
     document.getElementById("programs-section")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -944,6 +1074,9 @@ export default function HealthCareInstitutePage() {
 
   const academicYear = getAcademicYear();
   const currentYear = new Date().getFullYear();
+
+  // Close modal handler
+  const closeModal = () => setSelectedImage(null);
 
   return (
     <div style={styles.page}>
@@ -984,6 +1117,11 @@ export default function HealthCareInstitutePage() {
           box-shadow: 0 25px 35px -12px rgba(0,0,0,0.15) !important;
         }
         .program-card:hover .program-img { transform: scale(1.03); }
+        .facility-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15) !important;
+        }
+        .facility-card:hover .facility-img { transform: scale(1.03); }
         .stat-item:hover .stat-icon {
           background-color: rgba(255,255,255,0.2);
           transform: scale(1.05);
@@ -1024,6 +1162,10 @@ export default function HealthCareInstitutePage() {
         }
         .filter-tab-active:hover {
           background-color: #1d4ed8;
+        }
+        .modal-close-btn:hover {
+          transform: scale(1.05);
+          background-color: #f1f5f9;
         }
         
         /* Mobile specific adjustments */
@@ -1087,12 +1229,12 @@ export default function HealthCareInstitutePage() {
                 </div>
               </div>
             </div>
-            <button 
-              className="hero-cta-right" 
+            <button
+              className="hero-cta-right"
               style={styles.rightCta}
               onClick={scrollToAdmission}
             >
-              Get Application Form → 
+              Get Application Form →
             </button>
           </div>
         </div>
@@ -1103,8 +1245,11 @@ export default function HealthCareInstitutePage() {
         <div style={statsBarLayout}>
           {[
             { icon: "🎓", label: "Quality Education", desc: "Recognized by UP State Medical Faculty." },
-            { icon: "🔬", label: "Modern Labs", desc: "State-of-the-art equipment & clinical exposure." },
-            { icon: "👩‍🏫", label: "Experienced Faculty", desc: "Qualified educators & healthcare professionals." },
+            {
+              icon: "🔬",
+              label: "Modern Labs",
+              desc: "Advanced laboratory facilities for practical training."
+            }, { icon: "👩‍🏫", label: "Experienced Faculty", desc: "Qualified educators & healthcare professionals." },
             { icon: "💼", label: "Career Support", desc: "Placement assistance in leading hospitals." },
             { icon: "🏘️", label: "Girls Hostel", desc: "Safe & secure on-campus accommodation." },
           ].map((s, i) => (
@@ -1119,7 +1264,7 @@ export default function HealthCareInstitutePage() {
         </div>
       </section>
 
-      {/* ABOUT SECTION */}
+      {/* ABOUT SECTION (UPDATED CONTENT) */}
       <section style={styles.about} className="scroll-reveal">
         <div style={aboutLayout}>
           <div style={styles.aboutLeft}>
@@ -1131,21 +1276,21 @@ export default function HealthCareInstitutePage() {
           </div>
           <div style={styles.aboutMid}>
             <p style={styles.aboutDesc}>
-              Established in 2020, St. Joseph Paramedical Institute, Ghaziabad, is dedicated to excellence in healthcare education and professional training. 
-              It is run by the Medical Sisters of St. Joseph, Little Flower Province, Lucknow – a religious congregation that strives to bring the vision 
+              Established in 2020, St. Joseph Paramedical Institute, Ghaziabad, is dedicated to excellence in healthcare education and professional training.
+              It is run by the Medical Sisters of St. Joseph, Little Flower Province, Lucknow – a religious congregation that strives to bring the vision
               of its Founder, Venerable Joseph Panjikaran, into reality through compassionate service, quality education, and the promotion of human dignity.
             </p>
             <p style={styles.aboutDesc}>
-              The institute is committed to the holistic development of students through quality education, hands-on laboratory training, and strong ethical values. 
-              More than 100 students have successfully completed their training, and many are serving in government institutions, reputed hospitals, 
-              and other healthcare organizations. With a focus on academic excellence, professional competence, and compassionate care, the institute prepares 
+              The institute is committed to the holistic development of students through quality education, hands-on laboratory training, and strong ethical values.
+              More than 100 students have successfully completed their training, and many are serving in government institutions, reputed hospitals,
+              and other healthcare organizations. With a focus on academic excellence, professional competence, and compassionate care, the institute prepares
               skilled healthcare professionals to meet the growing needs of society.
             </p>
             <div style={styles.aboutExtraContent}>
               <p style={{ ...styles.aboutDesc, marginBottom: "10px" }}>
-                <strong>Recognition:</strong> This Course is recognized by Uttar Pradesh State Medical Faculty Lucknow 
-                (Letter No. – 1504 / 71 – 4 –2020– N – 8 / 2016, 20th November 2020). Our DMLT program provides rigorous theoretical knowledge 
-                and real-life laboratory experience. Students train under experienced faculty and pathologists at St. Joseph's Hospital, 
+                <strong>Recognition:</strong> This Course is recognized by Uttar Pradesh State Medical Faculty Lucknow
+                (Letter No. – 1504 / 71 – 4 –2020– N – 8 / 2016, 20th November 2020). Our DMLT program provides rigorous theoretical knowledge
+                and real-life laboratory experience. Students train under experienced faculty and pathologists at St. Joseph's Hospital,
                 making them job-ready for diagnostic labs, blood banks, and healthcare institutions.
               </p>
               <ul style={styles.aboutBulletList}>
@@ -1155,6 +1300,8 @@ export default function HealthCareInstitutePage() {
                 <li style={styles.aboutBulletItem}>🎓 Affordable fees with scholarship opportunities</li>
                 <li style={styles.aboutBulletItem}>🙏 Values-driven education – Respect for life, Justice, Reconciliation</li>
                 <li style={styles.aboutBulletItem}>👩‍⚕️ 100+ students trained & placed in reputed healthcare organizations</li>
+                <li style={styles.aboutBulletItem}>📚 Well-stocked library with medical journals & digital resources</li>
+                <li style={styles.aboutBulletItem}>🏫 Smart classrooms with modern teaching aids</li>
               </ul>
             </div>
           </div>
@@ -1178,31 +1325,59 @@ export default function HealthCareInstitutePage() {
       </section>
 
       {/* PROGRAMS SECTION */}
-      <section id="programs-section" style={styles.programs} className="scroll-reveal">
-        <div style={{ ...containerPadding, paddingTop: isMobile ? "40px" : "60px", paddingBottom: isMobile ? "40px" : "60px" }}>
+      <section
+        id="programs-section"
+        style={styles.programs}
+        className="scroll-reveal"
+      >
+        <div
+          style={{
+            ...containerPadding,
+            paddingTop: isMobile ? "40px" : "60px",
+            paddingBottom: isMobile ? "40px" : "60px",
+          }}
+        >
           <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>Diploma in Medical Laboratory Technician (DMLT)</h2>
+            <h2 style={styles.sectionTitle}>
+              Diploma in Medical Laboratory Technician (DMLT)
+            </h2>
             <span className="view-all-link" style={styles.viewAllLink}>
               2-Year Full-time Program <span>→</span>
             </span>
           </div>
-          <div style={styles.programsGrid}>
-            {programHighlights.map((p, idx) => (
-              <div key={idx} className="program-card" style={styles.programCard}>
+
+          {/* Add DMLT content here */}
+        </div>
+      </section>
+
+      {/* Facilities Section */}
+      <section style={styles.facilities} className="scroll-reveal">
+        <div
+          style={{
+            ...containerPadding,
+            paddingTop: isMobile ? "40px" : "60px",
+            paddingBottom: isMobile ? "40px" : "60px",
+          }}
+        >
+
+
+          <div style={styles.facilitiesGrid}>
+            {facilitiesData.map((facility, idx) => (
+              <div
+                key={idx}
+                className="facility-card"
+                style={styles.facilityCard}
+              >
                 <img
-                  src={p.imgUrl}
-                  alt={p.alt}
-                  className="program-img"
-                  style={styles.programImg}
+                  src={facility.imgUrl}
+                  alt={facility.alt}
+                  className="facility-img"
+                  style={styles.facilityImg}
                   loading="lazy"
                 />
-                <div style={styles.programBody}>
-                  <div style={styles.programTitle}>{p.title}</div>
-                  <div style={styles.programDuration}>{p.duration}</div>
-                  <div style={styles.programDesc}>{p.desc}</div>
-                  <span className="learn-more-link" style={styles.learnMore}>
-                    Learn More <span>→</span>
-                  </span>
+                <div style={styles.facilityBody}>
+                  <div style={styles.facilityTitle}>{facility.title}</div>
+                  <div style={styles.facilityDesc}>{facility.desc}</div>
                 </div>
               </div>
             ))}
@@ -1223,16 +1398,16 @@ export default function HealthCareInstitutePage() {
               <h3 style={{ fontSize: isMobile ? "20px" : "24px", fontWeight: "800", color: "#0f172a", marginBottom: "16px", borderLeft: "4px solid #2563eb", paddingLeft: "12px" }}>1st Year Fees</h3>
               <table style={styles.feeTable}>
                 <tbody>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Admission Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹2,000</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Affiliation Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹2,700</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Breakage Deposit (Non-Refundable)</td><td style={{...styles.feeCell, textAlign:"right"}}>₹500</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Tuition Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹50,000</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Library Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹1,300</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Printing & Stationery</td><td style={{...styles.feeCell, textAlign:"right"}}>₹500</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Establishment Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹4,000</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Student Welfare</td><td style={{...styles.feeCell, textAlign:"right"}}>₹1,000</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Practical Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹12,000</td></tr>
-                  <tr style={{ fontWeight: "800", backgroundColor: "#f1f5f9" }}><td style={styles.feeCell}>Total</td><td style={{...styles.feeCell, textAlign:"right", fontWeight:"800"}}>₹74,000</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Admission Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹2,000</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Affiliation Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹2,700</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Breakage Deposit (Non-Refundable)</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹500</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Tuition Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹50,000</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Library Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹1,300</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Printing & Stationery</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹500</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Establishment Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹4,000</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Student Welfare</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹1,000</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Practical Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹12,000</td></tr>
+                  <tr style={{ fontWeight: "800", backgroundColor: "#f1f5f9" }}><td style={styles.feeCell}>Total</td><td style={{ ...styles.feeCell, textAlign: "right", fontWeight: "800" }}>₹74,000</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1241,14 +1416,14 @@ export default function HealthCareInstitutePage() {
               <h3 style={{ fontSize: isMobile ? "20px" : "24px", fontWeight: "800", color: "#0f172a", marginBottom: "16px", borderLeft: "4px solid #2563eb", paddingLeft: "12px" }}>2nd Year Fees</h3>
               <table style={styles.feeTable}>
                 <tbody>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Affiliation Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹2,700</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Tuition Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹50,000</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Library Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹1,300</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Printing & Stationery</td><td style={{...styles.feeCell, textAlign:"right"}}>₹500</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Establishment Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹5,000</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Student Welfare</td><td style={{...styles.feeCell, textAlign:"right"}}>₹1,000</td></tr>
-                  <tr style={styles.feeRow}><td style={styles.feeCell}>Practical Fees</td><td style={{...styles.feeCell, textAlign:"right"}}>₹13,000</td></tr>
-                  <tr style={{ fontWeight: "800", backgroundColor: "#f1f5f9" }}><td style={styles.feeCell}>Total</td><td style={{...styles.feeCell, textAlign:"right", fontWeight:"800"}}>₹73,500</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Affiliation Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹2,700</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Tuition Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹50,000</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Library Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹1,300</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Printing & Stationery</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹500</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Establishment Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹5,000</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Student Welfare</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹1,000</td></tr>
+                  <tr style={styles.feeRow}><td style={styles.feeCell}>Practical Fees</td><td style={{ ...styles.feeCell, textAlign: "right" }}>₹13,000</td></tr>
+                  <tr style={{ fontWeight: "800", backgroundColor: "#f1f5f9" }}><td style={styles.feeCell}>Total</td><td style={{ ...styles.feeCell, textAlign: "right", fontWeight: "800" }}>₹73,500</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1259,7 +1434,7 @@ export default function HealthCareInstitutePage() {
         </div>
       </section>
 
-      {/* GALLERY SECTION - DYNAMIC */}
+      {/* GALLERY SECTION - DYNAMIC with Popup Modal */}
       <section style={styles.gallery} className="scroll-reveal">
         <div style={{ ...containerPadding, paddingTop: isMobile ? "40px" : "60px", paddingBottom: isMobile ? "40px" : "60px" }}>
           <div style={styles.sectionHeader}>
@@ -1291,7 +1466,12 @@ export default function HealthCareInstitutePage() {
           ) : (
             <div style={styles.galleryGrid}>
               {filteredImages.map((image) => (
-                <div key={image._id} className="gallery-card" style={styles.galleryCard}>
+                <div 
+                  key={image._id} 
+                  className="gallery-card" 
+                  style={styles.galleryCard}
+                  onClick={() => setSelectedImage(image.imageUrl)}
+                >
                   <img
                     src={image.imageUrl}
                     alt={image.title}
@@ -1299,7 +1479,6 @@ export default function HealthCareInstitutePage() {
                     style={styles.galleryImg}
                     loading="lazy"
                   />
-                  <div style={styles.galleryCaption}>{image.title}</div>
                 </div>
               ))}
               {filteredImages.length === 0 && (
@@ -1311,6 +1490,29 @@ export default function HealthCareInstitutePage() {
           )}
         </div>
       </section>
+
+      {/* Modal / Popup for Gallery Image */}
+      {selectedImage && (
+        <div style={styles.modalOverlay} onClick={closeModal}>
+          <button 
+            className="modal-close-btn"
+            style={styles.modalCloseBtn} 
+            onClick={closeModal}
+          >
+            ✕
+          </button>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <img 
+              src={selectedImage} 
+              alt="Full size view" 
+              style={styles.modalImage} 
+            />
+          </div>
+        </div>
+      )}
+
+      {/* NEW FACILITIES SECTION (Lab, Library, Classroom) */}
+
 
       {/* ADMISSION SECTION */}
       <section id="admission-section" style={{ margin: isMobile ? "32px 0" : "60px 0" }} className="scroll-reveal">
@@ -1325,12 +1527,12 @@ export default function HealthCareInstitutePage() {
                 </div>
                 <h2 style={styles.admissionTitle}>Begin Your Journey in Healthcare</h2>
                 <p style={styles.admissionDesc}>
-                  <strong>Eligibility:</strong> 10+2 (PCB) with first attempt, minimum 40% aggregate marks. Age 17+ as of 30th December. 
+                  <strong>Eligibility:</strong> 10+2 (PCB) with first attempt, minimum 40% aggregate marks. Age 17+ as of 30th December.
                   Candidate must be physically and mentally fit. Limited seats – 30 per year. Apply now for merit-based admission.
                 </p>
                 <p style={{ ...styles.admissionDesc, marginBottom: "14px", fontSize: "12px" }}>
-                  <strong>Mode of Application:</strong> Obtain application form and prospectus from institute office on payment of ₹350/- in person 
-                  or ₹400/- by Demand Draft in favour of <strong>“St. Joseph’s Paramedical Institute”</strong> payable at Ghaziabad. 
+                  <strong>Mode of Application:</strong> Obtain application form and prospectus from institute office on payment of ₹350/- in person
+                  or ₹400/- by Demand Draft in favour of <strong>“St. Joseph’s Paramedical Institute”</strong> payable at Ghaziabad.
                   You can also download the form below and submit along with DD.
                 </p>
                 <p style={{ ...styles.admissionDesc, marginBottom: "20px", fontSize: "12px" }}>
@@ -1352,7 +1554,7 @@ export default function HealthCareInstitutePage() {
                   Download Application Form & Prospectus (PDF) →
                 </a>
                 <p style={{ fontSize: "11px", color: "#cbdffc" }}>
-                  <strong>Note:</strong> Fill the form in candidate's own handwriting. Attach all required documents. 
+                  <strong>Note:</strong> Fill the form in candidate's own handwriting. Attach all required documents.
                   Submit before deadline to: <em>St. Joseph’s Paramedical Institute, Mariam Nagar, Meerut Road, Ghaziabad, UP 201003</em>
                 </p>
               </div>
@@ -1461,8 +1663,8 @@ export default function HealthCareInstitutePage() {
             <div style={{ fontSize: isMobile ? "40px" : "48px", marginBottom: "12px" }}>📖</div>
             <h3 style={{ fontSize: isMobile ? "24px" : "28px", fontWeight: "800", marginBottom: "16px", color: "#0f172a" }}>Message from the Principal</h3>
             <p style={{ fontSize: isMobile ? "14px" : "16px", color: "#334155", lineHeight: "1.7", marginBottom: "20px", fontStyle: "italic" }}>
-              “Welcome to St. Joseph’s Paramedical Institute. We combine medical knowledge with compassion and discipline. 
-              Through our DMLT program, students receive strong academics and real-time hospital training. We believe every student 
+              “Welcome to St. Joseph’s Paramedical Institute. We combine medical knowledge with compassion and discipline.
+              Through our DMLT program, students receive strong academics and real-time hospital training. We believe every student
               has the potential to make a difference in someone’s life.”
             </p>
             <p style={{ fontWeight: "700", color: "#0f172a" }}>— Sr. Neha, Principal</p>
@@ -1489,35 +1691,35 @@ export default function HealthCareInstitutePage() {
 
       {/* CTA STRIP with Contact & Address */}
       <section style={styles.ctaStrip} className="scroll-reveal">
-  <div style={ctaStripLayout}>
-    <div style={ctaLeftLayout}>
-      <div style={styles.ctaIconWrap}>📞</div>
-      <div>
-        <div style={styles.ctaTitle}>Have Questions? Contact Our Admission Office</div>
-        <div style={styles.ctaDesc}>
-          📞 +91 95827-39411 | +91 78279-08615 | ✉️ stjosephparamedicalgzb@gmail.com<br />
-          🏥 Address: Mariam Nagar, Meerut Road, Ghaziabad, UP 201003
+        <div style={ctaStripLayout}>
+          <div style={ctaLeftLayout}>
+            <div style={styles.ctaIconWrap}>📞</div>
+            <div>
+              <div style={styles.ctaTitle}>Have Questions? Contact Our Admission Office</div>
+              <div style={styles.ctaDesc}>
+                📞 +91 95827-39411 | +91 78279-08615 | ✉️ stjosephparamedicalgzb@gmail.com<br />
+                🏥 Address: Mariam Nagar, Meerut Road, Ghaziabad, UP 201003
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button
+              className="cta-btn"
+              style={styles.ctaBtn}
+              onClick={() => window.location.href = "tel:+919582739411"}
+            >
+              📞 Call Us →
+            </button>
+            <button
+              className="cta-btn"
+              style={{ ...styles.ctaBtn, backgroundColor: '#ffffff' }}
+              onClick={() => window.location.href = "mailto:stjosephparamedicalgzb@gmail.com"}
+            >
+              ✉️ Email Us →
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
-    <div style={{ display: 'flex', gap: '12px' }}>
-      <button 
-        className="cta-btn" 
-        style={styles.ctaBtn} 
-        onClick={() => window.location.href = "tel:+919582739411"}
-      >
-        📞 Call Us →
-      </button>
-      <button 
-        className="cta-btn" 
-        style={{ ...styles.ctaBtn, backgroundColor: '#ffffff' }} 
-        onClick={() => window.location.href = "mailto:stjosephparamedicalgzb@gmail.com"}
-      >
-        ✉️ Email Us →
-      </button>
-    </div>
-  </div>
-</section>
+      </section>
 
       <Footer />
     </div>

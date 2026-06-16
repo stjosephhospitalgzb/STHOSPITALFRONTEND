@@ -448,7 +448,7 @@ export default function AboutUs() {
   const heroHighlights = [
     { icon: IC.clock, label: "24/7 Emergency", desc: "Round-the-clock care" },
     { icon: IC.badge, label: "NABH Accredited", desc: "Quality assured" },
-    { icon: IC.user, label: "40+ Doctors", desc: "Expert specialists" },
+    { icon: IC.user, label: "50+ Doctors", desc: "Expert specialists" },
     { icon: IC.hospital, label: "100+ Beds", desc: "Modern infrastructure" },
   ];
 

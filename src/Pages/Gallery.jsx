@@ -6,7 +6,7 @@ import API from "../api";
 
 // Import social media icons from assets/Icons
 import facebookIcon from "../assets/Icons/facebook.png";
-import whatsappIcon  from "../assets/Icons/whatsappIcon.png";
+import whatsappIcon from "../assets/Icons/whatsappIcon.png";
 import instagramIcon from "../assets/Icons/Instagram.png";
 import linkedinIcon from "../assets/Icons/linkedin.png";
 import youtubeIcon from "../assets/Icons/youtube.png";
@@ -39,7 +39,7 @@ const categories = [
 const socialLinks = [
   { icon: facebookIcon, name: "Facebook", url: "https://www.facebook.com/profile.php?id=100077486113772" },
   { icon: whatsappIcon, name: "WhatsApp", url: "https://wa.me/917827908598" },
-  { icon: instagramIcon, name: "Instagram", url: "https://instagram.com/yourhospital" }, // Update if you have a valid Instagram link
+  { icon: instagramIcon, name: "Instagram", url: "https://instagram.com/yourhospital" },
   { icon: linkedinIcon, name: "LinkedIn", url: "https://www.linkedin.com/in/st-joseph-s-hospital-7423652a7/" },
   { icon: youtubeIcon, name: "YouTube", url: "https://www.youtube.com/@STJOSEPHSHOSPITAL" },
 ];
@@ -53,7 +53,7 @@ const Ico = ({ d, size = 20, color = "currentColor", fill = "none" }) => (
 
 const IC = { arrow: "M17 8l4 4m0 0l-4 4m4-4H3" };
 
-// ---------- Styles (with additions for banner chips) ----------
+// ---------- Styles ----------
 const s = {
   page: {
     fontFamily: "'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
@@ -148,7 +148,6 @@ const s = {
     lineHeight: 1.7,
     marginBottom: 24,
   },
-  // New: highlight chips container
   heroHighlights: {
     display: "flex",
     gap: 20,
@@ -201,6 +200,39 @@ const s = {
     textDecoration: "none",
     fontFamily: "inherit",
   },
+  // ---------- NEW MARQUEE STYLES ----------
+  marqueeSection: {
+    padding: "40px 0 10px",
+    background: "#f8faff",
+  },
+ 
+  marqueeContainer: {
+    overflow: "hidden",
+    position: "relative",
+    width: "100%",
+  },
+  marqueeTrack: {
+    display: "flex",
+    gap: "16px",
+    animation: "scrollMarquee 25s linear infinite",
+    width: "max-content",
+  },
+  marqueeTrackPaused: {
+    animationPlayState: "paused",
+  },
+  marqueeImage: {
+    flex: "0 0 auto",
+    width: "420px",
+    height: "260px",
+    objectFit: "cover",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+    transition: "transform 0.3s",
+  },
+  marqueeImageHover: {
+    transform: "scale(1.03)",
+  },
+  // -----------------------------------------
   filterSection: { padding: "60px 0 20px" },
   filterBar: {
     display: "flex",
@@ -347,7 +379,7 @@ const s = {
     width: "40px",
     height: "40px",
     objectFit: "contain",
-    filter: "brightness(0) invert(1)", // makes white icons
+    filter: "brightness(0) invert(1)",
   },
   socialName: { fontSize: "16px", fontWeight: "600", color: "#ffffff" },
   ctaWrap: { paddingBottom: "50px", paddingTop: "50px" },
@@ -406,13 +438,14 @@ const s = {
     fontWeight: "700",
     cursor: "pointer",
   },
+  // MODAL STYLES - With dual close buttons (top-left corner + top-right corner)
   modalOverlay: {
     position: "fixed",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.95)",
+    backgroundColor: "rgba(0,0,0,0.85)",
     zIndex: 1000,
     display: "flex",
     alignItems: "center",
@@ -421,51 +454,78 @@ const s = {
   },
   modalContent: {
     position: "relative",
-    maxWidth: "95vw",
-    maxHeight: "95vh",
+    maxWidth: "min(80vw, 800px)",
+    maxHeight: "min(80vh, 600px)",
+    width: "auto",
+    height: "auto",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    cursor: "default",
+    borderRadius: "16px",
+    overflow: "hidden",
+    boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
   },
   modalImage: {
     maxWidth: "100%",
-    maxHeight: "95vh",
+    maxHeight: "100%",
     width: "auto",
     height: "auto",
     objectFit: "contain",
-    borderRadius: "12px",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
+    display: "block",
   },
-  modalClose: {
+  modalCloseTopRight: {
     position: "absolute",
-    top: "-50px",
-    right: "-50px",
-    background: "rgba(255,255,255,0.2)",
+    top: "-40px",
+    right: "-40px",
+    background: "rgba(0,0,0,0.7)",
     borderRadius: "50%",
-    width: "44px",
-    height: "44px",
+    width: "36px",
+    height: "36px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "32px",
+    fontSize: "24px",
     color: "#fff",
     cursor: "pointer",
     transition: "0.2s",
-    backdropFilter: "blur(8px)",
+    backdropFilter: "blur(4px)",
+    border: "1px solid rgba(255,255,255,0.2)",
+  },
+  modalCloseTopLeft: {
+    position: "absolute",
+    top: "10px",
+    left: "10px",
+    background: "rgba(0,0,0,0.6)",
+    borderRadius: "50%",
+    width: "36px",
+    height: "36px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "20px",
+    color: "#fff",
+    cursor: "pointer",
+    transition: "0.2s",
+    backdropFilter: "blur(4px)",
+    border: "1px solid rgba(255,255,255,0.2)",
+    zIndex: 10,
   },
   modalCaption: {
     position: "absolute",
-    bottom: "-50px",
+    bottom: "-40px",
     left: 0,
     right: 0,
     textAlign: "center",
     color: "#fff",
-    fontSize: "16px",
-    backgroundColor: "rgba(0,0,0,0.6)",
-    padding: "8px 16px",
-    borderRadius: "30px",
+    fontSize: "14px",
+    backgroundColor: "rgba(0,0,0,0.7)",
+    padding: "6px 16px",
+    borderRadius: "20px",
     width: "fit-content",
     margin: "0 auto",
+    backdropFilter: "blur(4px)",
+    fontWeight: 500,
   },
   videoModalOverlay: {
     position: "fixed",
@@ -528,8 +588,7 @@ const s = {
   },
 };
 
-
-// Gallery Item Component (unchanged)
+// Gallery Item Component
 function GalleryItem({ item, height, onImageClick }) {
   const [hovered, setHovered] = useState(false);
   return (
@@ -552,7 +611,7 @@ function GalleryItem({ item, height, onImageClick }) {
   );
 }
 
-// Social Media Section with imported icons
+// Social Media Section
 function SocialMediaSection() {
   const [hoverIndex, setHoverIndex] = useState(null);
   return (
@@ -583,7 +642,7 @@ function SocialMediaSection() {
   );
 }
 
-// Video Gallery Modal (unchanged)
+// Video Gallery Modal
 function VideoGalleryModal({ isOpen, onClose, videos, loading }) {
   const [selectedVideo, setSelectedVideo] = useState(null);
   if (!isOpen) return null;
@@ -647,6 +706,55 @@ function VideoGalleryModal({ isOpen, onClose, videos, loading }) {
   );
 }
 
+// Image Lightbox Component - With dual close buttons (top-left and top-right)
+function ImageLightbox({ item, onClose }) {
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
+  if (!item) return null;
+
+  return (
+    <div style={s.modalOverlay} onClick={onClose}>
+      <div style={s.modalContent} onClick={(e) => e.stopPropagation()}>
+        {/* Close button - Top Left corner inside image */}
+        <div 
+          style={s.modalCloseTopLeft} 
+          onClick={onClose}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.9)")}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.6)")}
+        >
+          ✕
+        </div>
+        
+        {/* Close button - Top Right corner (outside) */}
+        <div 
+          style={s.modalCloseTopRight} 
+          onClick={onClose}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.9)")}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.7)")}
+        >
+          ✕
+        </div>
+        
+        <img 
+          src={item.imageUrl} 
+          alt={item.label} 
+          style={s.modalImage} 
+        />
+        
+        <div style={s.modalCaption}>
+          {item.label} • {item.category || item.tag}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Main Component
 export default function HealthCareGalleryPage() {
   const isMobile = useIsMobile();
@@ -662,6 +770,9 @@ export default function HealthCareGalleryPage() {
   const [videos, setVideos] = useState([]);
   const [loadingVideos, setLoadingVideos] = useState(false);
 
+  // State for marquee pause
+  const [marqueePaused, setMarqueePaused] = useState(false);
+
   useEffect(() => {
     setHeroAnimated(true);
     const style = document.createElement("style");
@@ -673,6 +784,10 @@ export default function HealthCareGalleryPage() {
       @keyframes heroGlow {
         0% { opacity: 0; transform: scale(0.98) translateY(20px); }
         100% { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      @keyframes scrollMarquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
       }
       .hero-animate {
         animation: heroGlow 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
@@ -733,14 +848,63 @@ export default function HealthCareGalleryPage() {
   const ctaPadding = isMobile ? "40px 24px" : "60px";
   const subscribeDirection = isMobile ? "column" : "row";
 
-  const handleBookAppointment = () => (window.location.href = "/appointment");
+  const handleBookAppointment = () => {
+    window.location.href = "http://103.47.16.55/Online_HIS/design/patientportal/onlinebooking.aspx";
+  };
   const handleExploreServices = () => (window.location.href = "/services");
+
+  // ---------- MARQUEE RENDER ----------
+  const renderMarquee = () => {
+    if (loading) {
+      return (
+        <div style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>
+          Loading images...
+        </div>
+      );
+    }
+    if (galleryItems.length === 0) return null;
+
+    // Duplicate the array to make the scroll seamless (infinite)
+    const marqueeImages = [...galleryItems, ...galleryItems];
+
+    return (
+      <div style={s.marqueeSection}>
+        <div style={s.container}>
+          <div 
+            style={s.marqueeContainer}
+            onMouseEnter={() => setMarqueePaused(true)}
+            onMouseLeave={() => setMarqueePaused(false)}
+          >
+            <div 
+              style={{
+                ...s.marqueeTrack,
+                animationPlayState: marqueePaused ? "paused" : "running",
+              }}
+            >
+              {marqueeImages.map((item, idx) => (
+                <img
+                  key={idx}
+                  src={item.imageUrl}
+                  alt={item.label}
+                  style={s.marqueeImage}
+                  onClick={() => openLightbox(item)}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  // ------------------------------------
 
   return (
     <div style={s.page}>
       <Navbar />
 
-      {/* Hero Section with extra highlights */}
+      {/* Hero Section */}
       <div style={s.heroSection}>
         <div style={{ position: "absolute", top: -80, left: -80, width: 360, height: 360, borderRadius: "50%", background: "radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%)", zIndex: 0 }} />
         <div style={{ position: "absolute", bottom: -60, left: 300, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 70%)", zIndex: 0 }} />
@@ -799,6 +963,9 @@ export default function HealthCareGalleryPage() {
         </div>
       </div>
 
+      {/* ====== NEW AUTO‑SCROLLING MARQUEE ====== */}
+      {renderMarquee()}
+
       {/* Filter Section */}
       <section style={s.filterSection}>
         <div style={s.container}>
@@ -844,8 +1011,8 @@ export default function HealthCareGalleryPage() {
               <button
                 style={s.viewVideosBtn}
                 onClick={() => setShowVideoModal(true)}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#2563eb")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#2563eb", e.currentTarget.style.color = "#fff")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#fff", e.currentTarget.style.color = "#2563eb")}
               >
                 ▶ View Videos
               </button>
@@ -920,16 +1087,8 @@ export default function HealthCareGalleryPage() {
         </div>
       </section>
 
-      {/* Image Lightbox */}
-      {lightboxItem && (
-        <div style={s.modalOverlay} onClick={closeLightbox}>
-          <div style={s.modalContent} onClick={(e) => e.stopPropagation()}>
-            <img src={lightboxItem.imageUrl} alt={lightboxItem.label} style={s.modalImage} />
-            <div style={s.modalClose} onClick={closeLightbox}>✕</div>
-            <div style={s.modalCaption}>{lightboxItem.label} • {lightboxItem.category}</div>
-          </div>
-        </div>
-      )}
+      {/* Image Lightbox - With dual close buttons (top-left and top-right) */}
+      <ImageLightbox item={lightboxItem} onClose={closeLightbox} />
 
       {/* Video Modal */}
       <VideoGalleryModal isOpen={showVideoModal} onClose={() => setShowVideoModal(false)} videos={videos} loading={loadingVideos} />

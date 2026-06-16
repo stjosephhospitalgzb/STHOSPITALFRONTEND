@@ -596,16 +596,16 @@ const DoctorModal = ({ doctor, onClose }) => {
               </div>
             </div>
           </div>
-          
+
           {/* OPD Timings and Room Number Side by Side */}
-          <div style={{ 
-            marginBottom: 28, 
-            display: "grid", 
-            gridTemplateColumns: "1fr 1fr", 
+          <div style={{
+            marginBottom: 28,
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
             gap: 20,
-            background: "#f8fafc", 
-            borderRadius: 16, 
-            padding: "16px 20px", 
+            background: "#f8fafc",
+            borderRadius: 16,
+            padding: "16px 20px",
             border: "1px solid #e2e8f0"
           }}>
             <div>
@@ -623,7 +623,7 @@ const DoctorModal = ({ doctor, onClose }) => {
               <p style={{ fontSize: 15, color: "#0f172a", fontWeight: 500 }}>{doctor.roomNo || "Not assigned"}</p>
             </div>
           </div>
-          
+
           <div style={{ marginBottom: 28 }}>
             <h4 style={{ fontWeight: 800, fontSize: 20, marginBottom: 14, color: "#0f172a" }}>About</h4>
             <p style={{ fontSize: 16, color: "#64748b", lineHeight: 1.7 }}>{doctor.about || "Experienced specialist dedicated to providing exceptional patient care with compassion and expertise."}</p>
@@ -678,7 +678,7 @@ const Home = () => {
       console.error("Error fetching news:", error);
       setNewsItems([
         "🏥 Welcome to St. Joseph's Hospital",
-        "📞 24/7 Emergency: +91-120-1234567",
+        "📞 24/7 Emergency: +91-7827908598",
       ]);
     }
   };
@@ -930,28 +930,28 @@ const Home = () => {
   };
 
   // Hero content for 4 slides
-const heroContent = {
-  0: {
-    pillText: "Trusted Healthcare Excellence.",
-    title: "Caring for Life. Advancing Health Every Day",
-    description: "Experience comprehensive healthcare backed by expert doctors, advanced medical technology, and patient-centered care designed to support your well-being at every stage of life.",
-  },
-  1: {
-    pillText: "Patient First. Always.",
-    title: "Healing with Compassion, Excellence, and Trust",
-    description: "We are committed to delivering personalized healthcare experiences through quality treatment, ethical practices, and compassionate support for every patient.",
-  },
-  2: {
-    pillText: "Specialized Medical & Surgical Care",
-    title: "Expertise You Trust. Outcomes You Deserve",
-    description: "Our experienced specialists provide advanced medical and surgical treatments using the latest techniques to ensure safer procedures and faster recovery.",
-  },
-  3: {
-    pillText: "Emergency & Critical Care",
-    title: "24×7 Emergency Support When Every Moment Matters",
-    description: "Round-the-clock emergency services, critical care units, advanced life support systems, and dedicated medical professionals ready to respond immediately.",
-  },
-};
+  const heroContent = {
+    0: {
+      pillText: "Trusted Healthcare Excellence.",
+      title: "Caring for Life. Advancing Health Every Day",
+      description: "Experience comprehensive healthcare backed by expert doctors, advanced medical technology, and patient-centered care designed to support your well-being at every stage of life.",
+    },
+    1: {
+      pillText: "Patient First. Always.",
+      title: "Healing with Compassion, Excellence, and Trust",
+      description: "We are committed to delivering personalized healthcare experiences through quality treatment, ethical practices, and compassionate support for every patient.",
+    },
+    2: {
+      pillText: "Specialized Medical & Surgical Care",
+      title: "Expertise You Trust. Outcomes You Deserve",
+      description: "Our experienced specialists provide advanced medical and surgical treatments using the latest techniques to ensure safer procedures and faster recovery.",
+    },
+    3: {
+      pillText: "Emergency & Critical Care",
+      title: "24×7 Emergency Support When Every Moment Matters",
+      description: "Round-the-clock emergency services, critical care units, advanced life support systems, and dedicated medical professionals ready to respond immediately.",
+    },
+  };
 
   const indianFaces = [
     "https://img.magnific.com/free-photo/indian-woman-posing-cute-stylish-outfit-camera-smiling_482257-122351.jpg",
@@ -960,38 +960,38 @@ const heroContent = {
     "https://img.magnific.com/free-photo/closeup-smiling-young-beautiful-indian-woman_1262-2261.jpg?semt=ais_hybrid&w=740&q=80",
   ];
 
- const statsData = [
-  { 
-    icon: icons.clock, 
-    label: "Bed Capacity", 
-    sub: "Modern and spacious inpatient beds", 
-    val: "100+" 
-  },
-  { 
-    icon: icons.heartbeat, 
-    label: "Cured Patients", 
-    sub: "Successfully treated and recovered lives", 
-    val: "9M+" 
-  },
-  { 
-    icon: icons.tech, 
-    label: "Medical Apparatus", 
-    sub: "Advanced and high-tech equipment units", 
-    val: "110+" 
-  },
-  { 
-    icon: icons.stethoscope, 
-    label: "Dialysis Unit", 
-    sub: "State-of-the-art renal care stations", 
-    val: "5+" 
-  },
-  { 
-    icon: icons.user, 
-    label: "Expert Doctors", 
-    sub: "Highly qualified specialists on duty", 
-    val: "50+" 
-  },
-];
+  const statsData = [
+    {
+      icon: icons.clock,
+      label: "Bed Capacity",
+      sub: "Modern and spacious inpatient beds",
+      val: "100+"
+    },
+    {
+      icon: icons.heartbeat,
+      label: "Cured Patients",
+      sub: "Successfully treated and recovered lives",
+      val: "9M+"
+    },
+    {
+      icon: icons.tech,
+      label: "Medical Apparatus",
+      sub: "Advanced and high-tech equipment units",
+      val: "110+"
+    },
+    {
+      icon: icons.stethoscope,
+      label: "Dialysis Unit",
+      sub: "Advanced dialysis care with modern equipment",
+      val: "5+"
+    },
+    {
+      icon: icons.user,
+      label: "Expert Doctors",
+      sub: "Highly qualified specialists on duty",
+      val: "50+"
+    },
+  ];
 
   const services = [
     { icon: cardiologyIcon, title: "Cardiology", desc: "Our cardiology services include evaluation and management of conditions such as hypertension, coronary artery disease, heart rhythm disorders, and heart failure. " },
@@ -1909,7 +1909,7 @@ const heroContent = {
                     </div>
                     <div>
                       <div style={{ fontWeight: 800, fontSize: 16, color: dark }}>24/7 Helpline</div>
-                      <div style={{ fontSize: 14, color: gray }}>+91-120-1234567</div>
+                      <div style={{ fontSize: 14, color: gray }}>+91-7827908598</div>
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 18, alignItems: "center" }}>

@@ -51,6 +51,9 @@ const injectStyles = () => {
     /* Responsive overrides - no side gaps on mobile */
     @media (max-width: 1024px) {
       .hc-main-grid   { grid-template-columns: 1fr !important; gap: 24px !important; }
+      /* Mobile reorder: Other Ways to Reach Us first, then Send Us a Message */
+      .hc-main-grid .reach-card-wrapper { order: 1 !important; }
+      .hc-main-grid .form-wrapper { order: 2 !important; }
       .hc-map-grid    { grid-template-columns: 1fr !important; gap: 24px !important; }
       .hc-reach-grid  { grid-template-columns: 1fr 1fr !important; gap: 16px !important; }
       .google-form-iframe { min-height: 800px; }
@@ -372,60 +375,64 @@ export default function ContactUs() {
       <section id="contact-form" style={{ padding: "60px 20px", background: C.lgray }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 8px" }}>
           <div className="hc-main-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>
-            {/* LEFT: Google Form */}
-            <Anim dir="left">
-              <div style={{ background: C.white, borderRadius: 22, padding: "24px 24px 20px 24px", boxShadow: "0 6px 30px rgba(0,0,0,.06)", border: `1px solid ${C.border}` }}>
-                <h2 style={{ fontSize: "1.3rem", fontWeight: 900, color: C.dark, marginBottom: 16 }}>Send Us a Message</h2>
-                <iframe className="google-form-iframe" src={GOOGLE_FORM_URL} title="Google Form" frameBorder="0" marginHeight={0} marginWidth={0}>Loading…</iframe>
-                <p style={{ fontSize: 12, color: C.gray, textAlign: "center", marginTop: 16 }}>
-                  This form is powered by Google Forms. Your data will be handled according to our privacy policy.
-                </p>
-              </div>
-            </Anim>
+            {/* LEFT: Google Form (form-wrapper) */}
+            <div className="form-wrapper" style={{ order: 1 }}>
+              <Anim dir="left">
+                <div style={{ background: C.white, borderRadius: 22, padding: "24px 24px 20px 24px", boxShadow: "0 6px 30px rgba(0,0,0,.06)", border: `1px solid ${C.border}` }}>
+                  <h2 style={{ fontSize: "1.3rem", fontWeight: 900, color: C.dark, marginBottom: 16 }}>Send Us a Message</h2>
+                  <iframe className="google-form-iframe" src={GOOGLE_FORM_URL} title="Google Form" frameBorder="0" marginHeight={0} marginWidth={0}>Loading…</iframe>
+                  <p style={{ fontSize: 12, color: C.gray, textAlign: "center", marginTop: 16 }}>
+                    This form is powered by Google Forms. Your data will be handled according to our privacy policy.
+                  </p>
+                </div>
+              </Anim>
+            </div>
 
-            {/* RIGHT: Other Ways to Reach Us */}
-            <Anim dir="right" delay={0.1}>
-              <div style={{ background: C.white, borderRadius: 22, padding: "36px 36px", boxShadow: "0 6px 30px rgba(0,0,0,.06)", border: `1px solid ${C.border}` }}>
-                <h2 style={{ fontSize: "1.3rem", fontWeight: 900, color: C.dark, marginBottom: 28 }}>Other Ways to Reach Us</h2>
-                <div className="hc-reach-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
-                  {REACH_CARDS.map((card, i) => (
-                    <div key={i} className="hc-contact-card" style={{ border: `1.5px solid ${C.border}`, borderRadius: 16, padding: "20px", transition: "all .3s ease", cursor: "default" }}>
-                      <div style={{ width: 46, height: 46, borderRadius: 13, background: `${C.blue}12`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
-                        <Ico d={card.icon} size={22} color={C.blue} />
+            {/* RIGHT: Other Ways to Reach Us (reach-card-wrapper) */}
+            <div className="reach-card-wrapper" style={{ order: 2 }}>
+              <Anim dir="right" delay={0.1}>
+                <div style={{ background: C.white, borderRadius: 22, padding: "36px 36px", boxShadow: "0 6px 30px rgba(0,0,0,.06)", border: `1px solid ${C.border}` }}>
+                  <h2 style={{ fontSize: "1.3rem", fontWeight: 900, color: C.dark, marginBottom: 28 }}>Other Ways to Reach Us</h2>
+                  <div className="hc-reach-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+                    {REACH_CARDS.map((card, i) => (
+                      <div key={i} className="hc-contact-card" style={{ border: `1.5px solid ${C.border}`, borderRadius: 16, padding: "20px", transition: "all .3s ease", cursor: "default" }}>
+                        <div style={{ width: 46, height: 46, borderRadius: 13, background: `${C.blue}12`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+                          <Ico d={card.icon} size={22} color={C.blue} />
+                        </div>
+                        <div style={{ fontWeight: 800, fontSize: 14, color: C.dark, marginBottom: 6 }}>{card.title}</div>
+                        {card.lines.map((l, j) => <div key={j} style={{ fontSize: 13, color: C.gray, lineHeight: 1.6 }}>{l}</div>)}
                       </div>
-                      <div style={{ fontWeight: 800, fontSize: 14, color: C.dark, marginBottom: 6 }}>{card.title}</div>
-                      {card.lines.map((l, j) => <div key={j} style={{ fontSize: 13, color: C.gray, lineHeight: 1.6 }}>{l}</div>)}
+                    ))}
+                  </div>
+
+                  {/* OPD Schedule Block */}
+                  <div style={{ background: "#eff6ff", borderRadius: 18, padding: "20px 24px", marginBottom: 24, border: `1px solid #bfdbfe`, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+                    <div style={{ width: 52, height: 52, borderRadius: "50%", background: `${C.blue}15`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Ico d={IC.calendar} size={24} color={C.blue} />
                     </div>
-                  ))}
-                </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 900, fontSize: "1.1rem", color: C.dark, marginBottom: 4 }}>OPD Timings</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: C.blue }}>{HOSPITAL.opdTiming}</div>
+                      <div style={{ fontSize: 13, color: C.gray, marginTop: 4 }}>Sunday Closed (Emergency services available 24/7)</div>
+                    </div>
+                  </div>
 
-                {/* OPD Schedule Block */}
-                <div style={{ background: "#eff6ff", borderRadius: 18, padding: "20px 24px", marginBottom: 24, border: `1px solid #bfdbfe`, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                  <div style={{ width: 52, height: 52, borderRadius: "50%", background: `${C.blue}15`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Ico d={IC.calendar} size={24} color={C.blue} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 900, fontSize: "1.1rem", color: C.dark, marginBottom: 4 }}>OPD Timings</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: C.blue }}>{HOSPITAL.opdTiming}</div>
-                    <div style={{ fontSize: 13, color: C.gray, marginTop: 4 }}>Sunday Closed (Emergency services available 24/7)</div>
-                  </div>
-                </div>
-
-                {/* Emergency CTA */}
-                <div style={{ borderRadius: 18, overflow: "hidden", position: "relative", background: "linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#4f46e5 100%)", padding: "28px 28px" }}>
-                  <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,.08)" }} />
-                  <div style={{ position: "relative", zIndex: 1 }}>
-                    <h3 style={{ fontSize: "1.1rem", fontWeight: 900, color: C.white, marginBottom: 10 }}>Need Immediate Assistance?</h3>
-                    <p style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.7, marginBottom: 20, maxWidth: 300 }}>
-                      For life-threatening emergencies, please visit our nearest emergency room or call our 24/7 helpline.
-                    </p>
-                    <a href={`tel:${HOSPITAL.emergency}`} className="hc-btn-primary" style={{ ...btnPrimary, background: "rgba(255,255,255,.18)", border: "1.5px solid rgba(255,255,255,.35)", backdropFilter: "blur(6px)", animation: "pulse 2.5s ease-in-out infinite", textDecoration: "none" }}>
-                      Call Emergency Hotline <Ico d={IC.clock} size={16} color={C.white} />
-                    </a>
+                  {/* Emergency CTA */}
+                  <div style={{ borderRadius: 18, overflow: "hidden", position: "relative", background: "linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#4f46e5 100%)", padding: "28px 28px" }}>
+                    <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,.08)" }} />
+                    <div style={{ position: "relative", zIndex: 1 }}>
+                      <h3 style={{ fontSize: "1.1rem", fontWeight: 900, color: C.white, marginBottom: 10 }}>Need Immediate Assistance?</h3>
+                      <p style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.7, marginBottom: 20, maxWidth: 300 }}>
+                        For life-threatening emergencies, please visit our nearest emergency room or call our 24/7 helpline.
+                      </p>
+                      <a href={`tel:${HOSPITAL.emergency}`} className="hc-btn-primary" style={{ ...btnPrimary, background: "rgba(255,255,255,.18)", border: "1.5px solid rgba(255,255,255,.35)", backdropFilter: "blur(6px)", animation: "pulse 2.5s ease-in-out infinite", textDecoration: "none" }}>
+                        Call Emergency Hotline <Ico d={IC.clock} size={16} color={C.white} />
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Anim>
+              </Anim>
+            </div>
           </div>
         </div>
       </section>
