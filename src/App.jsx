@@ -19,6 +19,7 @@ import Gallery from "./Pages/Gallery";
 import TpaService from "./Pages/Tpa.jsx";
 import Chatbot from "./components/Chatbot";
 import ParamedicalGalleryManager from "./components/ParamedicalGalleryManager.jsx";
+import WelcomePopup from "./components/WelcomePopup.jsx";
 
 // ==================== CORRECTED PHONE NUMBERS ====================
 // Ambulance numbers (as used in ContactUs page)
@@ -107,6 +108,7 @@ function App() {
 
   return (
     <BrowserRouter>
+     <WelcomePopup />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
