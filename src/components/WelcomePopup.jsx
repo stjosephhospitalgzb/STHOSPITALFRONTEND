@@ -8,8 +8,8 @@ const DOCTORS_ON_LEAVE = [
   { name: 'Dr. S. Verma',  dept: 'Orthopaedics', initials: 'SV' },
 ];
 
-// ─── Word arrays (only Hindi) ──────────────────────────────────
-const HI_WORDS = "नमस्ते! सेंट जोसेफ हॉस्पिटल (St. Joseph's Hospital) में आपका स्वागत है। गाज़ियाबाद में स्थित यह अस्पताल मरीजों को उच्च गुणवत्ता वाली स्वास्थ्य सेवाएँ और चिकित्सा सुविधाएँ प्रदान करने के लिए तत्पर है।".split(' ');
+// ─── Welcome text (full Hindi) ────────────────────────────────
+const WELCOME_TEXT = "नमस्ते! सेंट जोसेफ हॉस्पिटल (St. Joseph's Hospital) में आपका स्वागत है। गाज़ियाबाद में स्थित यह अस्पताल मरीजों को उच्च गुणवत्ता वाली स्वास्थ्य सेवाएँ और चिकित्सा सुविधाएँ प्रदान करने के लिए तत्पर है।";
 
 // ─── Inject styles ──────────────────────────────────────────────
 const injectStyles = () => {
@@ -18,22 +18,18 @@ const injectStyles = () => {
   const el = document.createElement('style');
   el.id = id;
   el.textContent = `
-    @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&display=swap');
 
     @keyframes sjhFadeUp {
       from { opacity:0; transform:translateY(20px) scale(0.96); }
       to   { opacity:1; transform:translateY(0)    scale(1);    }
     }
-    @keyframes sjhWelcomeSlideIn {
-      from { opacity:0; transform:translateX(-16px); }
-      to   { opacity:1; transform:translateX(0);    }
-    }
     @keyframes sjhBlink {
       from, to { opacity: 1; }
       50% { opacity: 0; }
     }
-    @keyframes wordAppear {
-      from { opacity:0; transform:translateY(8px); }
+    @keyframes charAppear {
+      from { opacity:0; transform:translateY(4px); }
       to   { opacity:1; transform:translateY(0);   }
     }
     @keyframes bannerShimmer {
@@ -91,18 +87,9 @@ const injectStyles = () => {
       opacity: 0;
       animation: none;
     }
-    .sjh-word {
+    .sjh-char {
       display: inline-block;
-      animation: wordAppear 0.25s cubic-bezier(.22,.68,0,1.12) both;
-    }
-    .sjh-word-highlight {
-      display: inline-block;
-      animation: wordAppear 0.25s cubic-bezier(.22,.68,0,1.12) both;
-      color: #1e3a8a !important;
-      font-weight: 700 !important;
-    }
-    .sjh-volume-btn:hover {
-      background: rgba(255,255,255,0.25) !important;
+      animation: charAppear 0.15s cubic-bezier(.22,.68,0,1.12) both;
     }
     .sjh-pulse-dot {
       width: 8px;
@@ -128,7 +115,7 @@ const injectStyles = () => {
         border-radius: 18px !important;
       }
       .sjh-video-wrapper {
-        height: 200px !important;
+        height: 280px !important;
       }
       .sjh-body {
         padding: 1rem 1.25rem 1.5rem !important;
@@ -166,7 +153,7 @@ const injectStyles = () => {
     }
     @media (max-width: 400px) {
       .sjh-video-wrapper {
-        height: 160px !important;
+        height: 220px !important;
       }
       .sjh-body {
         padding: 0.75rem 1rem 1.25rem !important;
@@ -225,12 +212,14 @@ const playWelcomeSound = () => {
 };
 
 const WelcomePopup = () => {
-  const [visible,    setVisible]    = useState(false);
-  const [animated,   setAnimated]   = useState(false);
-  const [hiWords,    setHiWords]    = useState([]);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isMuted,    setIsMuted]    = useState(false); // start UNMUTED
-  const [audioBlocked, setAudioBlocked] = useState(false); // flag if autoplay with sound failed
+  const [visible,       setVisible]       = useState(false);
+  const [animated,      setAnimated]      = useState(false);
+  const [displayedChars, setDisplayedChars] = useState([]);
+  const [isComplete,    setIsComplete]    = useState(false);
+  const [isMuted,       setIsMuted]       = useState(false);
+  const [audioBlocked,  setAudioBlocked]  = useState(false);
+  const [videoLoaded,   setVideoLoaded]   = useState(false);
+  const [showTapHint,   setShowTapHint]   = useState(false);
 
   const videoRef = useRef(null);
 
@@ -246,75 +235,111 @@ const WelcomePopup = () => {
     return () => clearTimeout(t);
   }, []);
 
-  // ─── Video autoplay with sound fallback ──────────────────────
-  useEffect(() => {
-    if (videoRef.current) {
-      const video = videoRef.current;
-      
-      const attemptPlay = (muted) => {
-        video.muted = muted;
-        return video.play();
-      };
+  // ─── Video autoplay with robust retry ──────────────────────
+  const playVideo = (muted) => {
+    const video = videoRef.current;
+    if (!video) return Promise.reject('No video element');
+    video.muted = muted;
+    return video.play();
+  };
 
-      // First try with sound (muted=false)
-      attemptPlay(false)
-        .then(() => {
-          // Success – sound is on
-          setIsMuted(false);
-          setAudioBlocked(false);
-        })
-        .catch((err) => {
-          // Autoplay with sound blocked – fallback to muted
-          if (err.name === 'NotAllowedError') {
-            setAudioBlocked(true);
-            // Play muted
-            attemptPlay(true)
-              .then(() => {
-                setIsMuted(true);
-              })
-              .catch(() => {});
-          }
-        });
+  const attemptPlay = (withSound) => {
+    const muted = !withSound;
+    return playVideo(muted)
+      .then(() => {
+        setIsMuted(muted);
+        setAudioBlocked(false);
+        return true;
+      })
+      .catch((err) => {
+        if (err.name === 'NotAllowedError' && withSound) {
+          setAudioBlocked(true);
+          return playVideo(true)
+            .then(() => {
+              setIsMuted(true);
+              setShowTapHint(true);
+              return true;
+            })
+            .catch(() => false);
+        }
+        return false;
+      });
+  };
+
+  useEffect(() => {
+    if (videoLoaded && videoRef.current) {
+      attemptPlay(true).catch(() => {});
     }
+  }, [videoLoaded]);
+
+  // ─── Fallback: retry after a delay ──────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (videoRef.current && !videoRef.current.currentTime) {
+        attemptPlay(true).catch(() => {});
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
   }, []);
 
-  // ─── Word‑by‑word typewriter (only Hindi) ─────────────────────
+  // ─── Grapheme‑aware character split ────────────────────────
+  const splitGraphemes = (str) => {
+    // Use Unicode property escapes to match grapheme clusters (base + combining marks)
+    const regex = /\P{M}\p{M}*/gu;
+    return str.match(regex) || [];
+  };
+
+  // ─── Character‑by‑character typewriter ──────────────────────
   useEffect(() => {
-    let hiIdx = 0;
+    const chars = splitGraphemes(WELCOME_TEXT);
+    let idx = 0;
     const timer = setInterval(() => {
-      if (hiIdx < HI_WORDS.length) {
-        setHiWords(prev => [...prev, HI_WORDS[hiIdx]]);
-        hiIdx++;
+      if (idx < chars.length) {
+        setDisplayedChars(prev => [...prev, chars[idx]]);
+        idx++;
       } else {
         clearInterval(timer);
         setIsComplete(true);
       }
-    }, 120);
+    }, 35); // 35ms per character for smooth effect
     return () => clearInterval(timer);
   }, []);
 
-  // ─── Toggle mute & ensure play ──────────────────────────────
-  const toggleMute = () => {
+  // ─── Toggle mute on video tap ──────────────────────────────
+  const handleVideoTap = () => {
     if (videoRef.current) {
       const newMuted = !isMuted;
       videoRef.current.muted = newMuted;
       setIsMuted(newMuted);
-      // If unmuting, ensure playback (user gesture now allows sound)
+      setShowTapHint(false);
       if (!newMuted) {
+        // Unmuting – ensure playback with sound
         videoRef.current.play().catch(() => {});
         setAudioBlocked(false);
-      }
-      if (newMuted) {
-        setAudioBlocked(false); // user chose to mute, so clear blocked hint
       }
     }
   };
 
-  // ─── Resume if video pauses ──────────────────────────────────
+  // ─── Resume if video pauses unexpectedly ──────────────────────
   const handlePause = () => {
     if (videoRef.current && !videoRef.current.ended) {
       videoRef.current.play().catch(() => {});
     }
+  };
+
+  // ─── Video event handlers ────────────────────────────────────
+  const handleLoadedData = () => {
+    setVideoLoaded(true);
+    attemptPlay(true).catch(() => {});
+  };
+
+  const handleError = () => {
+    setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.load();
+        attemptPlay(!isMuted).catch(() => {});
+      }
+    }, 500);
   };
 
   const handleClose = () => {
@@ -327,17 +352,10 @@ const WelcomePopup = () => {
     weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
   });
 
-  // ─── Render word with highlight ──────────────────────────────
-  const renderWord = (word, index) => {
-    const highlightIndices = [1, 2, 3]; // "सेंट", "जोसेफ", "हॉस्पिटल"
-    const isHighlight = highlightIndices.includes(index);
-    const className = isHighlight ? 'sjh-word-highlight' : 'sjh-word';
-    return (
-      <span key={index} className={className} style={{ marginRight: '0.25rem' }}>
-        {word}
-      </span>
-    );
-  };
+  // ─── Render each character ──────────────────────────────────
+  const renderChar = (char, index) => (
+    <span key={index} className="sjh-char">{char}</span>
+  );
 
   if (!visible) return null;
 
@@ -386,14 +404,18 @@ const WelcomePopup = () => {
             muted={isMuted}
             loop
             playsInline
-            onClick={toggleMute}
+            preload="auto"
+            onClick={handleVideoTap}
             onPause={handlePause}
+            onLoadedData={handleLoadedData}
+            onError={handleError}
             style={{
               position: 'absolute',
               top: 0, left: 0,
               width: '100%', height: '100%',
               objectFit: 'cover',
               zIndex: 0,
+              cursor: 'pointer',
             }}
           >
             <source src={video} type="video/mp4" />
@@ -406,6 +428,7 @@ const WelcomePopup = () => {
             inset: 0,
             background: 'rgba(0,0,0,0.35)',
             zIndex: 1,
+            pointerEvents: 'none',
           }} />
 
           {/* Content on top of video */}
@@ -419,7 +442,7 @@ const WelcomePopup = () => {
             height: '100%',
             color: '#fff',
           }}>
-            {/* Top bar: logo left, controls right */}
+            {/* Top bar: logo left, close button right */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div
                 className="sjh-logo"
@@ -439,62 +462,47 @@ const WelcomePopup = () => {
                 <img src={logo} alt="Hospital Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
 
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button
-                  className="sjh-volume-btn sjh-control-btn"
-                  onClick={toggleMute}
-                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    borderRadius: '50%',
-                    width: 32, height: 32,
-                    cursor: 'pointer',
-                    color: '#fff',
-                    fontSize: 16,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'background 0.2s',
-                  }}
-                >
-                  {isMuted ? '🔇' : '🔊'}
-                </button>
-                <button
-                  className="sjh-close-btn sjh-control-btn"
-                  onClick={handleClose}
-                  aria-label="Close"
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    borderRadius: '50%',
-                    width: 32, height: 32,
-                    cursor: 'pointer',
-                    color: '#fff',
-                    fontSize: 14,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'background 0.2s',
-                  }}
-                >✕</button>
-              </div>
+              <button
+                className="sjh-close-btn sjh-control-btn"
+                onClick={handleClose}
+                aria-label="Close"
+                style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: '50%',
+                  width: 32, height: 32,
+                  cursor: 'pointer',
+                  color: '#fff',
+                  fontSize: 14,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                }}
+              >✕</button>
             </div>
 
-            {/* Audio blocked hint (only if sound is blocked and video is muted) */}
-            {audioBlocked && isMuted && (
+            {/* Tap hint (shows when muted or audio blocked) */}
+            {(isMuted || audioBlocked) && (
               <div style={{
                 background: 'rgba(0,0,0,0.6)',
                 backdropFilter: 'blur(4px)',
                 borderRadius: '8px',
-                padding: '4px 12px',
-                fontSize: '12px',
+                padding: '6px 16px',
+                fontSize: '13px',
                 alignSelf: 'center',
-                border: '1px solid rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.25)',
                 color: '#fff',
                 textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                pointerEvents: 'none',
+                fontWeight: 500,
+                letterSpacing: '0.3px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
               }}>
-                🔊 Tap to unmute
+                <span>{isMuted ? '🔇' : '🔊'}</span>
+                {isMuted ? 'Tap to unmute' : 'Tap to mute'}
               </div>
             )}
           </div>
@@ -503,7 +511,7 @@ const WelcomePopup = () => {
         {/* ─── Body ─── */}
         <div className="sjh-body" style={{ padding: '1.25rem 1.5rem 1.75rem' }}>
 
-          {/* Welcome banner */}
+          {/* Welcome banner with character‑by‑character typewriter */}
           <div
             className="sjh-welcome-banner"
             style={{
@@ -526,12 +534,12 @@ const WelcomePopup = () => {
                 margin: 0,
                 fontWeight: 500,
                 minHeight: '1.6em',
-                fontFamily: "'Times New Roman', Times, serif",
+                fontFamily: "'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif",
                 textAlign: 'justify',
                 textJustify: 'inter-word',
               }}
             >
-              {hiWords.map((word, idx) => renderWord(word, idx))}
+              {displayedChars.map((char, idx) => renderChar(char, idx))}
               <span className={isComplete ? 'sjh-cursor-hidden' : 'sjh-cursor'} />
             </p>
           </div>
