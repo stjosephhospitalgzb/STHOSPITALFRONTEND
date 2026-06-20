@@ -50,7 +50,7 @@ const injectStyles = () => {
     }
     .sjh-overlay { transition: opacity 0.3s ease; }
     .sjh-card { animation: sjhFadeUp 0.44s cubic-bezier(.22,.68,0,1.12) both; }
-    .sjh-close-btn:hover { background: rgba(255,255,255,0.25) !important; }
+    .sjh-close-btn:hover, .sjh-mute-btn:hover { background: rgba(255,255,255,0.25) !important; }
     .sjh-leave-row:nth-child(even) { background: #f9fafb; }
     .sjh-leave-row:hover { background: #eff6ff !important; }
     .sjh-continue-btn:hover { background: #1e40af !important; }
@@ -219,7 +219,6 @@ const WelcomePopup = () => {
   const [isMuted,       setIsMuted]       = useState(false);
   const [audioBlocked,  setAudioBlocked]  = useState(false);
   const [videoLoaded,   setVideoLoaded]   = useState(false);
-  const [showTapHint,   setShowTapHint]   = useState(false);
 
   const videoRef = useRef(null);
 
@@ -257,7 +256,6 @@ const WelcomePopup = () => {
           return playVideo(true)
             .then(() => {
               setIsMuted(true);
-              setShowTapHint(true);
               return true;
             })
             .catch(() => false);
@@ -284,7 +282,6 @@ const WelcomePopup = () => {
 
   // ─── Grapheme‑aware character split ────────────────────────
   const splitGraphemes = (str) => {
-    // Use Unicode property escapes to match grapheme clusters (base + combining marks)
     const regex = /\P{M}\p{M}*/gu;
     return str.match(regex) || [];
   };
@@ -301,17 +298,16 @@ const WelcomePopup = () => {
         clearInterval(timer);
         setIsComplete(true);
       }
-    }, 35); // 35ms per character for smooth effect
+    }, 35);
     return () => clearInterval(timer);
   }, []);
 
-  // ─── Toggle mute on video tap ──────────────────────────────
-  const handleVideoTap = () => {
+  // ─── Toggle mute (called from button or video tap) ─────────
+  const toggleMute = () => {
     if (videoRef.current) {
       const newMuted = !isMuted;
       videoRef.current.muted = newMuted;
       setIsMuted(newMuted);
-      setShowTapHint(false);
       if (!newMuted) {
         // Unmuting – ensure playback with sound
         videoRef.current.play().catch(() => {});
@@ -405,7 +401,7 @@ const WelcomePopup = () => {
             loop
             playsInline
             preload="auto"
-            onClick={handleVideoTap}
+            onClick={toggleMute}
             onPause={handlePause}
             onLoadedData={handleLoadedData}
             onError={handleError}
@@ -442,7 +438,7 @@ const WelcomePopup = () => {
             height: '100%',
             color: '#fff',
           }}>
-            {/* Top bar: logo left, close button right */}
+            {/* Top bar: logo left, controls right */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div
                 className="sjh-logo"
@@ -462,28 +458,52 @@ const WelcomePopup = () => {
                 <img src={logo} alt="Hospital Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
 
-              <button
-                className="sjh-close-btn sjh-control-btn"
-                onClick={handleClose}
-                aria-label="Close"
-                style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  borderRadius: '50%',
-                  width: 32, height: 32,
-                  cursor: 'pointer',
-                  color: '#fff',
-                  fontSize: 14,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'background 0.2s',
-                }}
-              >✕</button>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {/* Mute button */}
+                <button
+                  className="sjh-mute-btn sjh-control-btn"
+                  onClick={toggleMute}
+                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: '50%',
+                    width: 32, height: 32,
+                    cursor: 'pointer',
+                    color: '#fff',
+                    fontSize: 16,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'background 0.2s',
+                  }}
+                >
+                  {isMuted ? '🔇' : '🔊'}
+                </button>
+                {/* Close button */}
+                <button
+                  className="sjh-close-btn sjh-control-btn"
+                  onClick={handleClose}
+                  aria-label="Close"
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: '50%',
+                    width: 32, height: 32,
+                    cursor: 'pointer',
+                    color: '#fff',
+                    fontSize: 14,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'background 0.2s',
+                  }}
+                >✕</button>
+              </div>
             </div>
 
-            {/* Tap hint (shows when muted or audio blocked) */}
-            {(isMuted || audioBlocked) && (
+            {/* Hint when audio is blocked and muted */}
+            {audioBlocked && isMuted && (
               <div style={{
                 background: 'rgba(0,0,0,0.6)',
                 backdropFilter: 'blur(4px)',
@@ -501,8 +521,7 @@ const WelcomePopup = () => {
                 alignItems: 'center',
                 gap: 6,
               }}>
-                <span>{isMuted ? '🔇' : '🔊'}</span>
-                {isMuted ? 'Tap to unmute' : 'Tap to mute'}
+                <span>🔇</span> Tap to unmute
               </div>
             )}
           </div>
