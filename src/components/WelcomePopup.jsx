@@ -146,10 +146,6 @@ const injectStyles = () => {
         height: 28px !important;
         font-size: 13px !important;
       }
-      .sjh-footer-logo {
-        width: 32px !important;
-        height: 32px !important;
-      }
     }
     @media (max-width: 400px) {
       .sjh-video-wrapper {
@@ -171,10 +167,6 @@ const injectStyles = () => {
       .sjh-continue-btn {
         font-size: 0.85rem !important;
         padding: 0.6rem !important;
-      }
-      .sjh-footer-logo {
-        width: 28px !important;
-        height: 28px !important;
       }
     }
   `;
@@ -212,11 +204,12 @@ const playWelcomeSound = () => {
 };
 
 const WelcomePopup = () => {
-  const [visible,       setVisible]       = useState(false);
-  const [animated,      setAnimated]      = useState(false);
+  const [visible,        setVisible]        = useState(false);
+  const [animated,       setAnimated]       = useState(false);
   const [displayedChars, setDisplayedChars] = useState([]);
-  const [isComplete,    setIsComplete]    = useState(false);
-  const [videoLoaded,   setVideoLoaded]   = useState(false);
+  const [isComplete,     setIsComplete]     = useState(false);
+  const [videoLoaded,    setVideoLoaded]    = useState(false);
+  const [audioEnabled,   setAudioEnabled]   = useState(false); // true when audio is playing
 
   const videoRef = useRef(null);
 
@@ -232,19 +225,66 @@ const WelcomePopup = () => {
     return () => clearTimeout(t);
   }, []);
 
-  // ─── Video autoplay ──────────────────────────────────────────
-  const playVideo = () => {
+  // ─── Video playback: try with sound, fallback to muted ──────
+  const playVideoWithAudio = () => {
     const video = videoRef.current;
     if (!video) return Promise.reject('No video element');
-    video.muted = true; // always muted to allow autoplay
-    return video.play();
+    video.muted = false; // want sound
+    return video.play()
+      .then(() => {
+        setAudioEnabled(true);
+        return true;
+      })
+      .catch((err) => {
+        if (err.name === 'NotAllowedError') {
+          // Autoplay with sound blocked – keep video muted for now
+          video.muted = true;
+          return video.play()
+            .then(() => {
+              setAudioEnabled(false); // user must enable via tap
+              return false;
+            })
+            .catch(() => false);
+        }
+        return false;
+      });
   };
 
+  // ─── Try autoplay when video is loaded ──────────────────────
   useEffect(() => {
     if (videoLoaded && videoRef.current) {
-      playVideo().catch(() => {});
+      playVideoWithAudio().catch(() => {});
     }
   }, [videoLoaded]);
+
+  // ─── Fallback retry ──────────────────────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (videoRef.current && !videoRef.current.currentTime) {
+        playVideoWithAudio().catch(() => {});
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // ─── Handle video click to enable audio if blocked ──────────
+  const handleVideoClick = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (!audioEnabled) {
+      // Attempt to unmute and play with sound
+      video.muted = false;
+      video.play()
+        .then(() => {
+          setAudioEnabled(true);
+        })
+        .catch(() => {
+          // If still blocked, keep muted
+          video.muted = true;
+        });
+    }
+    // If audio already enabled, do nothing (no toggle)
+  };
 
   // ─── Grapheme‑aware character split ────────────────────────
   const splitGraphemes = (str) => {
@@ -264,21 +304,21 @@ const WelcomePopup = () => {
         clearInterval(timer);
         setIsComplete(true);
       }
-    }, 70); // increased from 35ms to 70ms
+    }, 70);
     return () => clearInterval(timer);
   }, []);
 
   // ─── Video event handlers ────────────────────────────────────
   const handleLoadedData = () => {
     setVideoLoaded(true);
-    playVideo().catch(() => {});
+    playVideoWithAudio().catch(() => {});
   };
 
   const handleError = () => {
     setTimeout(() => {
       if (videoRef.current) {
         videoRef.current.load();
-        playVideo().catch(() => {});
+        playVideoWithAudio().catch(() => {});
       }
     }, 500);
   };
@@ -347,9 +387,10 @@ const WelcomePopup = () => {
           <video
             ref={videoRef}
             autoPlay
-            muted
+            muted={!audioEnabled} // initially muted if audio not enabled
             playsInline
             preload="auto"
+            onClick={handleVideoClick}
             onEnded={handleVideoEnded}
             onLoadedData={handleLoadedData}
             onError={handleError}
@@ -359,13 +400,14 @@ const WelcomePopup = () => {
               width: '100%', height: '100%',
               objectFit: 'cover',
               zIndex: 0,
+              cursor: 'pointer',
             }}
           >
             <source src={video} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
 
-          {/* Overlay */}
+          {/* Overlay with subtle hint for audio enable */}
           <div style={{
             position: 'absolute',
             inset: 0,
@@ -405,7 +447,7 @@ const WelcomePopup = () => {
                 <img src={logo} alt="Hospital Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
 
-              {/* Only close button – no mute toggle */}
+              {/* Close button only – no mute control */}
               <button
                 className="sjh-close-btn sjh-control-btn"
                 onClick={handleClose}
@@ -425,6 +467,25 @@ const WelcomePopup = () => {
                 }}
               >✕</button>
             </div>
+
+            {/* Hint: show only if audio is not enabled and video is playing */}
+            {!audioEnabled && videoLoaded && (
+              <div style={{
+                alignSelf: 'center',
+                background: 'rgba(0,0,0,0.55)',
+                backdropFilter: 'blur(4px)',
+                borderRadius: '8px',
+                padding: '6px 18px',
+                fontSize: '14px',
+                color: '#fff',
+                border: '1px solid rgba(255,255,255,0.2)',
+                fontWeight: 500,
+                letterSpacing: '0.3px',
+                pointerEvents: 'none',
+              }}>
+                🔈 Tap video to enable audio
+              </div>
+            )}
           </div>
         </div>
 
