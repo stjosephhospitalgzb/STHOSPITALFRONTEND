@@ -50,7 +50,7 @@ const injectStyles = () => {
     }
     .sjh-overlay { transition: opacity 0.3s ease; }
     .sjh-card { animation: sjhFadeUp 0.44s cubic-bezier(.22,.68,0,1.12) both; }
-    .sjh-close-btn:hover, .sjh-mute-btn:hover { background: rgba(255,255,255,0.25) !important; }
+    .sjh-close-btn:hover { background: rgba(255,255,255,0.25) !important; }
     .sjh-leave-row:nth-child(even) { background: #f9fafb; }
     .sjh-leave-row:hover { background: #eff6ff !important; }
     .sjh-continue-btn:hover { background: #1e40af !important; }
@@ -216,8 +216,6 @@ const WelcomePopup = () => {
   const [animated,      setAnimated]      = useState(false);
   const [displayedChars, setDisplayedChars] = useState([]);
   const [isComplete,    setIsComplete]    = useState(false);
-  const [isMuted,       setIsMuted]       = useState(false);
-  const [audioBlocked,  setAudioBlocked]  = useState(false);
   const [videoLoaded,   setVideoLoaded]   = useState(false);
 
   const videoRef = useRef(null);
@@ -234,51 +232,19 @@ const WelcomePopup = () => {
     return () => clearTimeout(t);
   }, []);
 
-  // ─── Video autoplay with robust retry ──────────────────────
-  const playVideo = (muted) => {
+  // ─── Video autoplay ──────────────────────────────────────────
+  const playVideo = () => {
     const video = videoRef.current;
     if (!video) return Promise.reject('No video element');
-    video.muted = muted;
+    video.muted = true; // always muted to allow autoplay
     return video.play();
-  };
-
-  const attemptPlay = (withSound) => {
-    const muted = !withSound;
-    return playVideo(muted)
-      .then(() => {
-        setIsMuted(muted);
-        setAudioBlocked(false);
-        return true;
-      })
-      .catch((err) => {
-        if (err.name === 'NotAllowedError' && withSound) {
-          setAudioBlocked(true);
-          return playVideo(true)
-            .then(() => {
-              setIsMuted(true);
-              return true;
-            })
-            .catch(() => false);
-        }
-        return false;
-      });
   };
 
   useEffect(() => {
     if (videoLoaded && videoRef.current) {
-      attemptPlay(true).catch(() => {});
+      playVideo().catch(() => {});
     }
   }, [videoLoaded]);
-
-  // ─── Fallback: retry after a delay ──────────────────────────
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (videoRef.current && !videoRef.current.currentTime) {
-        attemptPlay(true).catch(() => {});
-      }
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
 
   // ─── Grapheme‑aware character split ────────────────────────
   const splitGraphemes = (str) => {
@@ -286,7 +252,7 @@ const WelcomePopup = () => {
     return str.match(regex) || [];
   };
 
-  // ─── Character‑by‑character typewriter ──────────────────────
+  // ─── Character‑by‑character typewriter (slower: 70ms) ──────
   useEffect(() => {
     const chars = splitGraphemes(WELCOME_TEXT);
     let idx = 0;
@@ -298,44 +264,28 @@ const WelcomePopup = () => {
         clearInterval(timer);
         setIsComplete(true);
       }
-    }, 35);
+    }, 70); // increased from 35ms to 70ms
     return () => clearInterval(timer);
   }, []);
-
-  // ─── Toggle mute (called from button or video tap) ─────────
-  const toggleMute = () => {
-    if (videoRef.current) {
-      const newMuted = !isMuted;
-      videoRef.current.muted = newMuted;
-      setIsMuted(newMuted);
-      if (!newMuted) {
-        // Unmuting – ensure playback with sound
-        videoRef.current.play().catch(() => {});
-        setAudioBlocked(false);
-      }
-    }
-  };
-
-  // ─── Resume if video pauses unexpectedly ──────────────────────
-  const handlePause = () => {
-    if (videoRef.current && !videoRef.current.ended) {
-      videoRef.current.play().catch(() => {});
-    }
-  };
 
   // ─── Video event handlers ────────────────────────────────────
   const handleLoadedData = () => {
     setVideoLoaded(true);
-    attemptPlay(true).catch(() => {});
+    playVideo().catch(() => {});
   };
 
   const handleError = () => {
     setTimeout(() => {
       if (videoRef.current) {
         videoRef.current.load();
-        attemptPlay(!isMuted).catch(() => {});
+        playVideo().catch(() => {});
       }
     }, 500);
+  };
+
+  // ─── Close popup when video ends ─────────────────────────────
+  const handleVideoEnded = () => {
+    handleClose();
   };
 
   const handleClose = () => {
@@ -397,12 +347,10 @@ const WelcomePopup = () => {
           <video
             ref={videoRef}
             autoPlay
-            muted={isMuted}
-            loop
+            muted
             playsInline
             preload="auto"
-            onClick={toggleMute}
-            onPause={handlePause}
+            onEnded={handleVideoEnded}
             onLoadedData={handleLoadedData}
             onError={handleError}
             style={{
@@ -411,7 +359,6 @@ const WelcomePopup = () => {
               width: '100%', height: '100%',
               objectFit: 'cover',
               zIndex: 0,
-              cursor: 'pointer',
             }}
           >
             <source src={video} type="video/mp4" />
@@ -438,7 +385,7 @@ const WelcomePopup = () => {
             height: '100%',
             color: '#fff',
           }}>
-            {/* Top bar: logo left, controls right */}
+            {/* Top bar: logo left, close button right */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div
                 className="sjh-logo"
@@ -458,72 +405,26 @@ const WelcomePopup = () => {
                 <img src={logo} alt="Hospital Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
 
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {/* Mute button */}
-                <button
-                  className="sjh-mute-btn sjh-control-btn"
-                  onClick={toggleMute}
-                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    borderRadius: '50%',
-                    width: 32, height: 32,
-                    cursor: 'pointer',
-                    color: '#fff',
-                    fontSize: 16,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'background 0.2s',
-                  }}
-                >
-                  {isMuted ? '🔇' : '🔊'}
-                </button>
-                {/* Close button */}
-                <button
-                  className="sjh-close-btn sjh-control-btn"
-                  onClick={handleClose}
-                  aria-label="Close"
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    borderRadius: '50%',
-                    width: 32, height: 32,
-                    cursor: 'pointer',
-                    color: '#fff',
-                    fontSize: 14,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'background 0.2s',
-                  }}
-                >✕</button>
-              </div>
+              {/* Only close button – no mute toggle */}
+              <button
+                className="sjh-close-btn sjh-control-btn"
+                onClick={handleClose}
+                aria-label="Close"
+                style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: '50%',
+                  width: 32, height: 32,
+                  cursor: 'pointer',
+                  color: '#fff',
+                  fontSize: 14,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                }}
+              >✕</button>
             </div>
-
-            {/* Hint when audio is blocked and muted */}
-            {audioBlocked && isMuted && (
-              <div style={{
-                background: 'rgba(0,0,0,0.6)',
-                backdropFilter: 'blur(4px)',
-                borderRadius: '8px',
-                padding: '6px 16px',
-                fontSize: '13px',
-                alignSelf: 'center',
-                border: '1px solid rgba(255,255,255,0.25)',
-                color: '#fff',
-                textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                pointerEvents: 'none',
-                fontWeight: 500,
-                letterSpacing: '0.3px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-              }}>
-                <span>🔇</span> Tap to unmute
-              </div>
-            )}
           </div>
         </div>
 
