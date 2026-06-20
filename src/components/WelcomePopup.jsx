@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import video from "../assets/WELCOME.mp4";
-import logo from "../assets/logo.jpg";   // hospital logo
+import logo from "../assets/logo.jpg";
 
 const DOCTORS_ON_LEAVE = [
   { name: 'Dr. R. Sharma', dept: 'Cardiology',   initials: 'RS' },
@@ -217,7 +217,7 @@ const playWelcomeSound = () => {
       gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
       gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
       osc2.connect(gain2);
-      gain2.connect(audioCtx.destination);
+      osc2.connect(audioCtx.destination);
       osc2.start(audioCtx.currentTime);
       osc2.stop(audioCtx.currentTime + 0.6);
     }, 150);
@@ -229,7 +229,8 @@ const WelcomePopup = () => {
   const [animated,   setAnimated]   = useState(false);
   const [hiWords,    setHiWords]    = useState([]);
   const [isComplete, setIsComplete] = useState(false);
-  const [isMuted,    setIsMuted]    = useState(false);  // default: sound ON
+  const [isMuted,    setIsMuted]    = useState(false); // start UNMUTED
+  const [audioBlocked, setAudioBlocked] = useState(false); // flag if autoplay with sound failed
 
   const videoRef = useRef(null);
 
@@ -243,6 +244,38 @@ const WelcomePopup = () => {
       playWelcomeSound();
     }, 300);
     return () => clearTimeout(t);
+  }, []);
+
+  // ─── Video autoplay with sound fallback ──────────────────────
+  useEffect(() => {
+    if (videoRef.current) {
+      const video = videoRef.current;
+      
+      const attemptPlay = (muted) => {
+        video.muted = muted;
+        return video.play();
+      };
+
+      // First try with sound (muted=false)
+      attemptPlay(false)
+        .then(() => {
+          // Success – sound is on
+          setIsMuted(false);
+          setAudioBlocked(false);
+        })
+        .catch((err) => {
+          // Autoplay with sound blocked – fallback to muted
+          if (err.name === 'NotAllowedError') {
+            setAudioBlocked(true);
+            // Play muted
+            attemptPlay(true)
+              .then(() => {
+                setIsMuted(true);
+              })
+              .catch(() => {});
+          }
+        });
+    }
   }, []);
 
   // ─── Word‑by‑word typewriter (only Hindi) ─────────────────────
@@ -260,11 +293,27 @@ const WelcomePopup = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // ─── Toggle video mute ─────────────────────────────────────────
+  // ─── Toggle mute & ensure play ──────────────────────────────
   const toggleMute = () => {
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      const newMuted = !isMuted;
+      videoRef.current.muted = newMuted;
+      setIsMuted(newMuted);
+      // If unmuting, ensure playback (user gesture now allows sound)
+      if (!newMuted) {
+        videoRef.current.play().catch(() => {});
+        setAudioBlocked(false);
+      }
+      if (newMuted) {
+        setAudioBlocked(false); // user chose to mute, so clear blocked hint
+      }
+    }
+  };
+
+  // ─── Resume if video pauses ──────────────────────────────────
+  const handlePause = () => {
+    if (videoRef.current && !videoRef.current.ended) {
+      videoRef.current.play().catch(() => {});
     }
   };
 
@@ -273,17 +322,15 @@ const WelcomePopup = () => {
     setTimeout(() => setVisible(false), 320);
   };
 
-  // ─── Today's date string ───────────────────────────────────────
+  // ─── Today's date ─────────────────────────────────────────────
   const todayStr = new Date().toLocaleDateString('en-IN', {
     weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
   });
 
-  // ─── Helper to render a word with highlight for hospital name ──
+  // ─── Render word with highlight ──────────────────────────────
   const renderWord = (word, index) => {
-    // Indices that form the hospital name in Hindi
     const highlightIndices = [1, 2, 3]; // "सेंट", "जोसेफ", "हॉस्पिटल"
     const isHighlight = highlightIndices.includes(index);
-
     const className = isHighlight ? 'sjh-word-highlight' : 'sjh-word';
     return (
       <span key={index} className={className} style={{ marginRight: '0.25rem' }}>
@@ -339,6 +386,8 @@ const WelcomePopup = () => {
             muted={isMuted}
             loop
             playsInline
+            onClick={toggleMute}
+            onPause={handlePause}
             style={{
               position: 'absolute',
               top: 0, left: 0,
@@ -432,14 +481,29 @@ const WelcomePopup = () => {
               </div>
             </div>
 
-            <div />
+            {/* Audio blocked hint (only if sound is blocked and video is muted) */}
+            {audioBlocked && isMuted && (
+              <div style={{
+                background: 'rgba(0,0,0,0.6)',
+                backdropFilter: 'blur(4px)',
+                borderRadius: '8px',
+                padding: '4px 12px',
+                fontSize: '12px',
+                alignSelf: 'center',
+                border: '1px solid rgba(255,255,255,0.2)',
+                color: '#fff',
+                textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+              }}>
+                🔊 Tap to unmute
+              </div>
+            )}
           </div>
         </div>
 
         {/* ─── Body ─── */}
         <div className="sjh-body" style={{ padding: '1.25rem 1.5rem 1.75rem' }}>
 
-          {/* Welcome banner with typewriter + highlighted hospital name (Hindi only) */}
+          {/* Welcome banner */}
           <div
             className="sjh-welcome-banner"
             style={{
@@ -474,7 +538,6 @@ const WelcomePopup = () => {
 
           {/* Doctors on leave */}
           <div style={{ marginBottom: '1.25rem' }}>
-            {/* Section header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="sjh-pulse-dot" />
@@ -492,7 +555,6 @@ const WelcomePopup = () => {
               </span>
             </div>
 
-            {/* Date sub-label */}
             <div style={{
               fontSize: 10,
               color: '#9ca3af',
@@ -545,9 +607,6 @@ const WelcomePopup = () => {
                 </div>
               ))}
             </div>
-
-            {/* Footer note */}
-          
           </div>
 
           {/* Continue button */}
@@ -567,7 +626,7 @@ const WelcomePopup = () => {
             Continue to portal →
           </button>
 
-          {/* ─── Footer ─── */}
+          {/* Footer */}
           <div style={{
             display: 'flex',
             justifyContent: 'flex-end',
