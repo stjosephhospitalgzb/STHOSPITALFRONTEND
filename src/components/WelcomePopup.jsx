@@ -209,7 +209,6 @@ const WelcomePopup = () => {
   const [displayedChars, setDisplayedChars] = useState([]);
   const [isComplete,     setIsComplete]     = useState(false);
   const [videoLoaded,    setVideoLoaded]    = useState(false);
-  const [audioEnabled,   setAudioEnabled]   = useState(false); // true when audio is playing
 
   const videoRef = useRef(null);
 
@@ -225,35 +224,24 @@ const WelcomePopup = () => {
     return () => clearTimeout(t);
   }, []);
 
-  // ─── Video playback: try with sound, fallback to muted ──────
-  const playVideoWithAudio = () => {
+  // ─── Video playback with sound ──────────────────────────────
+  const playVideo = () => {
     const video = videoRef.current;
-    if (!video) return Promise.reject('No video element');
-    video.muted = false; // want sound
-    return video.play()
-      .then(() => {
-        setAudioEnabled(true);
-        return true;
-      })
-      .catch((err) => {
-        if (err.name === 'NotAllowedError') {
-          // Autoplay with sound blocked – keep video muted for now
-          video.muted = true;
-          return video.play()
-            .then(() => {
-              setAudioEnabled(false); // user must enable via tap
-              return false;
-            })
-            .catch(() => false);
-        }
-        return false;
-      });
+    if (!video) return;
+    
+    // Ensure video plays with sound
+    video.muted = false;
+    video.volume = 1.0;
+    
+    video.play().catch(() => {
+      // If autoplay is blocked, user interaction will trigger it
+    });
   };
 
   // ─── Try autoplay when video is loaded ──────────────────────
   useEffect(() => {
     if (videoLoaded && videoRef.current) {
-      playVideoWithAudio().catch(() => {});
+      playVideo();
     }
   }, [videoLoaded]);
 
@@ -261,29 +249,21 @@ const WelcomePopup = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (videoRef.current && !videoRef.current.currentTime) {
-        playVideoWithAudio().catch(() => {});
+        playVideo();
       }
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  // ─── Handle video click to enable audio if blocked ──────────
+  // ─── Handle user interaction to enable audio ────────────────
   const handleVideoClick = () => {
     const video = videoRef.current;
     if (!video) return;
-    if (!audioEnabled) {
-      // Attempt to unmute and play with sound
-      video.muted = false;
-      video.play()
-        .then(() => {
-          setAudioEnabled(true);
-        })
-        .catch(() => {
-          // If still blocked, keep muted
-          video.muted = true;
-        });
-    }
-    // If audio already enabled, do nothing (no toggle)
+    
+    // Unmute and play with sound
+    video.muted = false;
+    video.volume = 1.0;
+    video.play().catch(() => {});
   };
 
   // ─── Grapheme‑aware character split ────────────────────────
@@ -311,14 +291,14 @@ const WelcomePopup = () => {
   // ─── Video event handlers ────────────────────────────────────
   const handleLoadedData = () => {
     setVideoLoaded(true);
-    playVideoWithAudio().catch(() => {});
+    playVideo();
   };
 
   const handleError = () => {
     setTimeout(() => {
       if (videoRef.current) {
         videoRef.current.load();
-        playVideoWithAudio().catch(() => {});
+        playVideo();
       }
     }, 500);
   };
@@ -387,7 +367,6 @@ const WelcomePopup = () => {
           <video
             ref={videoRef}
             autoPlay
-            muted={!audioEnabled} // initially muted if audio not enabled
             playsInline
             preload="auto"
             onClick={handleVideoClick}
@@ -407,7 +386,7 @@ const WelcomePopup = () => {
             Your browser does not support the video tag.
           </video>
 
-          {/* Overlay with subtle hint for audio enable */}
+          {/* Overlay with subtle gradient */}
           <div style={{
             position: 'absolute',
             inset: 0,
@@ -447,7 +426,7 @@ const WelcomePopup = () => {
                 <img src={logo} alt="Hospital Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
 
-              {/* Close button only – no mute control */}
+              {/* Close button */}
               <button
                 className="sjh-close-btn sjh-control-btn"
                 onClick={handleClose}
@@ -468,8 +447,8 @@ const WelcomePopup = () => {
               >✕</button>
             </div>
 
-            {/* Hint: show only if audio is not enabled and video is playing */}
-            {!audioEnabled && videoLoaded && (
+            {/* Audio hint - shows only if video is loaded and not playing with sound */}
+            {videoLoaded && (
               <div style={{
                 alignSelf: 'center',
                 background: 'rgba(0,0,0,0.55)',
@@ -482,6 +461,7 @@ const WelcomePopup = () => {
                 fontWeight: 500,
                 letterSpacing: '0.3px',
                 pointerEvents: 'none',
+                display: 'none', // Hidden since we want auto-play with sound
               }}>
                 🔈 Tap video to enable audio
               </div>
