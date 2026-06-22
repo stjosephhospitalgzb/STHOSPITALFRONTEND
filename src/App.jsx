@@ -21,96 +21,63 @@ import Chatbot from "./components/Chatbot";
 import ParamedicalGalleryManager from "./components/ParamedicalGalleryManager.jsx";
 import WelcomePopup from "./components/WelcomePopup.jsx";
 
-// ==================== CORRECTED PHONE NUMBERS ====================
-// Ambulance numbers (as used in ContactUs page)
-const AMBULANCE_PRIMARY = "+919910878137";   // 9910878137
-const AMBULANCE_SECONDARY = "+9185100075051"; // 85100075051 (if needed)
-// Emergency / Hospital helpline (24/7)
-const EMERGENCY_PHONE = "+917827908598";     // from ContactUs: +91 7827-908-598
+// ==================== NEW STAFF IMPORTS ====================
+import StaffLogin from "./components/StaffLogin.jsx";
+import StaffDashboard from "./components/StaffDashboard";
 
-// Ambulance Button (calls primary ambulance number)
-const AmbulanceButton = () => {
-  return (
-    <a
-      href={`tel:${AMBULANCE_PRIMARY}`}
-      className="right-action-btn ambulance-btn"
-      aria-label="Call Ambulance"
-      title="Ambulance - 24/7"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect x="2" y="6" width="20" height="12" rx="2" />
-        <path d="M8 12h4" />
-        <path d="M12 8v4" />
-        <circle cx="6" cy="18" r="2" />
-        <circle cx="18" cy="18" r="2" />
-        <path d="M6 18h12" />
-        <path d="M18 12h2" />
-        <path d="M4 12h2" />
-      </svg>
-      <span>AMBULANCE</span>
-    </a>
-  );
-};
+// ==================== PHONE NUMBERS ====================
+const AMBULANCE_PRIMARY = "+919910878137";
+const EMERGENCY_PHONE = "+917827908598";
 
-// Emergency Button (calls hospital emergency helpline)
-const EmergencyButton = () => {
-  return (
-    <a
-      href={`tel:${EMERGENCY_PHONE}`}
-      className="right-action-btn emergency-btn"
-      aria-label="Emergency Call"
-      title="Emergency – Tap to Call"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-      </svg>
-      <span>EMERGENCY</span>
-    </a>
-  );
-};
+// ==================== AMBULANCE & EMERGENCY BUTTONS ====================
+const AmbulanceButton = () => (
+  <a href={`tel:${AMBULANCE_PRIMARY}`} className="right-action-btn ambulance-btn" aria-label="Call Ambulance" title="Ambulance - 24/7">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <path d="M8 12h4" /><path d="M12 8v4" /><circle cx="6" cy="18" r="2" /><circle cx="18" cy="18" r="2" />
+      <path d="M6 18h12" /><path d="M18 12h2" /><path d="M4 12h2" />
+    </svg>
+    <span>AMBULANCE</span>
+  </a>
+);
 
-// Container for the two buttons (stacked vertically)
-const RightSideButtons = () => {
-  return (
-    <div className="right-buttons-container">
-      <AmbulanceButton />
-      <EmergencyButton />
-    </div>
-  );
-};
+const EmergencyButton = () => (
+  <a href={`tel:${EMERGENCY_PHONE}`} className="right-action-btn emergency-btn" aria-label="Emergency Call" title="Emergency – Tap to Call">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+    <span>EMERGENCY</span>
+  </a>
+);
+
+const RightSideButtons = () => (
+  <div className="right-buttons-container">
+    <AmbulanceButton />
+    <EmergencyButton />
+  </div>
+);
 
 function App() {
-  const token = localStorage.getItem('adminToken');
+  // Token checks
+  const adminToken = localStorage.getItem('adminToken');
+  const staffToken = localStorage.getItem('staffToken');
 
-  const ProtectedRoute = ({ children }) => {
-    return token ? children : <Navigate to="/admin-login" />;
+  // Protected route for admin
+  const ProtectedAdminRoute = ({ children }) => {
+    return adminToken ? children : <Navigate to="/admin-login" />;
+  };
+
+  // Protected route for staff
+  const ProtectedStaffRoute = ({ children }) => {
+    return staffToken ? children : <Navigate to="/staff-login" />;
   };
 
   return (
     <BrowserRouter>
-     <WelcomePopup />
+      <WelcomePopup />
       <Navbar />
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/doctors" element={<Doctors />} />
@@ -120,8 +87,10 @@ function App() {
         <Route path="/careers" element={<CareersPage />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/tpaservices" element={<TpaService />} />
+
+        {/* Admin routes */}
         <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
+        <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>}>
           <Route index element={<AdminDoctors />} />
           <Route path="doctors" element={<AdminDoctors />} />
           <Route path="gallery" element={<AdminGallery />} />
@@ -129,13 +98,20 @@ function App() {
           <Route path="news" element={<AdminNews />} />
           <Route path="paramedical-gallery" element={<ParamedicalGalleryManager />} />
         </Route>
+
+        {/* ========== NEW STAFF ROUTES ========== */}
+        <Route path="/staff-login" element={<StaffLogin />} />
+        <Route path="/staff/dashboard" element={<ProtectedStaffRoute><StaffDashboard /></ProtectedStaffRoute>} />
+
+        {/* Fallback (optional) */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
 
       <Chatbot />
       <RightSideButtons />
 
+      {/* Global styles (unchanged) */}
       <style>{`
-        /* Container for the two right-side buttons */
         .right-buttons-container {
           position: fixed;
           right: 20px;
@@ -145,8 +121,6 @@ function App() {
           gap: 12px;
           z-index: 1000;
         }
-
-        /* Common button style */
         .right-action-btn {
           background: #dc2626;
           color: white;
@@ -172,7 +146,6 @@ function App() {
           background: #b91c1c;
           box-shadow: 0 12px 28px rgba(220, 38, 38, 0.5);
         }
-        /* Pulse animation only on the phone icon inside Emergency button */
         .emergency-btn svg {
           animation: pulse 1.5s infinite;
         }
@@ -181,8 +154,6 @@ function App() {
           50% { transform: scale(1.1); }
           100% { transform: scale(1); }
         }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
           .right-buttons-container {
             right: 16px;
@@ -205,7 +176,7 @@ function App() {
             gap: 8px;
           }
           .right-action-btn span {
-            display: none;  /* hide text on very small screens, show only icons */
+            display: none;
           }
           .right-action-btn {
             padding: 10px;
@@ -216,8 +187,6 @@ function App() {
             height: 22px;
           }
         }
-
-        /* Chatbot toggle button (left side) – ensure no conflict */
         .chatbot-toggle-btn {
           position: fixed;
           left: 20px;

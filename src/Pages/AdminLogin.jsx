@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, Lock, Mail } from "lucide-react";
+import { ShieldCheck, Lock, Mail, Loader } from "lucide-react";
 import API from "../api";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      // ✅ Changed from "/auth/login" to "/admin/login"
       const { data } = await API.post("/admin/login", {
         email,
         password,
@@ -25,10 +26,11 @@ const AdminLogin = () => {
       navigate("/admin/doctors");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ... (styles remain the same)
   const styles = {
     container: {
       minHeight: "100vh",
@@ -146,22 +148,46 @@ const AdminLogin = () => {
     },
     button: {
       width: "100%",
-      backgroundImage: "linear-gradient(to right, #3b82f6, #06b6d4)",
+      backgroundImage: loading
+        ? "linear-gradient(to right, #6b7280, #9ca3af)"
+        : "linear-gradient(to right, #3b82f6, #06b6d4)",
       color: "white",
       padding: "0.75rem 1rem",
       borderRadius: "0.75rem",
       fontWeight: "600",
       border: "none",
-      cursor: "pointer",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-      transform: isButtonHovered ? "scale(1.02)" : "scale(1)",
+      cursor: loading ? "not-allowed" : "pointer",
+      transition: "transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease",
+      transform: isButtonHovered && !loading ? "scale(1.02)" : "scale(1)",
       boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "0.5rem",
     },
     footer: {
       textAlign: "center",
       color: "#9ca3af",
       fontSize: "0.75rem",
       marginTop: "1.5rem",
+    },
+    staffLink: {
+      color: "#93c5fd",
+      textDecoration: "none",
+      fontWeight: "500",
+      cursor: "pointer",
+      transition: "color 0.2s",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "0.3rem",
+    },
+    staffLinkHover: {
+      color: "#bfdbfe",
+    },
+    divider: {
+      margin: "1rem 0 0.5rem",
+      border: "0",
+      borderTop: "1px solid rgba(255,255,255,0.1)",
     },
   };
 
@@ -194,6 +220,7 @@ const AdminLogin = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 style={styles.input}
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -209,6 +236,7 @@ const AdminLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 style={styles.input}
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -218,10 +246,38 @@ const AdminLogin = () => {
             style={styles.button}
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
+            disabled={loading}
           >
-            Login to Dashboard
+            {loading ? (
+              <>
+                <Loader size={20} className="animate-spin" />
+                Logging in...
+              </>
+            ) : (
+              "Login to Dashboard"
+            )}
           </button>
         </form>
+
+        <hr style={styles.divider} />
+
+        <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+          <span style={{ color: "#9ca3af", fontSize: "0.875rem" }}>
+            Are you a staff member?{" "}
+          </span>
+          <a
+            href="/staff-login"
+            style={styles.staffLink}
+            onMouseEnter={(e) => (e.target.style.color = styles.staffLinkHover.color)}
+            onMouseLeave={(e) => (e.target.style.color = styles.staffLink.color)}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/staff-login");
+            }}
+          >
+            Login here →
+          </a>
+        </div>
 
         <p style={styles.footer}>Protected Admin Panel • Secure Authentication</p>
       </div>

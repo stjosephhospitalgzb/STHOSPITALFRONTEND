@@ -1,15 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import video from "../assets/WELCOME.mp4";
 import logo from "../assets/logo.jpg";
-
-const DOCTORS_ON_LEAVE = [
-  { name: 'Dr. R. Sharma', dept: 'Cardiology',   initials: 'RS' },
-  { name: 'Dr. P. Gupta',  dept: 'Neurology',    initials: 'PG' },
-  { name: 'Dr. S. Verma',  dept: 'Orthopaedics', initials: 'SV' },
-];
+import API from "../api"; // 💡 Connects directly to your base Axios instance setup
 
 // ─── Welcome text (full Hindi) ────────────────────────────────
-const WELCOME_TEXT = "नमस्ते! सेंट जोसेफ हॉस्पिटल (St. Joseph's Hospital) में आपका स्वागत है। गाज़ियाबाद में स्थित यह अस्पताल मरीजों को उच्च गुणवत्ता वाली स्वास्थ्य सेवाएँ और चिकित्सा सुविधाएँ प्रदान करने के लिए तत्पर है।";
+const WELCOME_TEXT = "नमस्ते!  सेंट  जोसेफ हॉस्पिटल (St. Joseph's Hospital) में आपका स्वागत है। गाज़ियाबाद में स्थित यह अस्पताल मरीजों को उच्च गुणवत्ता वाली स्वास्थ्य सेवाएँ और चिकित्सा सुविधाएँ प्रदान करने के लिए तत्पर है।";
 
 // ─── Inject styles ──────────────────────────────────────────────
 const injectStyles = () => {
@@ -103,9 +98,34 @@ const injectStyles = () => {
     .sjh-leave-row {
       animation: slideInRow 0.35s ease both;
     }
-    .sjh-leave-row:nth-child(1) { animation-delay: 0.1s; }
-    .sjh-leave-row:nth-child(2) { animation-delay: 0.2s; }
-    .sjh-leave-row:nth-child(3) { animation-delay: 0.3s; }
+
+    /* ─── Sound control button ─── */
+    .sjh-sound-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      z-index: 10;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(4px);
+    }
+    .sjh-sound-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+    .sjh-sound-btn.muted {
+      opacity: 0.7;
+    }
 
     /* ─── Responsive adjustments ─── */
     @media (max-width: 520px) {
@@ -146,6 +166,13 @@ const injectStyles = () => {
         height: 28px !important;
         font-size: 13px !important;
       }
+      .sjh-sound-btn {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 14px !important;
+        bottom: 10px !important;
+        right: 10px !important;
+      }
     }
     @media (max-width: 400px) {
       .sjh-video-wrapper {
@@ -177,6 +204,10 @@ const injectStyles = () => {
 const playWelcomeSound = () => {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    
     const osc1 = audioCtx.createOscillator();
     const gain1 = audioCtx.createGain();
     osc1.type = 'sine';
@@ -196,7 +227,7 @@ const playWelcomeSound = () => {
       gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
       gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
       osc2.connect(gain2);
-      osc2.connect(audioCtx.destination);
+      gain2.connect(audioCtx.destination);
       osc2.start(audioCtx.currentTime);
       osc2.stop(audioCtx.currentTime + 0.6);
     }, 150);
@@ -204,69 +235,173 @@ const playWelcomeSound = () => {
 };
 
 const WelcomePopup = () => {
-  const [visible,        setVisible]        = useState(false);
-  const [animated,       setAnimated]       = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [animated, setAnimated] = useState(false);
   const [displayedChars, setDisplayedChars] = useState([]);
-  const [isComplete,     setIsComplete]     = useState(false);
-  const [videoLoaded,    setVideoLoaded]    = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  // 🟢 Live state for real-time absent doctor records
+  const [doctorsOnLeave, setDoctorsOnLeave] = useState([]);
 
   const videoRef = useRef(null);
+  const audioUnlockedRef = useRef(false);
+  const playAttemptRef = useRef(false);
 
-  useEffect(() => { injectStyles(); }, []);
+  useEffect(() => { 
+    injectStyles(); 
+    fetchAbsentDoctors(); // 🟢 Trigger live collection query loop
+  }, []);
+
+  // ─── Fetch and Filter Absent Doctors ─────────────────────────
+  const fetchAbsentDoctors = async () => {
+    try {
+      const { data } = await API.get("/doctors");
+      // Filter out only active database records explicitly on leave status
+      const absentList = data.filter(doc => doc.isOnLeave === true);
+      
+      // Map structures to extract initials dynamically if missing from model
+      const formattedList = absentList.map(doc => {
+        const cleanName = doc.name.replace(/^(Dr\.|Dr|dr|DR)\.?\s*/i, "");
+        const parts = cleanName.trim().split(" ");
+        let initials = "DR";
+        if (parts.length > 0 && parts[0]) initials = parts[0][0].toUpperCase();
+        if (parts.length > 1 && parts[1]) initials += parts[1][0].toUpperCase();
+        
+        return {
+          name: doc.name,
+          dept: doc.dept || "Medical General",
+          initials: initials.substring(0, 2)
+        };
+      });
+
+      setDoctorsOnLeave(formattedList);
+    } catch (err) {
+      console.error("Failed to load live doctor leave configurations on popup:", err);
+    }
+  };
 
   // ─── Open popup + play sound ───────────────────────────────────
   useEffect(() => {
     const t = setTimeout(() => {
       setVisible(true);
       requestAnimationFrame(() => setTimeout(() => setAnimated(true), 20));
-      playWelcomeSound();
+      
+      try {
+        playWelcomeSound();
+      } catch (e) { /* sound will play on user interaction */ }
     }, 300);
     return () => clearTimeout(t);
   }, []);
 
-  // ─── Video playback with sound ──────────────────────────────
-  const playVideo = () => {
-    const video = videoRef.current;
-    if (!video) return;
+  // ─── Video playback with sound ─────────────────────────────────
+  const playVideoWithSound = async () => {
+    const videoObj = videoRef.current;
+    if (!videoObj) return;
+
+    try {
+      videoObj.muted = false;
+      videoObj.volume = 1.0;
+      await videoObj.play();
+      setIsPlaying(true);
+      setIsMuted(false);
+      audioUnlockedRef.current = true;
+    } catch (error) {
+      console.log('Autoplay with sound blocked, playing muted');
+      try {
+        videoObj.muted = true;
+        await videoObj.play();
+        setIsPlaying(true);
+        setIsMuted(true);
+      } catch (e) {
+        console.log('Video playback failed:', e);
+      }
+    }
+  };
+
+  // ─── Unlock audio on user interaction ──────────────────────────
+  const unlockAudio = async () => {
+    if (audioUnlockedRef.current) return;
     
-    // Ensure video plays with sound
-    video.muted = false;
-    video.volume = 1.0;
-    
-    video.play().catch(() => {
-      // If autoplay is blocked, user interaction will trigger it
-    });
+    const videoObj = videoRef.current;
+    if (!videoObj) return;
+
+    try {
+      if (window.AudioContext || window.webkitAudioContext) {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
+      }
+
+      videoObj.muted = false;
+      videoObj.volume = 1.0;
+      await videoObj.play();
+      setIsMuted(false);
+      audioUnlockedRef.current = true;
+      setIsPlaying(true);
+      
+      try {
+        playWelcomeSound();
+      } catch (e) { /* ignore */ }
+    } catch (error) {
+      console.log('Audio unlock failed:', error);
+    }
+  };
+
+  // ─── Toggle mute ──────────────────────────────────────────────
+  const toggleMute = async () => {
+    const videoObj = videoRef.current;
+    if (!videoObj) return;
+
+    if (isMuted) {
+      try {
+        videoObj.muted = false;
+        videoObj.volume = 1.0;
+        await videoObj.play();
+        setIsMuted(false);
+        audioUnlockedRef.current = true;
+        setIsPlaying(true);
+      } catch (error) {
+        console.log('Unmute failed:', error);
+      }
+    } else {
+      videoObj.muted = true;
+      setIsMuted(true);
+    }
   };
 
   // ─── Try autoplay when video is loaded ──────────────────────
   useEffect(() => {
-    if (videoLoaded && videoRef.current) {
-      playVideo();
+    if (videoLoaded && videoRef.current && !playAttemptRef.current) {
+      playAttemptRef.current = true;
+      setTimeout(playVideoWithSound, 200);
     }
   }, [videoLoaded]);
 
-  // ─── Fallback retry ──────────────────────────────────────────
+  // ─── Global click listener to unlock audio ───────────────────
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (videoRef.current && !videoRef.current.currentTime) {
-        playVideo();
+    const handleGlobalClick = async () => {
+      if (!audioUnlockedRef.current) {
+        await unlockAudio();
       }
-    }, 1000);
-    return () => clearTimeout(timer);
+    };
+    
+    document.addEventListener('click', handleGlobalClick);
+    document.addEventListener('touchstart', handleGlobalClick);
+    
+    return () => {
+      document.removeEventListener('click', handleGlobalClick);
+      document.removeEventListener('touchstart', handleGlobalClick);
+    };
   }, []);
 
-  // ─── Handle user interaction to enable audio ────────────────
-  const handleVideoClick = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    
-    // Unmute and play with sound
-    video.muted = false;
-    video.volume = 1.0;
-    video.play().catch(() => {});
+  const handleVideoInteraction = async () => {
+    await unlockAudio();
   };
 
-  // ─── Grapheme‑aware character split ────────────────────────
   const splitGraphemes = (str) => {
     const regex = /\P{M}\p{M}*/gu;
     return str.match(regex) || [];
@@ -288,22 +423,19 @@ const WelcomePopup = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // ─── Video event handlers ────────────────────────────────────
   const handleLoadedData = () => {
     setVideoLoaded(true);
-    playVideo();
   };
 
   const handleError = () => {
     setTimeout(() => {
       if (videoRef.current) {
         videoRef.current.load();
-        playVideo();
+        playVideoWithSound();
       }
     }, 500);
   };
 
-  // ─── Close popup when video ends ─────────────────────────────
   const handleVideoEnded = () => {
     handleClose();
   };
@@ -313,12 +445,10 @@ const WelcomePopup = () => {
     setTimeout(() => setVisible(false), 320);
   };
 
-  // ─── Today's date ─────────────────────────────────────────────
   const todayStr = new Date().toLocaleDateString('en-IN', {
     weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
   });
 
-  // ─── Render each character ──────────────────────────────────
   const renderChar = (char, index) => (
     <span key={index} className="sjh-char">{char}</span>
   );
@@ -369,7 +499,7 @@ const WelcomePopup = () => {
             autoPlay
             playsInline
             preload="auto"
-            onClick={handleVideoClick}
+            onClick={handleVideoInteraction}
             onEnded={handleVideoEnded}
             onLoadedData={handleLoadedData}
             onError={handleError}
@@ -386,7 +516,6 @@ const WelcomePopup = () => {
             Your browser does not support the video tag.
           </video>
 
-          {/* Overlay with subtle gradient */}
           <div style={{
             position: 'absolute',
             inset: 0,
@@ -394,6 +523,15 @@ const WelcomePopup = () => {
             zIndex: 1,
             pointerEvents: 'none',
           }} />
+
+          {/* Sound control button */}
+          <button
+            className={`sjh-sound-btn ${isMuted ? 'muted' : ''}`}
+            onClick={toggleMute}
+            aria-label={isMuted ? 'Unmute' : 'Mute'}
+          >
+            {isMuted ? '🔇' : '🔊'}
+          </button>
 
           {/* Content on top of video */}
           <div style={{
@@ -406,27 +544,20 @@ const WelcomePopup = () => {
             height: '100%',
             color: '#fff',
           }}>
-            {/* Top bar: logo left, close button right */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div
                 className="sjh-logo"
                 style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                  background: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                  width: 48, height: 48,
+                  borderRadius: '50%', background: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
                   border: '2px solid rgba(255,255,255,0.3)',
                 }}
               >
                 <img src={logo} alt="Hospital Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
 
-              {/* Close button */}
               <button
                 className="sjh-close-btn sjh-control-btn"
                 onClick={handleClose}
@@ -436,34 +567,23 @@ const WelcomePopup = () => {
                   border: '1px solid rgba(255,255,255,0.3)',
                   borderRadius: '50%',
                   width: 32, height: 32,
-                  cursor: 'pointer',
-                  color: '#fff',
-                  fontSize: 14,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  cursor: 'pointer', color: '#fff',
+                  fontSize: 14, display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
                   transition: 'background 0.2s',
                 }}
               >✕</button>
             </div>
 
-            {/* Audio hint - shows only if video is loaded and not playing with sound */}
-            {videoLoaded && (
+            {isMuted && !audioUnlockedRef.current && (
               <div style={{
-                alignSelf: 'center',
-                background: 'rgba(0,0,0,0.55)',
-                backdropFilter: 'blur(4px)',
-                borderRadius: '8px',
-                padding: '6px 18px',
-                fontSize: '14px',
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.2)',
-                fontWeight: 500,
-                letterSpacing: '0.3px',
-                pointerEvents: 'none',
-                display: 'none', // Hidden since we want auto-play with sound
+                alignSelf: 'center', background: 'rgba(0,0,0,0.5)',
+                padding: '4px 12px', borderRadius: '20px',
+                fontSize: '11px', color: '#fff',
+                backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.2)',
+                marginBottom: '8px', pointerEvents: 'none',
               }}>
-                🔈 Tap video to enable audio
+                Tap to enable sound 🔊
               </div>
             )}
           </div>
@@ -472,7 +592,7 @@ const WelcomePopup = () => {
         {/* ─── Body ─── */}
         <div className="sjh-body" style={{ padding: '1.25rem 1.5rem 1.75rem' }}>
 
-          {/* Welcome banner with character‑by‑character typewriter */}
+          {/* Welcome banner */}
           <div
             className="sjh-welcome-banner"
             style={{
@@ -489,15 +609,11 @@ const WelcomePopup = () => {
             <p
               className="sjh-welcome-text"
               style={{
-                color: '#1e293b',
-                fontSize: '0.97rem',
-                lineHeight: 1.75,
-                margin: 0,
-                fontWeight: 500,
-                minHeight: '1.6em',
+                color: '#1e293b', fontSize: '0.97rem',
+                lineHeight: 1.75, margin: 0,
+                fontWeight: 500, minHeight: '1.6em',
                 fontFamily: "'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif",
-                textAlign: 'justify',
-                textJustify: 'inter-word',
+                textAlign: 'justify', textJustify: 'inter-word',
               }}
             >
               {displayedChars.map((char, idx) => renderChar(char, idx))}
@@ -505,7 +621,7 @@ const WelcomePopup = () => {
             </p>
           </div>
 
-          {/* Doctors on leave */}
+          {/* Doctors on leave Section */}
           <div style={{ marginBottom: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -515,73 +631,76 @@ const WelcomePopup = () => {
                 </span>
               </div>
               <span style={{
-                background: '#fef3c7', color: '#92400e',
+                background: doctorsOnLeave.length > 0 ? '#fef3c7' : '#dcfce7', 
+                color: doctorsOnLeave.length > 0 ? '#92400e' : '#15803d',
                 fontSize: 10, fontWeight: 600,
                 borderRadius: 20, padding: '2px 10px',
-                border: '1px solid #fde68a',
+                border: doctorsOnLeave.length > 0 ? '1px solid #fde68a' : '1px solid #bbf7d0',
               }}>
-                {DOCTORS_ON_LEAVE.length} absent
+                {doctorsOnLeave.length} absent
               </span>
             </div>
 
-            <div style={{
-              fontSize: 10,
-              color: '#9ca3af',
-              marginBottom: 8,
-              paddingLeft: 2,
-              letterSpacing: '0.3px',
-            }}>
+            <div style={{ fontSize: 10, color: '#9ca3af', marginBottom: 8, paddingLeft: 2, letterSpacing: '0.3px' }}>
               📅 {todayStr} &nbsp;·&nbsp; 
             </div>
 
             <div style={{ border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
-              {DOCTORS_ON_LEAVE.map((doc, i) => (
-                <div
-                  key={i}
-                  className="sjh-leave-row"
-                  style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '9px 12px',
-                    borderBottom: i < DOCTORS_ON_LEAVE.length - 1 ? '1px solid #f3f4f6' : 'none',
-                    transition: 'background 0.15s',
-                  }}
-                >
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{
-                      width: 30, height: 30, borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #e0e7ff, #c7d2fe)',
-                      color: '#3730a3',
-                      fontSize: 10, fontWeight: 700,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      flexShrink: 0,
-                      boxShadow: '0 1px 4px rgba(99,102,241,0.15)',
-                    }}>
-                      {doc.initials}
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      <span className="sjh-doctor-name" style={{ color: '#1f2937', fontSize: 13, fontWeight: 600 }}>{doc.name}</span>
-                      <span style={{ fontSize: 10, color: '#9ca3af' }}>On leave</span>
-                    </div>
-                  </span>
-                  <span
-                    className="sjh-doctor-dept"
+              {doctorsOnLeave.length > 0 ? (
+                doctorsOnLeave.map((doc, i) => (
+                  <div
+                    key={i}
+                    className="sjh-leave-row"
                     style={{
-                      color: '#92400e', fontSize: 11, fontWeight: 500,
-                      background: '#fef3c7', borderRadius: 6,
-                      padding: '2px 8px', border: '1px solid #fde68a',
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      padding: '9px 12px',
+                      borderBottom: i < doctorsOnLeave.length - 1 ? '1px solid #f3f4f6' : 'none',
+                      transition: 'background 0.15s',
+                      animation: 'slideInRow 0.35s ease both',
+                      animationDelay: `${(i + 1) * 0.1}s`
                     }}
                   >
-                    {doc.dept}
-                  </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{
+                        width: 30, height: 30, borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #e0e7ff, #c7d2fe)',
+                        color: '#3730a3', fontSize: 10, fontWeight: 700,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0, boxShadow: '0 1px 4px rgba(99,102,241,0.15)',
+                      }}>
+                        {doc.initials}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        <span className="sjh-doctor-name" style={{ color: '#1f2937', fontSize: 13, fontWeight: 600 }}>{doc.name}</span>
+                        <span style={{ fontSize: 10, color: '#9ca3af' }}>On leave</span>
+                      </div>
+                    </span>
+                    <span
+                      className="sjh-doctor-dept"
+                      style={{
+                        color: '#92400e', fontSize: 11, fontWeight: 500,
+                        background: '#fef3c7', borderRadius: 6,
+                        padding: '2px 8px', border: '1px solid #fde68a',
+                      }}
+                    >
+                      {doc.dept}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div style={{ padding: '1.5rem', textAlign: 'center', color: '#6b7280', fontSize: '0.85rem', backgroundColor: '#f8fafc' }}>
+                  😊 All Doctors are fully available today.
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
           {/* Continue button */}
           <button
             className="sjh-continue-btn"
-            onClick={handleClose}
+            onClick={async () => {
+              await unlockAudio();
+            }}
             style={{
               width: '100%', padding: '0.7rem',
               border: 'none', borderRadius: 40,
@@ -596,19 +715,8 @@ const WelcomePopup = () => {
           </button>
 
           {/* Footer */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            marginTop: '0.75rem',
-            gap: '0.5rem',
-          }}>
-            <span style={{
-              fontSize: '0.7rem',
-              color: '#6b7280',
-              fontWeight: 500,
-              letterSpacing: '0.3px',
-            }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '0.75rem', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.7rem', color: '#6b7280', fontWeight: 500, letterSpacing: '0.3px' }}>
               @ St. Joseph's Hospital Ghaziabad
             </span>
           </div>
