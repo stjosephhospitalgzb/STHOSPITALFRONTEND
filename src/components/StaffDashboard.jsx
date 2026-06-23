@@ -8,9 +8,10 @@ const StaffDashboard = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [message, setMessage] = useState("");
+  const [clearing, setClearing] = useState(false);
   const navigate = useNavigate();
 
-  // Modal State
+  // Modal state
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -20,28 +21,80 @@ const StaffDashboard = () => {
     fetchDoctors();
   }, []);
 
-  // Update filtered list whenever doctors or searchTerm changes
-  useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredDoctors(doctors);
-    } else {
-      const filtered = doctors.filter((doc) =>
-        doc.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredDoctors(filtered);
-    }
-  }, [searchTerm, doctors]);
+  // ─── Sort function: on‑leave doctors first ─────────────────────
+  const sortDoctors = (list) => {
+    return [...list].sort((a, b) => {
+      // If both are on leave or both available, keep original order (stable)
+      if (a.isOnLeave === b.isOnLeave) return 0;
+      // a on leave → -1 (comes first), b on leave → 1
+      return a.isOnLeave ? -1 : 1;
+    });
+  };
 
+  // ─── Fetch and sort ─────────────────────────────────────────────
   const fetchDoctors = async () => {
     try {
       const { data } = await API.get("/doctors");
-      setDoctors(data);
-      setFilteredDoctors(data);
+      const sorted = sortDoctors(data);
+      setDoctors(sorted);
+      setFilteredDoctors(sorted);
+      // Check for expired leaves after fetching
+      checkAndClearExpiredLeaves(sorted);
     } catch (err) {
       console.error("Error loading doctor records", err);
     }
   };
 
+  // ─── Clear a single expired leave ──────────────────────────────
+  const clearExpiredLeave = async (id) => {
+    try {
+      const token = localStorage.getItem("staffToken");
+      await API.patch(
+        `/staff/doctor-leave/${id}`,
+        { isOnLeave: false },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return true;
+    } catch (err) {
+      console.error("Failed to auto‑clear leave for doctor", id, err);
+      return false;
+    }
+  };
+
+  // ─── Check all doctors for expired endDate and clear them ──────
+  const checkAndClearExpiredLeaves = async (doctorList) => {
+    if (clearing) return;
+    setClearing(true);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const expired = doctorList.filter((doc) => {
+      if (!doc.isOnLeave) return false;
+      if (!doc.leaveDetails || !doc.leaveDetails.endDate) return false;
+      const end = new Date(doc.leaveDetails.endDate);
+      end.setHours(0, 0, 0, 0);
+      return end < today;
+    });
+
+    if (expired.length === 0) {
+      setClearing(false);
+      return;
+    }
+
+    const results = await Promise.all(expired.map((doc) => clearExpiredLeave(doc._id)));
+    const anyCleared = results.some((r) => r === true);
+    setClearing(false);
+
+    if (anyCleared) {
+      setMessage(`🔄 Auto‑cleared leave for ${expired.length} doctor(s) whose leave period ended.`);
+      // Refresh the list to reflect changes
+      fetchDoctors();
+      setTimeout(() => setMessage(""), 4000);
+    }
+  };
+
+  // ─── Manual clear (mark available) ─────────────────────────────
   const markAsAvailable = async (id) => {
     try {
       const token = localStorage.getItem("staffToken");
@@ -51,13 +104,14 @@ const StaffDashboard = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setMessage("Doctor is now active and available!");
-      fetchDoctors();
+      fetchDoctors(); // re‑fetch and re‑sort
       setTimeout(() => setMessage(""), 3000);
     } catch (err) {
       alert(err.response?.data?.message || "Failed to update availability status.");
     }
   };
 
+  // ─── Submit leave form ─────────────────────────────────────────
   const handleLeaveFormSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -78,18 +132,31 @@ const StaffDashboard = () => {
       setStartDate("");
       setEndDate("");
       setReason("");
-      fetchDoctors();
+      fetchDoctors(); // re‑fetch and re‑sort
       setTimeout(() => setMessage(""), 3000);
     } catch (err) {
       alert(err.response?.data?.message || "Failed to save leave details.");
     }
   };
 
+  // ─── Search filter (preserves sorted order) ────────────────────
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredDoctors(doctors);
+    } else {
+      const filtered = doctors.filter((doc) =>
+        doc.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredDoctors(filtered);
+    }
+  }, [searchTerm, doctors]);
+
   const handleLogout = () => {
     localStorage.removeItem("staffToken");
     navigate("/staff-login");
   };
 
+  // ─── Styles (unchanged) ────────────────────────────────────────
   const styles = {
     layout: { padding: "2rem", backgroundColor: "#0f172a", minHeight: "100vh", color: "#f8fafc", fontFamily: "sans-serif" },
     header: { display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #334155", paddingBottom: "1rem", marginBottom: "1rem", flexWrap: "wrap", gap: "1rem" },
@@ -175,7 +242,7 @@ const StaffDashboard = () => {
         )}
       </div>
 
-      {/* Modal (unchanged) */}
+      {/* Leave Modal */}
       {selectedDoc && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>

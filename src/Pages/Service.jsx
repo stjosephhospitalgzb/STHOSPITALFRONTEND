@@ -41,7 +41,7 @@ import banner from "../assets/hospitalimage/banner9.png";
 
 const defaultServiceIcon = generalWardIcon;
 
-// ─── GLOBAL STYLES (ENHANCED FOR MOBILE) ──────────────────────────────
+// ─── GLOBAL STYLES ──────────────────────────────────────────────────────
 const injectStyles = () => {
   if (document.getElementById("hc-services-styles")) return;
   const s = document.createElement("style");
@@ -51,7 +51,6 @@ const injectStyles = () => {
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', 'Outfit', sans-serif; font-size: 16px; line-height: 1.5; }
     
-    /* Responsive base */
     @media (max-width: 768px) {
       body { font-size: 14px; }
       .hc-container { padding: 0 16px; }
@@ -65,12 +64,10 @@ const injectStyles = () => {
       .hc-stat-num { font-size: 1.5rem !important; }
     }
 
-    /* Animations */
     @keyframes fadeInUp    { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeInLeft  { from{opacity:0;transform:translateX(-32px)} to{opacity:1;transform:translateX(0)} }
     @keyframes fadeInRight { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:translateX(0)} }
     
-    /* Navigation & buttons */
     .hc-nav-link { text-decoration:none; transition:color .2s; position:relative; }
     .hc-nav-link::after { content:''; display:block; height:2px; width:0; background:#2563eb; transition:width .3s; }
     .hc-nav-link:hover::after,.hc-nav-link.active::after { width:100%; }
@@ -79,48 +76,36 @@ const injectStyles = () => {
     .hc-btn-outline:hover { background:#2563eb !important; color:#fff !important; transform:translateY(-2px) !important; }
     .hc-filter-btn.active { background: #2563eb !important; color: white !important; border-color: #2563eb !important; }
     
-    /* Service list items */
     .hc-left-list-item { transition: all 0.2s ease; cursor: pointer; }
     .hc-left-list-item:hover { background: #eff6ff !important; border-color: #bfdbfe !important; transform: translateX(4px); }
     .hc-left-list-item.active { background: #2563eb !important; border-color: #2563eb !important; }
     .hc-left-list-item.active .service-title { color: white !important; }
     .hc-left-list-item.active .service-icon-img { filter: brightness(0) invert(1); }
     
-    /* Detail image hover */
     .hc-detail-img { transition: transform 0.5s ease; }
     .hc-detail-card:hover .hc-detail-img { transform: scale(1.03); }
     
-    /* Container */
     .hc-container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
     
-    /* Scrollable service list (desktop: vertical, mobile: horizontal) */
     .hc-scrollable-list { max-height: 70vh; overflow-y: auto; padding-right: 8px; }
     .hc-scrollable-list::-webkit-scrollbar { width: 6px; }
     .hc-scrollable-list::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 4px; }
     .hc-scrollable-list::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
     .hc-scrollable-list::-webkit-scrollbar-thumb:hover { background: #64748b; }
     
-    /* Gallery grid */
-    .hc-gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 20px 20px 0 20px; }
-    @media (max-width: 768px) {
-      .hc-gallery-grid { grid-template-columns: 1fr; gap: 10px; padding: 16px; }
-      .hc-gallery-grid img { height: 180px !important; object-fit: cover; }
-    }
+    .hc-gallery-grid { display: none; }
     
-    /* Doctors grid */
     .hc-doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 16px; }
     @media (max-width: 640px) { 
       .hc-doctors-grid { grid-template-columns: 1fr; gap: 16px; } 
     }
     
-    /* Two columns layout */
     @media (max-width: 1024px) {
       .hc-two-columns { flex-direction: column !important; }
       .hc-left-panel { width: 100% !important; margin-bottom: 40px; }
       .hc-right-panel { width: 100% !important; }
     }
     
-    /* Horizontal service list on tablet/mobile */
     @media (max-width: 1024px) {
       .hc-scrollable-list { 
         display: flex !important; 
@@ -142,7 +127,6 @@ const injectStyles = () => {
       }
     }
     
-    /* Features row responsive */
     .hc-feat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
     @media (max-width: 992px) {
       .hc-feat-row { grid-template-columns: repeat(2, 1fr) !important; gap: 16px; }
@@ -152,7 +136,6 @@ const injectStyles = () => {
       .hc-feat-row { grid-template-columns: 1fr !important; }
     }
     
-    /* Stats row responsive */
     .hc-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
     @media (max-width: 768px) { 
       .hc-stats-row { grid-template-columns: repeat(2, 1fr) !important; gap: 16px; } 
@@ -161,7 +144,6 @@ const injectStyles = () => {
       .hc-stats-row { grid-template-columns: 1fr !important; } 
     }
     
-    /* Choose us grid */
     .hc-choose-grid { display: grid; grid-template-columns: 380px 1fr; gap: 64px; align-items: center; }
     @media (max-width: 1024px) {
       .hc-choose-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
@@ -169,7 +151,6 @@ const injectStyles = () => {
       .hc-choose-left .hc-inline-badge { justify-content: center; }
     }
     
-    /* Hero highlight badges */
     .hc-hero-badges { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; }
     .hc-hero-badge { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border-radius: 60px; padding: 8px 16px; backdrop-filter: blur(4px); font-size: 13px; font-weight: 600; color: white; }
     @media (max-width: 640px) {
@@ -177,7 +158,6 @@ const injectStyles = () => {
       .hc-hero-badge svg { width: 18px; height: 18px; }
     }
     
-    /* Filter buttons responsive */
     .hc-filter-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-start; margin-bottom: 24px; }
     @media (max-width: 768px) {
       .hc-filter-group { justify-content: center; }
@@ -187,11 +167,22 @@ const injectStyles = () => {
       .hc-filter-group button { flex: 1 0 auto; text-align: center; min-width: 110px; }
     }
     
-    /* General responsive overrides */
+    .hc-hero-img {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 60%;
+      overflow: hidden;
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .hc-hero-img { display: none !important; }
+    }
+    
     @media (max-width: 768px) {
       .hc-nav-links { display:none !important; }
       .hc-hamburger { display:flex !important; }
-      .hc-hero-img { display:none !important; }
       .hc-footer-cols { grid-template-columns:1fr !important; gap:20px !important; }
       .hc-container { padding: 0 20px; }
       .stats-section { padding: 50px 16px !important; }
@@ -202,7 +193,7 @@ const injectStyles = () => {
   document.head.appendChild(s);
 };
 
-// ─── HOOKS (unchanged) ────────────────────────────────────────────────
+// ─── HOOKS ──────────────────────────────────────────────────────────────
 const useInView = (threshold = 0.12) => {
   const ref = useRef(null);
   const [v, setV] = useState(false);
@@ -307,9 +298,8 @@ const getLocalServiceIcon = (title) => {
   return iconMap[title] || defaultServiceIcon;
 };
 
-// ─── SERVICE DATA (unchanged - same as your original) ──────────────────
+// ─── SERVICE DATA (unchanged) ──────────────────────────────────────────
 const SERVICES = [
-  // General Services
   {
     title: "General Medicine",
     images: [
@@ -715,54 +705,59 @@ const StatCounter = ({ val, suffix, label, icon, inView }) => {
   );
 };
 
-const DoctorCard = ({ doctor }) => (
-  <div style={{ display:"flex", alignItems:"center", gap:16, padding:"12px", background:C.lgray, borderRadius:"16px", border:`1px solid ${C.border}`, transition:"all 0.2s" }}>
-    <img src={doctor.img} alt={doctor.name} style={{ width:64, height:64, borderRadius:"50%", objectFit:"cover", border:`2px solid ${C.blue}` }} />
-    <div>
-      <div style={{ fontWeight:800, color:C.dark }}>{doctor.name}</div>
-      <div style={{ fontSize:13, color:C.blue, fontWeight:600 }}>{doctor.qual}</div>
-      <div style={{ fontSize:12, color:C.gray }}>Exp: {doctor.exp} yrs</div>
+// ─── UPDATED DoctorCard with fallback image ──────────────────────────
+const DoctorCard = ({ doctor }) => {
+  const imgSrc = doctor.img || `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.name)}&background=2563eb&color=fff&size=64`;
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:16, padding:"12px", background:C.lgray, borderRadius:"16px", border:`1px solid ${C.border}`, transition:"all 0.2s" }}>
+      <img src={imgSrc} alt={doctor.name} style={{ width:64, height:64, borderRadius:"50%", objectFit:"cover", border:`2px solid ${C.blue}` }} />
+      <div>
+        <div style={{ fontWeight:800, color:C.dark }}>{doctor.name}</div>
+        <div style={{ fontSize:13, color:C.blue, fontWeight:600 }}>{doctor.qual || doctor.qualification || "MD"}</div>
+        <div style={{ fontSize:12, color:C.gray }}>Exp: {doctor.exp || doctor.experience || "0"} yrs</div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
+// ─── Improved department mapping with fallback ─────────────────────────
 const serviceToDepartmentMap = {
-  "General Medicine": "General Medicine (Physician)",
-  "General Surgery": "General Surgery",
-  "Gynecology / Obstetrics": "Gynecology",
-  "Pediatrics": "Pediatrics",
-  "Pediatric Surgery": "Pediatric Surgery",
-  "Anesthesiology": "Anesthesiology",
+  "General Medicine": ["General Medicine (Physician)", "General Medicine", "General Medicine (MD)"],
+  "General Surgery": ["General Surgery", "General Surgery (MS)"],
+  "Gynecology / Obstetrics": ["Gynecology", "Obstetrics & Gynecology"],
+  "Pediatrics": ["Pediatrics", "Pediatrics (MD)"],
+  "Pediatric Surgery": ["Pediatric Surgery"],
+  "Anesthesiology": ["Anesthesiology"],
   "Intensive Care Unit": null,
   "Neonatal ICU": null,
   "PICU": null,
   "Medical and Surgical ICU": null,
-  "Pathology": "Pathology",
-  "X-Ray, ECG, 2D ECHO": "Radiology",
-  "Ultrasound": "Radiology",
-  "Mammography": "Radiology",
-  "CT Scan": "Radiology",
-  "EEG, EMG & NCV": "Neurology",
-  "ENT": "ENT",
-  "Orthopedics": "Orthopedics",
-  "Dental": "Dentistry",
-  "Dermatology": "Dermatology",
-  "Skin & VD": "Dermatology",
-  "Cardiology": "Cardiology",
-  "Oncology": "Oncology",
-  "Psychiatry": "Psychiatry",
-  "Uro Surgery": "Urology",
-  "Laparoscopic Surgery": "General Surgery",
-  "Plastic Surgery": "Plastic Surgery",
-  "Neuro Surgery": "Neurosurgery",
-  "Nephrology": "Nephrology",
-  "Neurology": "Neurology",
-  "Dialysis": "Nephrology",
+  "Pathology": ["Pathology"],
+  "X-Ray, ECG, 2D ECHO": ["Radiology", "Radiodiagnosis"],
+  "Ultrasound": ["Radiology", "Radiodiagnosis"],
+  "Mammography": ["Radiology", "Radiodiagnosis"],
+  "CT Scan": ["Radiology", "Radiodiagnosis"],
+  "EEG, EMG & NCV": ["Neurology"],
+  "ENT": ["ENT", "Otolaryngology"],
+  "Orthopedics": ["Orthopedics", "Orthopaedics"],
+  "Dental": ["Dentistry", "Dental Surgery"],
+  "Dermatology": ["Dermatology"],
+  "Skin & VD": ["Dermatology", "Skin & VD"],
+  "Cardiology": ["Cardiology"],
+  "Oncology": ["Oncology"],
+  "Psychiatry": ["Psychiatry"],
+  "Uro Surgery": ["Urology", "Uro Surgery"],
+  "Laparoscopic Surgery": ["General Surgery"],
+  "Plastic Surgery": ["Plastic Surgery"],
+  "Neuro Surgery": ["Neurosurgery", "Neuro Surgery"],
+  "Nephrology": ["Nephrology"],
+  "Neurology": ["Neurology"],
+  "Dialysis": ["Nephrology"],
   "Physiotherapy": null,
   "24 Hours Emergency Services": null,
   "Pharmacy – 24 Hours": null,
   "Billing Services – 24 Hours": null,
-  "Counseling": "Psychiatry",
+  "Counseling": ["Psychiatry"],
 };
 
 export default function Services() {
@@ -790,10 +785,12 @@ export default function Services() {
 
   const enhancedServices = useMemo(() => {
     return SERVICES.map(service => {
-      const deptName = serviceToDepartmentMap[service.title];
+      const deptNames = serviceToDepartmentMap[service.title];
       let serviceDoctors = [];
-      if (deptName) {
-        serviceDoctors = doctors.filter(doc => doc.dept === deptName);
+      if (deptNames && Array.isArray(deptNames)) {
+        serviceDoctors = doctors.filter(doc => 
+          deptNames.some(dept => doc.dept && doc.dept.toLowerCase() === dept.toLowerCase())
+        );
       }
       return { ...service, doctors: serviceDoctors };
     });
@@ -804,15 +801,16 @@ export default function Services() {
     return svc.category === filter;
   });
 
+  // ─── FIX: Keep selected service in sync with updated list ──────────
   useEffect(() => {
     if (filteredServices.length > 0) {
-      if (!selectedService || !filteredServices.find(s => s.title === selectedService.title)) {
-        setSelectedService(filteredServices[0]);
-      }
+      // Try to keep the same service by title, or fallback to first
+      const matched = filteredServices.find(s => s.title === selectedService?.title);
+      setSelectedService(matched || filteredServices[0]);
     } else {
       setSelectedService(null);
     }
-  }, [filter, filteredServices, selectedService]);
+  }, [filter, filteredServices, selectedService?.title]);
 
   return (
     <div style={{ fontFamily:"'Inter', 'Outfit', sans-serif", background:C.white, color:C.dark, overflowX:"hidden" }}>
@@ -823,7 +821,7 @@ export default function Services() {
         <div style={{ position:"absolute", top:-80, left:-80, width:280, height:280, borderRadius:"50%", background:"radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%)" }} />
         <div style={{ position:"absolute", bottom:-40, left:200, width:160, height:160, borderRadius:"50%", background:"radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 70%)" }} />
         
-        <div className="hc-hero-img" style={{ position:"absolute", right:0, top:0, bottom:0, width:"60%", overflow:"hidden", display:"none", displayDesktop:"block" }}>
+        <div className="hc-hero-img">
           <img src={banner} alt="Hospital banner" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", opacity:0.9 }} />
           <div style={{ position:"absolute", inset:0, background:"linear-gradient(90deg, #0d1f3c 20%, transparent 60%)" }} />
         </div>
@@ -930,43 +928,85 @@ export default function Services() {
             </div>
           </div>
 
-          {/* Right Panel */}
+          {/* Right Panel - Blue header with white text, justified content */}
           <div className="hc-right-panel" style={{ width:"68%", flexShrink:0 }}>
             {selectedService ? (
               <Anim dir="right" key={selectedService.title}>
                 <div className="hc-detail-card" style={{ background:C.white, borderRadius:24, overflow:"hidden", border:`1px solid ${C.border}`, boxShadow:"0 12px 28px -8px rgba(0,0,0,0.1)" }}>
-                  <div className="hc-gallery-grid">
-                    {selectedService.images && selectedService.images.length > 0 ? (
-                      selectedService.images.slice(0, 4).map((img, idx) => (
-                        <img key={idx} src={img} alt={`${selectedService.title} ${idx+1}`} style={{ width:"100%", height:"180px", objectFit:"cover", borderRadius:"14px", border:`1px solid ${C.border}`, transition:"transform 0.3s" }} className="hc-detail-img" />
-                      ))
-                    ) : (
-                      <div style={{ height:180, background:C.lgray, borderRadius:14, display:"flex", alignItems:"center", justifyContent:"center", color:C.gray }}>No images available</div>
-                    )}
-                  </div>
-                  <div style={{ padding:"16px 20px 0 20px", position:"relative", display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
-                    <div style={{ width:48, height:48, borderRadius:14, background:`${C.blue}10`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                      <img src={getLocalServiceIcon(selectedService.title)} alt={selectedService.title} style={{ width:30, height:30, objectFit:"contain" }} />
+                  {/* Blue header */}
+                  <div style={{
+                    background: "linear-gradient(135deg, #1e3a8a, #2563eb)",
+                    padding: "20px 24px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 16,
+                    flexWrap: "wrap"
+                  }}>
+                    <div style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 16,
+                      background: "rgba(255,255,255,0.2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}>
+                      <img
+                        src={getLocalServiceIcon(selectedService.title)}
+                        alt={selectedService.title}
+                        style={{ width: 34, height: 34, objectFit: "contain", filter: "brightness(0) invert(1)" }}
+                      />
                     </div>
-                    <div style={{ flex:1 }}>
-                      {selectedService.category === "emergency" && <div style={{ display:"inline-block", background:"#dc2626", color:"white", fontSize:10, fontWeight:800, padding:"3px 12px", borderRadius:40, letterSpacing:1, marginBottom:6 }}>🚨 24/7 Emergency</div>}
-                      <h2 style={{ fontSize:"1.6rem", fontWeight:800, color:C.dark, letterSpacing:-0.5, marginBottom:6 }}>{selectedService.title}</h2>
-                      <div style={{ width:45, height:3, background:C.blue, borderRadius:2 }} />
+                    <div>
+                      {selectedService.category === "emergency" && (
+                        <div style={{
+                          display: "inline-block",
+                          background: "#dc2626",
+                          color: "white",
+                          fontSize: 10,
+                          fontWeight: 800,
+                          padding: "3px 12px",
+                          borderRadius: 40,
+                          letterSpacing: 1,
+                          marginBottom: 6
+                        }}>
+                          🚨 24/7 Emergency
+                        </div>
+                      )}
+                      <h2 style={{
+                        fontSize: "2rem",
+                        fontWeight: 900,
+                        color: "white",
+                        letterSpacing: "-0.5px",
+                        margin: 0,
+                        lineHeight: 1.2
+                      }}>
+                        {selectedService.title}
+                      </h2>
                     </div>
                   </div>
-                  <div style={{ padding:"16px 20px 24px 20px" }}>
+
+                  <div style={{ padding: "20px 24px 24px" }}>
                     {selectedService.Overview && (
                       <>
-                        <h4 style={{ fontSize:"1.1rem", fontWeight:700, color:C.dark, marginBottom:10 }}>Overview</h4>
-                        <p style={{ fontSize:"0.85rem", lineHeight:1.6, color:C.gray, marginBottom:20, textAlign:"justify" }}>{selectedService.Overview}</p>
+                        <h4 style={{ fontSize: "1.1rem", fontWeight: 700, color: C.dark, marginBottom: 10, marginTop: 4 }}>Overview</h4>
+                        <p style={{ fontSize: "0.9rem", lineHeight: 1.7, color: C.gray, marginBottom: 20, textAlign: "justify" }}>
+                          {selectedService.Overview}
+                        </p>
                       </>
                     )}
-                    <h4 style={{ fontSize:"1.1rem", fontWeight:700, color:C.dark, marginBottom:10 }}>Description</h4>
-                    <p style={{ fontSize:"0.85rem", lineHeight:1.6, color:C.gray, marginBottom:20, textAlign:"justify" }}>{selectedService.details}</p>
+                    <h4 style={{ fontSize: "1.1rem", fontWeight: 700, color: C.dark, marginBottom: 10 }}>Description</h4>
+                    <p style={{ fontSize: "0.9rem", lineHeight: 1.7, color: C.gray, marginBottom: 20, textAlign: "justify", whiteSpace: "pre-line" }}>
+                      {selectedService.details}
+                    </p>
 
-                    {selectedService.doctors && selectedService.doctors.length > 0 && (
-                      <div style={{ marginTop:28 }}>
-                        <h4 style={{ fontWeight:800, color:C.dark, marginBottom:14, display:"flex", alignItems:"center", gap:6 }}><Ico d={IC.users} size={16} color={C.blue} /> Our Expert Doctors</h4>
+                    {/* Doctors Section */}
+                    {!loadingDoctors && selectedService.doctors && selectedService.doctors.length > 0 && (
+                      <div style={{ marginTop: 28 }}>
+                        <h4 style={{ fontWeight: 800, color: C.dark, marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}>
+                          <Ico d={IC.users} size={16} color={C.blue} /> Our Expert Doctors
+                        </h4>
                         <div className="hc-doctors-grid">
                           {selectedService.doctors.map((doctor, idx) => (
                             <DoctorCard key={idx} doctor={doctor} />
@@ -974,17 +1014,24 @@ export default function Services() {
                         </div>
                       </div>
                     )}
-                    {loadingDoctors && selectedService.doctors?.length === 0 && (
-                      <div style={{ marginTop:24, textAlign:"center", color:C.gray }}>Loading doctors...</div>
+                    {!loadingDoctors && selectedService.doctors && selectedService.doctors.length === 0 && (
+                      <div style={{ marginTop: 28, padding: 16, background: C.lgray, borderRadius: 12, textAlign: "center", color: C.gray }}>
+                        <p style={{ margin: 0, fontSize: "0.9rem" }}>
+                          No doctors are currently assigned to this department.
+                        </p>
+                      </div>
+                    )}
+                    {loadingDoctors && (
+                      <div style={{ marginTop: 24, textAlign: "center", color: C.gray }}>Loading doctors...</div>
                     )}
                   </div>
                 </div>
               </Anim>
             ) : (
-              <div style={{ background:C.lgray, borderRadius:24, padding:40, textAlign:"center", border:`1px solid ${C.border}` }}>
-                <Ico d={IC.search} size={40} color={C.gray} style={{ marginBottom:16, opacity:0.5 }} />
-                <h3 style={{ fontSize:"1.4rem", color:C.dark, marginBottom:8 }}>Select a department</h3>
-                <p style={{ color:C.gray, fontSize:"0.85rem" }}>Please choose a service from the left panel to view detailed information.</p>
+              <div style={{ background: C.lgray, borderRadius: 24, padding: 40, textAlign: "center", border: `1px solid ${C.border}` }}>
+                <Ico d={IC.search} size={40} color={C.gray} style={{ marginBottom: 16, opacity: 0.5 }} />
+                <h3 style={{ fontSize: "1.4rem", color: C.dark, marginBottom: 8 }}>Select a department</h3>
+                <p style={{ color: C.gray, fontSize: "0.85rem" }}>Please choose a service from the left panel to view detailed information.</p>
               </div>
             )}
           </div>
@@ -992,27 +1039,27 @@ export default function Services() {
       </section>
 
       {/* Stats Section - responsive */}
-      <section className="stats-section" style={{ background:C.lgray, padding:"60px 16px", borderTop:`1px solid ${C.border}` }}>
-        <div style={{ maxWidth:1440, margin:"0 auto" }}>
+      <section className="stats-section" style={{ background: C.lgray, padding: "60px 16px", borderTop: `1px solid ${C.border}` }}>
+        <div style={{ maxWidth: 1440, margin: "0 auto" }}>
           <div className="hc-choose-grid">
             <div className="hc-choose-left">
               <Anim dir="left">
-                <div className="hc-inline-badge" style={{ display:"inline-flex", alignItems:"center", gap:8, marginBottom:12, justifyContent:"center" }}>
-                  <div style={{ width:24, height:2, background:C.blue }} />
-                  <span style={{ fontSize:12, fontWeight:800, color:C.blue, letterSpacing:1, textTransform:"uppercase" }}>Why Choose Us?</span>
+                <div className="hc-inline-badge" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 12, justifyContent: "center" }}>
+                  <div style={{ width: 24, height: 2, background: C.blue }} />
+                  <span style={{ fontSize: 12, fontWeight: 800, color: C.blue, letterSpacing: 1, textTransform: "uppercase" }}>Why Choose Us?</span>
                 </div>
-                <h2 style={{ fontSize:"2rem", fontWeight:900, color:C.dark, lineHeight:1.2, marginBottom:10, letterSpacing:-0.5 }}>Exceptional Care<br />You Can Trust</h2>
-                <div style={{ width:50, height:3, background:C.blue, borderRadius:2, marginBottom:20 }} />
-                <p style={{ fontSize:"0.85rem", color:C.gray, lineHeight:1.7, marginBottom:20, maxWidth:"100%" }}>
+                <h2 style={{ fontSize: "2rem", fontWeight: 900, color: C.dark, lineHeight: 1.2, marginBottom: 10, letterSpacing: -0.5 }}>Exceptional Care<br />You Can Trust</h2>
+                <div style={{ width: 50, height: 3, background: C.blue, borderRadius: 2, marginBottom: 20 }} />
+                <p style={{ fontSize: "0.85rem", color: C.gray, lineHeight: 1.7, marginBottom: 20, maxWidth: "100%" }}>
                   We are committed to providing exceptional healthcare with a focus on quality, safety, and patient satisfaction.
                 </p>
               </Anim>
             </div>
             <div ref={statsRef}>
               <div className="hc-stats-row">
-                {STATS.map((s,i) => (
-                  <Anim key={i} delay={i*0.08} dir="right">
-                    <div style={{ background:C.white, borderRadius:20, border:`1px solid ${C.border}`, boxShadow:"0 2px 12px rgba(0,0,0,.04)" }}>
+                {STATS.map((s, i) => (
+                  <Anim key={i} delay={i * 0.08} dir="right">
+                    <div style={{ background: C.white, borderRadius: 20, border: `1px solid ${C.border}`, boxShadow: "0 2px 12px rgba(0,0,0,.04)" }}>
                       <StatCounter val={s.val} suffix={s.suffix} label={s.label} icon={s.icon} inView={statsInView} />
                     </div>
                   </Anim>

@@ -39,6 +39,9 @@ const Chatbot = () => {
   const [loadingJobs, setLoadingJobs] = useState(false);
   const [jobsError, setJobsError] = useState(false);
 
+  // Flag to remember we are waiting for doctors to load
+  const [pendingTimingAction, setPendingTimingAction] = useState(false);
+
   const messagesEndRef = useRef(null);
   const typingIntervalRef = useRef(null);
   const typingMessageIdRef = useRef(null);
@@ -104,10 +107,29 @@ const Chatbot = () => {
         }
       } finally {
         setLoadingDoctors(false);
+        // If we were waiting for doctors to load, proceed with timing options
+        if (pendingTimingAction) {
+          setPendingTimingAction(false);
+          // Now show the doctor timing menu
+          showDoctorTimingOptions();
+        }
       }
     };
     fetchDoctors();
-  }, [isOpen, messages.length]);
+  }, [isOpen]);
+
+  // Separate function to show timing options after load
+  const showDoctorTimingOptions = () => {
+    if (doctorsError || doctors.length === 0) {
+      addBotMessageWithTyping("⚠️ Doctor information is currently unavailable. Please contact hospital reception for doctor timings.", false);
+      return;
+    }
+    setShowQuickHelp(false);
+    setShowDoctorTimingMenu(true);
+    setDoctorTimingMode(null);
+    setQuickReplyButtons([]);
+    addBotMessageWithTyping("🕐 Please choose how you'd like to see doctor timings:", false);
+  };
 
   const highlightImportant = (text) => {
     const keywords = [
@@ -299,20 +321,19 @@ const Chatbot = () => {
   const handleDoctorsTiming = () => {
     stopAndFinalizeTyping(true);
     setShowPostMessageOptions(false);
+    // If doctors are still loading, show a loading message and set flag
     if (loadingDoctors) {
-      addBotMessageWithTyping("📋 Loading doctor information, please wait a moment...", false);
+      addBotMessageWithTyping("⏳ Loading doctor information, please wait...", false);
+      setPendingTimingAction(true);
       return;
     }
+    // If error or no doctors, show error
     if (doctorsError || doctors.length === 0) {
       addBotMessageWithTyping("⚠️ Doctor information is currently unavailable. Please contact hospital reception for doctor timings.", false);
       return;
     }
-    setShowQuickHelp(false);
-    setShowDoctorTimingMenu(true);
-    setDoctorTimingMode(null);
-    setQuickReplyButtons([]);
-    addMessage("user", "Doctors Timing");
-    addBotMessageWithTyping("🕐 Please choose how you'd like to see doctor timings:", false);
+    // Otherwise show the timing menu
+    showDoctorTimingOptions();
   };
 
   const handleFindByDept = () => {
@@ -352,8 +373,9 @@ const Chatbot = () => {
       resetDoctorTimingFlow();
       return;
     }
+    // Room number removed from list label
     const docButtons = doctorsInDept.map(doc => ({
-      label: `${doc.name} (${doc.dept})${doc.roomNo ? ` - Room: ${doc.roomNo}` : ''}`,
+      label: `${doc.name} (${doc.dept})`,
       action: () => handleDoctorTimingSelect(doc)
     }));
     setQuickReplyButtons(docButtons);
@@ -389,8 +411,9 @@ const Chatbot = () => {
   };
 
   const showAllDoctorsList = () => {
+    // Room number removed from list label
     const allDoctorButtons = doctors.map(doc => ({
-      label: `${doc.name} (${doc.dept})${doc.roomNo ? ` - Room: ${doc.roomNo}` : ''}`,
+      label: `${doc.name} (${doc.dept})`,
       action: () => handleDoctorTimingSelect(doc)
     }));
     setQuickReplyButtons(allDoctorButtons);
@@ -611,7 +634,13 @@ const Chatbot = () => {
   if (!isOpen) {
     return (
       <div className="chatbot-toggle-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
-       
+        {/* Initial popup bubble */}
+        {showInitialPopup && (
+          <div className="initial-popup">
+            👋 Hi! I'm KALYANI. Need help?
+            <div className="initial-popup-arrow"></div>
+          </div>
+        )}
         <button 
           className="chatbot-toggle-btn highlight-toggle" 
           onClick={handleOpenChat} 
@@ -635,7 +664,9 @@ const Chatbot = () => {
             }} 
           />
         </button>
-      
+        <div className="chatbot-tooltip">
+          💬 Chat with KALYANI
+        </div>
       </div>
     );
   }

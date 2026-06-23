@@ -1047,6 +1047,13 @@ const Home = () => {
     window.open("http://103.47.16.55/Online_HIS/design/patientportal/onlinebooking.aspx", "_blank");
   };
 
+  // --- NEW: Sort doctors by most reviews (rating * reviews) ---
+  const sortedDoctors = [...doctors].sort((a, b) => {
+    const aScore = (a.rating || 0) * (a.reviews || 0);
+    const bScore = (b.rating || 0) * (b.reviews || 0);
+    return bScore - aScore;
+  });
+
   return (
     <div style={{ fontFamily: "'Inter', 'Outfit', sans-serif", background: white, color: dark, overflowX: "hidden" }}>
       <Navbar />
@@ -1067,15 +1074,12 @@ const Home = () => {
         boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
       }}>
         <div>
-          {/* Inline style tag for keyframes (only once) */}
           <style>{`
     @keyframes marqueeScroll {
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
   `}</style>
-
-          {/* Your marquee div with inline style – slower speed (45s) */}
           <div style={{
             display: "inline-block",
             animation: "marqueeScroll 70s linear infinite",
@@ -1084,7 +1088,8 @@ const Home = () => {
           }}>
             ⚠️ ALERT: St. Joseph's Hospital, Ghaziabad (Mariam Hospital) does not accept any online payments for hospital services. All payments must be made only at the hospital's authorized payment counters. The hospital never requests payments, banking details, OTPs, or personal information through unofficial phone calls, text messages, emails, websites, or social media accounts. If you receive any such request claiming to be from the hospital, treat it as fraudulent. For your safety, please verify all information only through St. Joseph's Hospital, Ghaziabad (Mariam Hospital)'s official website or helpline numbers. Stay alert and report any suspicious communication. ⚠️
 
-            ⚠️ ऑनलाइन धोखाधड़ी से सावधान रहें। सेंट जोसेफ अस्पताल, गाजियाबाद (मरियम अस्पताल) अस्पताल सेवाओं के लिए किसी भी प्रकार का ऑनलाइन भुगतान स्वीकार नहीं करता है। सभी भुगतान केवल अस्पताल के अधिकृत भुगतान काउंटरों पर ही किए जाएं। अस्पताल कभी भी अनौपचारिक फोन कॉल, संदेश, ईमेल, वेबसाइट या सोशल मीडिया के माध्यम से किसी भी प्रकार का भुगतान, बैंक विवरण, ओटीपी या व्यक्तिगत जानकारी नहीं मांगता है। यदि आपको अस्पताल के नाम पर ऐसा कोई अनुरोध प्राप्त होता है, तो उसे धोखाधड़ी मानें। आपकी सुरक्षा के लिए, किसी भी जानकारी की पुष्टि केवल सेंट जोसेफ अस्पताल, गाजियाबाद (मरियम अस्पताल) की आधिकारिक वेबसाइट या हेल्पलाइन नंबर के माध्यम से ही करें। कृपया सतर्क रहें और किसी भी संदिग्ध संपर्क की सूचना दें। ⚠️           </div>
+            ⚠️ ऑनलाइन धोखाधड़ी से सावधान रहें। सेंट जोसेफ अस्पताल, गाजियाबाद (मरियम अस्पताल) अस्पताल सेवाओं के लिए किसी भी प्रकार का ऑनलाइन भुगतान स्वीकार नहीं करता है। सभी भुगतान केवल अस्पताल के अधिकृत भुगतान काउंटरों पर ही किए जाएं। अस्पताल कभी भी अनौपचारिक फोन कॉल, संदेश, ईमेल, वेबसाइट या सोशल मीडिया के माध्यम से किसी भी प्रकार का भुगतान, बैंक विवरण, ओटीपी या व्यक्तिगत जानकारी नहीं मांगता है। यदि आपको अस्पताल के नाम पर ऐसा कोई अनुरोध प्राप्त होता है, तो उसे धोखाधड़ी मानें। आपकी सुरक्षा के लिए, किसी भी जानकारी की पुष्टि केवल सेंट जोसेफ अस्पताल, गाजियाबाद (मरियम अस्पताल) की आधिकारिक वेबसाइट या हेल्पलाइन नंबर के माध्यम से ही करें। कृपया सतर्क रहें और किसी भी संदिग्ध संपर्क की सूचना दें। ⚠️
+          </div>
         </div>
       </div>
 
@@ -1299,7 +1304,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* REST OF THE COMPONENT (no further changes) */}
       {/* STATS BAR */}
       <section style={{ background: white, padding: "48px 0", borderBottom: `1px solid #e2e8f0` }}>
         <div style={container}>
@@ -1446,7 +1450,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* FIND A DOCTOR SECTION - UPDATED WITH ROOM NO */}
+      {/* FIND A DOCTOR SECTION - ROOM NUMBER REMOVED FROM DROPDOWN */}
       <section style={{ ...sectionPy, background: lgray, paddingTop: "64px", paddingBottom: "64px" }}>
         <div style={container}>
           <div className="hc-appt-grid" style={{ display: "grid", gridTemplateColumns: "340px 1fr 320px", gap: 32, alignItems: "stretch" }}>
@@ -1498,7 +1502,7 @@ const Home = () => {
                       <option value="">Select Doctor</option>
                       {activeApptDept && departmentDoctors[activeApptDept]?.map(doc => (
                         <option key={doc._id} value={doc._id}>
-                          {doc.name} {doc.roomNo ? `(Room: ${doc.roomNo})` : ''}
+                          {doc.name} {/* Room number removed */}
                         </option>
                       ))}
                     </select>
@@ -1704,16 +1708,16 @@ const Home = () => {
         </div>
       </section>
 
-      {/* DOCTORS SECTION - Increased height for cards */}
+      {/* DOCTORS SECTION - NOW USING SORTED (MOST REVIEWED) */}
       <section style={{ ...sectionPy, background: white }}>
         <div style={container}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 56, flexWrap: "wrap", gap: 20 }}>
             <AnimSection direction="left">
               <div style={pill("#dbeafe", blue)}>Our Experts</div>
               <h2 className="hc-section-title" style={{ fontSize: "2.5rem", fontWeight: 900, color: dark, letterSpacing: -0.5 }}>
-                Meet Our <span style={{ color: blue }}>Expert Doctors</span>
+                Meet Our <span style={{ color: blue }}>Most Reviewed Doctors</span>
               </h2>
-              <p style={{ color: gray, fontSize: 15, marginTop: 12 }}>Our specialists are here to provide the best care for you.</p>
+              <p style={{ color: gray, fontSize: 15, marginTop: 12 }}>Our top‑rated specialists are here to provide the best care for you.</p>
             </AnimSection>
             <AnimSection direction="right">
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -1727,7 +1731,7 @@ const Home = () => {
             <div style={{ textAlign: "center", padding: 60 }}>Loading doctors...</div>
           ) : (
             <div className="hc-doctors-row" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 28 }}>
-              {doctors.slice(0, 4).map((d, i) => (
+              {sortedDoctors.slice(0, 4).map((d, i) => (
                 <AnimSection key={i} delay={i * 0.12}>
                   <div className="hc-doctor-card" style={{
                     background: white, borderRadius: 24, overflow: "hidden",
