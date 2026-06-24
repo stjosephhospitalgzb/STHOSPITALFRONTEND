@@ -12,3 +12,4 @@ export default API;
 
 
 // const API = axios.create({ baseURL: 'https://sthospitalbackend.onrender.com/api' });
+  // baseURL: 'http://localhost:5000/api'

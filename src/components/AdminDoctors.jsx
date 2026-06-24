@@ -30,7 +30,7 @@ const AdminDoctors = () => {
   const departments = [
     "Gynecology",
     "Emergency ",
-    "Neurology (Neurophysician)",
+    "Neurology ",
     "Homeopathy",
     "General Surgery",
     "General Medicine (Physician)",
@@ -54,7 +54,8 @@ const AdminDoctors = () => {
     "Psychiatry",
     "RMO",
     "SMO",
-   "AYURVEDA"
+   "Ayurveda",
+   "Audiometry"
   ];
 
   useEffect(() => {

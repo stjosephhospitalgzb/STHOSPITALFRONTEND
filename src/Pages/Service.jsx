@@ -38,6 +38,7 @@ import ultrasoundIcon from "../assets/Icons/ultrasound.png";
 import urosurgeryIcon from "../assets/Icons/UroSurgery.png";
 import vaccinationIcon from "../assets/Icons/vaccination.png";
 import banner from "../assets/hospitalimage/banner9.png";
+import ayurvedaIcon from "../assets/Icons/ayurveda.png";
 
 const defaultServiceIcon = generalWardIcon;
 
@@ -278,7 +279,6 @@ const getLocalServiceIcon = (title) => {
     "Orthopedics": orthopedicsIcon,
     "Dental": dentalIcon,
     "Dermatology": dermatologyIcon,
-    "Skin & VD": dermatologyIcon,
     "Cardiology": cardiologyIcon,
     "Oncology": oncologyIcon,
     "Psychiatry": psychiatryIcon,
@@ -294,6 +294,9 @@ const getLocalServiceIcon = (title) => {
     "Pharmacy – 24 Hours": pharmacyIcon,
     "Billing Services – 24 Hours": canteenIcon,
     "Counseling": psychiatryIcon,
+      "Ayurveda": ayurvedaIcon,
+    "Audiometry": audiometryIcon,
+    "Physiotherapy": physiotherapyIcon, 
   };
   return iconMap[title] || defaultServiceIcon;
 };
@@ -502,16 +505,7 @@ const SERVICES = [
     details: `Our dermatology services address a broad spectrum of conditions including acne, eczema, psoriasis, pigmentation disorders, infections, and hair-related problems. The department utilizes modern diagnostic techniques and treatment methods to deliver effective care. Patients receive individualized treatment plans aimed at improving skin health and overall appearance. With a focus on both clinical excellence and patient comfort, the department ensures long-term results and enhanced self-confidence.`,
     category: "speciality",
   },
-  {
-    title: "Skin & VD",
-    images: [
-      "https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?w=600&q=80",
-      "https://media.istockphoto.com/id/1435001168/photo/a-teen-girl-in-psychotherapy.jpg?s=612x612&w=0&k=20&c=A34KpyRI_m8CQxjfJHW9z-f3aMOY53EljP2zyXqMveM="
-    ],
-    Overview: `The Skin & VD Department provides specialized care for skin disorders and sexually transmitted infections, ensuring confidentiality, sensitivity, and effective treatment.`,
-    details: `This department handles a wide range of conditions related to skin health as well as sexually transmitted diseases. Patients are provided with accurate diagnosis, appropriate medical therapy, and counseling in a secure and respectful environment. The focus is not only on treatment but also on patient education, prevention, and long-term care. With a compassionate approach and strict confidentiality, the department ensures patient trust and comprehensive care.`,
-    category: "speciality",
-  },
+ 
   {
     title: "Cardiology",
     images: [
@@ -664,6 +658,48 @@ const SERVICES = [
     details: `Our Counselling Services focus on helping patients and caregivers cope with illness, stress, and medical decisions, offering guidance during challenging times.\nServices include pre- and post-treatment counselling, mental health support, patient education, and family guidance. Our trained counsellors work closely with medical teams to ensure holistic patient care.\nBy addressing emotional well-being alongside physical health, we aim to improve patient confidence, treatment adherence, and overall recovery experience.`,
     category: "emergency",
   },
+  {
+  title: "Ayurveda",
+  images: [
+    "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80",
+    "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80"
+  ],
+  Overview: `Ayurveda is a traditional system of medicine that emphasizes natural healing, balance of body energies, and holistic wellness through herbal treatments, diet, and lifestyle modifications.`,
+  details: `The Department of Ayurveda offers authentic Ayurvedic consultations and treatments for a wide range of health conditions. Our approach focuses on restoring the balance of the three doshas (Vata, Pitta, Kapha) using natural herbs, dietary recommendations, Panchakarma therapies, and lifestyle guidance.
+
+We treat chronic ailments such as arthritis, digestive disorders, skin conditions, stress, and lifestyle-related diseases. Our experienced Ayurvedic physicians provide personalized treatment plans based on a thorough assessment of individual constitution and health concerns.
+
+With a focus on prevention and natural healing, our department integrates traditional wisdom with modern diagnostic support to ensure safe and effective outcomes.`,
+  category: "speciality",
+},
+{
+  title: "Audiometry",
+  images: [
+    "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=80",
+    "https://images.unsplash.com/photo-1584466977731-b6d6e6c8e2a5?w=600&q=80"
+  ],
+  Overview: `Audiometry is a specialized diagnostic service that assesses hearing ability and helps identify hearing loss, balance disorders, and ear-related conditions.`,
+  details: `Our Audiometry Department provides comprehensive hearing evaluations using advanced equipment and testing techniques. We offer pure-tone audiometry, speech audiometry, and impedance testing to accurately diagnose hearing impairments.
+
+These tests help in identifying the type and degree of hearing loss, guiding appropriate treatment options such as hearing aids, medical management, or surgical intervention. Our audiologists work closely with ENT specialists to provide complete ear and hearing care.
+
+We also offer hearing screening programs and rehabilitation counseling to improve communication and quality of life for individuals with hearing difficulties.`,
+  category: "speciality",
+},
+{
+  title: "Physiotherapy",
+  images: [
+    "https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg",
+    "https://media.istockphoto.com/id/1435001168/photo/a-teen-girl-in-psychotherapy.jpg?s=612x612&w=0&k=20&c=A34KpyRI_m8CQxjfJHW9z-f3aMOY53EljP2zyXqMveM="
+  ],
+  Overview: `Physiotherapy focuses on rehabilitation, pain relief, and restoration of movement, helping patients regain strength and independence.`,
+  details: `The Physiotherapy Department provides treatment for injuries, post-surgical recovery, neurological disorders, musculoskeletal conditions, and chronic pain.
+
+Our approach combines manual therapy, exercise programs, electrotherapy, and modern rehabilitation techniques to achieve effective recovery.
+
+Each patient receives a customized therapy plan, ensuring improved mobility, faster healing, and long-term physical wellness.`,
+  category: "speciality",   // You can also keep it as "super-speciality" if you prefer
+},
 ];
 
 const FEATURES = [
@@ -735,14 +771,13 @@ const serviceToDepartmentMap = {
   "Pathology": ["Pathology"],
   "X-Ray, ECG, 2D ECHO": ["Radiology", "Radiodiagnosis"],
   "Ultrasound": ["Radiology", "Radiodiagnosis"],
-  "Mammography": ["Radiology", "Radiodiagnosis"],
+  "Mammography": null,
   "CT Scan": ["Radiology", "Radiodiagnosis"],
   "EEG, EMG & NCV": ["Neurology"],
   "ENT": ["ENT", "Otolaryngology"],
   "Orthopedics": ["Orthopedics", "Orthopaedics"],
   "Dental": ["Dentistry", "Dental Surgery"],
   "Dermatology": ["Dermatology"],
-  "Skin & VD": ["Dermatology", "Skin & VD"],
   "Cardiology": ["Cardiology"],
   "Oncology": ["Oncology"],
   "Psychiatry": ["Psychiatry"],
@@ -751,13 +786,16 @@ const serviceToDepartmentMap = {
   "Plastic Surgery": ["Plastic Surgery"],
   "Neuro Surgery": ["Neurosurgery", "Neuro Surgery"],
   "Nephrology": ["Nephrology"],
-  "Neurology": ["Neurology"],
-  "Dialysis": ["Nephrology"],
+"Neurology": ["Neurology", "Neurology (Neurophysician)"],
+  "Dialysis":null,
   "Physiotherapy": null,
   "24 Hours Emergency Services": null,
   "Pharmacy – 24 Hours": null,
   "Billing Services – 24 Hours": null,
   "Counseling": ["Psychiatry"],
+    "Ayurveda": ["Ayurveda"],
+  "Audiometry": ["Audiometry"],
+  "Physiotherapy": ["Physiotherapy"],
 };
 
 export default function Services() {

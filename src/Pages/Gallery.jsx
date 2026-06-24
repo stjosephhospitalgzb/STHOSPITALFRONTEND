@@ -214,7 +214,7 @@ const s = {
   marqueeTrack: {
     display: "flex",
     gap: "16px",
-    animation: "scrollMarquee 25s linear infinite",
+    animation: "scrollMarquee 80s linear infinite",
     width: "max-content",
   },
   marqueeTrackPaused: {

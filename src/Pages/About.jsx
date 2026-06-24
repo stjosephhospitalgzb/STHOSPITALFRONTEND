@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 // ─── Images ───────────────────────────────────────────────────────────────
-import hospitalHeroImg from "../assets/hospitalimage/hospitalimage.jpeg";
+import hospitalHeroImg from "../assets/hospitalimage/hospitalimage.jpg";
 import aboutImg from "../assets/hospitalimage/about.png";
 import founderImg from "../assets/hospitalimage/JosephPanjikaran.jpg";
 import administratorImg from "../assets/hospitalimage/adminastator.png";

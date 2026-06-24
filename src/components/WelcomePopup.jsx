@@ -110,7 +110,7 @@ const injectStyles = () => {
     .sjh-video-header {
       position: relative;
       width: 100%;
-      height: 220px;
+      height: 270px;
       overflow: hidden;
       background: linear-gradient(135deg, #1e3a8a, #3b82f6);
     }
@@ -121,7 +121,7 @@ const injectStyles = () => {
       display: block;
       animation: videoFadeIn 0.6s ease both;
     }
-    /* dark overlay so logo & close btn remain readable */
+    /* dark overlay so logo & controls remain readable */
     .sjh-video-header::after {
       content: '';
       position: absolute;
@@ -144,6 +144,50 @@ const injectStyles = () => {
       z-index: 2;
     }
 
+    /* Bottom sound bar */
+    .sjh-sound-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 40px;
+      padding: 6px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .sjh-sound-bar:hover {
+      background: rgba(0,0,0,0.6);
+    }
+    .sjh-sound-bar .icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .sjh-sound-bar .label {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    /* ── Welcome banner tweaks ── */
+    .sjh-welcome-text {
+      white-space: pre-wrap;      /* preserve spaces, wrap lines */
+      word-break: break-word;     /* prevent overflow on long words */
+      line-height: 1.9;           /* more breathing */
+      word-spacing: 0.25em;       /* extra gap between words */
+      letter-spacing: 0.02em;
+    }
+
     @media (max-width: 520px) {
       .sjh-card {
         max-width: 100% !important;
@@ -155,7 +199,7 @@ const injectStyles = () => {
       }
       .sjh-welcome-banner {
         padding: 0.75rem 1rem !important;
-        min-height: 100px !important;
+        min-height: 140px !important;   /* increased */
       }
       .sjh-welcome-text {
         font-size: 0.85rem !important;
@@ -180,15 +224,27 @@ const injectStyles = () => {
         font-size: 13px !important;
       }
       .sjh-video-header {
-        height: 180px !important;
+        height: 200px !important;
+      }
+      .sjh-sound-bar {
+        padding: 4px 14px;
+        bottom: 14px;
+      }
+      .sjh-sound-bar .label {
+        font-size: 11px;
       }
     }
     @media (max-width: 400px) {
       .sjh-body {
         padding: 0.75rem 1rem 1.25rem !important;
       }
+      .sjh-welcome-banner {
+        padding: 0.5rem 0.75rem !important;
+        min-height: 130px !important;
+      }
       .sjh-welcome-text {
         font-size: 0.8rem !important;
+        line-height: 1.8 !important;
       }
       .sjh-doctor-name {
         font-size: 12px !important;
@@ -202,7 +258,17 @@ const injectStyles = () => {
         padding: 0.6rem !important;
       }
       .sjh-video-header {
-        height: 155px !important;
+        height: 175px !important;
+      }
+      .sjh-sound-bar {
+        padding: 3px 12px;
+        bottom: 10px;
+      }
+      .sjh-sound-bar .label {
+        font-size: 10px;
+      }
+      .sjh-sound-bar .icon {
+        font-size: 15px;
       }
     }
   `;
@@ -217,8 +283,7 @@ const WelcomePopup = () => {
   const [doctorsOnLeave, setDoctorsOnLeave] = useState([]);
   const videoRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
-  const [needsTap, setNeedsTap] = useState(false); // show "tap to unmute" overlay
-  const closedRef = useRef(false); // Guard against double close
+  const closedRef = useRef(false);
 
   useEffect(() => {
     injectStyles();
@@ -247,7 +312,7 @@ const WelcomePopup = () => {
     }
   };
 
-  // ─── Show popup after a short delay ────────────────────────────
+  // Show popup after delay
   useEffect(() => {
     const t = setTimeout(() => {
       setVisible(true);
@@ -256,40 +321,16 @@ const WelcomePopup = () => {
     return () => clearTimeout(t);
   }, []);
 
-  // ─── Play video; unmute if browser allows, else show tap overlay ─
+  // Autoplay video muted
   useEffect(() => {
     if (!animated || !videoRef.current) return;
     const vid = videoRef.current;
-
-    // Try unmuted first
-    vid.muted = false;
-    vid.play()
-      .then(() => {
-        setIsMuted(false);
-        setNeedsTap(false);
-      })
-      .catch(() => {
-        // Browser blocked unmuted → play muted + show "tap to unmute" prompt
-        vid.muted = true;
-        setIsMuted(true);
-        setNeedsTap(true);
-        vid.play().catch(() => {});
-      });
+    vid.muted = true;
+    setIsMuted(true);
+    vid.play().catch(() => {});
   }, [animated]);
 
-  // ─── User taps the overlay → unmute & hide overlay ───────────────
-  const handleTapToUnmute = () => {
-    const vid = videoRef.current;
-    if (!vid) return;
-    vid.muted = false;
-    setIsMuted(false);
-    setNeedsTap(false);
-    // Restart from beginning so they hear it from the start
-    vid.currentTime = 0;
-    vid.play().catch(() => {});
-  };
-
-  // ─── Character‑by‑character typewriter ─────────────────────────
+  // Character typewriter
   const splitGraphemes = (str) => {
     const regex = /\P{M}\p{M}*/gu;
     return str.match(regex) || [];
@@ -316,22 +357,18 @@ const WelcomePopup = () => {
     const next = !isMuted;
     vid.muted = next;
     setIsMuted(next);
-    if (!next) setNeedsTap(false);
     if (vid.ended && !next) {
       vid.currentTime = 0;
       vid.play().catch(() => {});
     }
   };
 
-  // ─── Close handler with guard ──────────────────────────────────
   const handleClose = () => {
-    if (closedRef.current) return; // prevent double close
+    if (closedRef.current) return;
     closedRef.current = true;
     setAnimated(false);
     setTimeout(() => {
       setVisible(false);
-      // Reset guard after popup is fully hidden (optional)
-      // closedRef.current = false; // if we want to allow reopening
     }, 320);
   };
 
@@ -382,54 +419,10 @@ const WelcomePopup = () => {
             muted
             playsInline
             preload="auto"
-            onEnded={handleClose}   // 👈 Auto‑close when video finishes
+            onEnded={handleClose}
           />
 
-          {/* Tap-to-unmute overlay — shown only when browser blocks autoplay with sound */}
-          {needsTap && (
-            <div
-              onClick={handleTapToUnmute}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                zIndex: 3,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                background: 'rgba(10,20,60,0.45)',
-                backdropFilter: 'blur(2px)',
-                WebkitBackdropFilter: 'blur(2px)',
-                animation: 'videoFadeIn 0.4s ease both',
-              }}
-            >
-              <div style={{
-                width: 56, height: 56,
-                borderRadius: '50%',
-                background: 'rgba(255,255,255,0.18)',
-                border: '2px solid rgba(255,255,255,0.6)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 26,
-                marginBottom: 10,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                animation: 'sjhPulseRing 1.6s ease-in-out infinite',
-              }}>
-                🔊
-              </div>
-              <span style={{
-                color: '#fff',
-                fontSize: 13,
-                fontWeight: 600,
-                letterSpacing: '0.4px',
-                textShadow: '0 1px 4px rgba(0,0,0,0.5)',
-              }}>
-                Tap to play with sound
-              </span>
-            </div>
-          )}
-
-          {/* Logo + Close button + Sound toggle float above the video */}
+          {/* Logo + Close button */}
           <div className="sjh-header-controls">
             <div
               className="sjh-logo"
@@ -443,44 +436,29 @@ const WelcomePopup = () => {
             >
               <img src={logo} alt="Hospital Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {/* Sound toggle */}
-              <button
-                onClick={toggleSound}
-                aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-                title={isMuted ? 'Click to hear sound' : 'Click to mute'}
-                style={{
-                  background: isMuted ? 'rgba(255,255,255,0.15)' : 'rgba(59,130,246,0.75)',
-                  border: `1px solid ${isMuted ? 'rgba(255,255,255,0.3)' : 'rgba(59,130,246,0.9)'}`,
-                  borderRadius: '50%',
-                  width: 32, height: 32,
-                  cursor: 'pointer', color: '#fff',
-                  fontSize: 15, display: 'flex',
-                  alignItems: 'center', justifyContent: 'center',
-                  transition: 'background 0.2s, border 0.2s',
-                  flexShrink: 0,
-                }}
-              >
-                {isMuted ? '🔇' : '🔊'}
-              </button>
+            <button
+              className="sjh-close-btn sjh-control-btn"
+              onClick={handleClose}
+              aria-label="Close"
+              style={{
+                background: 'rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                borderRadius: '50%',
+                width: 32, height: 32,
+                cursor: 'pointer', color: '#fff',
+                fontSize: 14, display: 'flex',
+                alignItems: 'center', justifyContent: 'center',
+                transition: 'background 0.2s',
+              }}
+            >✕</button>
+          </div>
 
-              {/* Close */}
-              <button
-                className="sjh-close-btn sjh-control-btn"
-                onClick={handleClose}
-                aria-label="Close"
-                style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  borderRadius: '50%',
-                  width: 32, height: 32,
-                  cursor: 'pointer', color: '#fff',
-                  fontSize: 14, display: 'flex',
-                  alignItems: 'center', justifyContent: 'center',
-                  transition: 'background 0.2s',
-                }}
-              >✕</button>
-            </div>
+          {/* ─── Bottom sound bar ────────────────────────────────── */}
+          <div className="sjh-sound-bar" onClick={toggleSound}>
+            <span className="icon">{isMuted ? '🔇' : '🔊'}</span>
+            <span className="label">
+              {isMuted ? 'Tap to unmute' : 'Mute'}
+            </span>
           </div>
         </div>
 
@@ -494,7 +472,7 @@ const WelcomePopup = () => {
               borderRadius: '0 8px 8px 0',
               padding: '0.9rem 1.2rem',
               marginBottom: '1.25rem',
-              minHeight: '110px',
+              minHeight: '160px',          // enough to fit all lines
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -502,11 +480,13 @@ const WelcomePopup = () => {
             <p
               className="sjh-welcome-text"
               style={{
-                color: '#1e293b', fontSize: '0.97rem',
-                lineHeight: 1.75, margin: 0,
-                fontWeight: 500, minHeight: '1.6em',
+                color: '#1e293b',
+                fontSize: '0.97rem',
+                margin: 0,
+                fontWeight: 500,
                 fontFamily: "'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif",
-                textAlign: 'justify', textJustify: 'inter-word',
+                textAlign: 'justify',
+                textJustify: 'inter-word',
               }}
             >
               {displayedChars.map((char, idx) => renderChar(char, idx))}

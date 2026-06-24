@@ -39,7 +39,6 @@ const Chatbot = () => {
   const [loadingJobs, setLoadingJobs] = useState(false);
   const [jobsError, setJobsError] = useState(false);
 
-  // Flag to remember we are waiting for doctors to load
   const [pendingTimingAction, setPendingTimingAction] = useState(false);
 
   const messagesEndRef = useRef(null);
@@ -107,10 +106,8 @@ const Chatbot = () => {
         }
       } finally {
         setLoadingDoctors(false);
-        // If we were waiting for doctors to load, proceed with timing options
         if (pendingTimingAction) {
           setPendingTimingAction(false);
-          // Now show the doctor timing menu
           showDoctorTimingOptions();
         }
       }
@@ -118,7 +115,6 @@ const Chatbot = () => {
     fetchDoctors();
   }, [isOpen]);
 
-  // Separate function to show timing options after load
   const showDoctorTimingOptions = () => {
     if (doctorsError || doctors.length === 0) {
       addBotMessageWithTyping("⚠️ Doctor information is currently unavailable. Please contact hospital reception for doctor timings.", false);
@@ -321,18 +317,15 @@ const Chatbot = () => {
   const handleDoctorsTiming = () => {
     stopAndFinalizeTyping(true);
     setShowPostMessageOptions(false);
-    // If doctors are still loading, show a loading message and set flag
     if (loadingDoctors) {
       addBotMessageWithTyping("⏳ Loading doctor information, please wait...", false);
       setPendingTimingAction(true);
       return;
     }
-    // If error or no doctors, show error
     if (doctorsError || doctors.length === 0) {
       addBotMessageWithTyping("⚠️ Doctor information is currently unavailable. Please contact hospital reception for doctor timings.", false);
       return;
     }
-    // Otherwise show the timing menu
     showDoctorTimingOptions();
   };
 
@@ -373,7 +366,6 @@ const Chatbot = () => {
       resetDoctorTimingFlow();
       return;
     }
-    // Room number removed from list label
     const docButtons = doctorsInDept.map(doc => ({
       label: `${doc.name} (${doc.dept})`,
       action: () => handleDoctorTimingSelect(doc)
@@ -388,9 +380,31 @@ const Chatbot = () => {
     addMessage("user", doctor.name);
     let timingText = doctor.opdTimings || "Timings not available. Please contact reception.";
     let roomText = doctor.roomNo ? `\n\n📍 **Room Number:** ${doctor.roomNo}` : "";
-    const response = `👨‍⚕️ **${doctor.name}** (${doctor.dept})\n\n🕐 **OPD Timings:** ${timingText}${roomText}\n\nFor an appointment,  use the online booking portal.`;
+    const response = `👨‍⚕️ **${doctor.name}** (${doctor.dept})\n\n🕐 **OPD Timings:** ${timingText}${roomText}\n\nClick the button below to book an appointment online.`;
     addBotMessageWithTyping(response, false);
-    resetDoctorTimingFlow();
+    setQuickReplyButtons([
+      { 
+        label: "📅 Book Appointment Online", 
+        action: () => {
+          stopAndFinalizeTyping(true);
+          setQuickReplyButtons([]);
+          addMessage("user", "Book Appointment Online");
+          window.open("http://103.47.16.55/Online_HIS/design/patientportal/onlinebooking.aspx", "_blank");
+          addBotMessageWithTyping("You have been redirected to our online appointment portal. Please complete the form there. If you need any assistance, feel free to ask!", false);
+          setQuickReplyButtons([
+            { label: "🏠 Main Menu", action: goBackToMainMenu }
+          ]);
+        }
+      },
+      { 
+        label: "🔙 Back to Timing Options", 
+        action: () => {
+          stopAndFinalizeTyping(true);
+          setQuickReplyButtons([]);
+          handleBackToTimingOptions();
+        }
+      }
+    ]);
   };
 
   const handleFindByDoctorName = () => {
@@ -411,7 +425,6 @@ const Chatbot = () => {
   };
 
   const showAllDoctorsList = () => {
-    // Room number removed from list label
     const allDoctorButtons = doctors.map(doc => ({
       label: `${doc.name} (${doc.dept})`,
       action: () => handleDoctorTimingSelect(doc)
@@ -517,26 +530,29 @@ const Chatbot = () => {
     resetToMainMenu();
   };
 
-  // Menu items (icons remain same)
+  // ─── UPDATED MENU ITEMS (ordered as requested) ──────────────────────
   const menuItems = [
     { label: "About Hospital", iconImage: hospitalIcon },
-    { label: "TPA Services", iconImage: tpaServicesIcon },
-    { label: "Take Appointment", iconImage: takeAppointmentIcon },
     { label: "Contact Info", iconImage: contactInfoIcon },
+    { label: "Take Appointment", iconImage: takeAppointmentIcon },
+    { label: "Doctors Timing", iconImage: doctorsTimingIcon },
+    { label: "Services", iconImage: servicesIcon },
+    { label: "TPA Services", iconImage: tpaServicesIcon },
     { label: "Paramedical Institute", iconImage: universityIcon },
     { label: "Careers", iconImage: careersIcon },
-    { label: "Services", iconImage: servicesIcon },
   ];
 
   const botAnswers = {
     "About Hospital": "🏥 St. Joseph's Hospital, Ghaziabad, is a leading **NABH-accredited multi-specialty healthcare institution** dedicated to providing compassionate, ethical, affordable, and high-quality medical care. Established in 1990 and inspired by the vision of **Servant of God Rev. Fr. Joseph Panjikaran**, the hospital combines advanced medical technology with a patient-centered approach to healing.\n\nWith a team of **50+ highly qualified doctors**, modern infrastructure, and **100+ bed capacity**, St. Joseph's Hospital Ghaziabad offers comprehensive healthcare services across **10 General Services, 6 Contributory Departments, 8 Specialities, 8 Super Specialities, and 24/7 Emergency Care across 4 critical units**. The hospital remains committed to serving all sections of society, especially the poor and marginalized, while delivering excellence in healthcare.\n\n**Our Vision:** Be an angel of consolation to extend the compassionate love of Christ to bring about healing and wholeness.\n\n**Our Mission:**\n- To provide ethical, affordable, and quality healthcare.\n- To ensure preventive, promotive, curative, and rehabilitative care.\n- To serve all patients with dignity, compassion, and respect.\n- To give special attention to the poor and marginalized.\n\n**Our Core Values:** Respect for Life, Deliver Compassionate Care, Patient-Focused Service, Teamwork, Ethics and Integrity.\n\n**Hospital Highlights:**\n- 50+ Expert Doctors\n- 100+ Bed Capacity\n- 9M+ Patients Treated\n- 110+ Medical Apparatus\n- 5+ Dialysis Units\n- 10 General Services\n- 6 Contributory Departments\n- 8 Specialities\n- 8 Super Specialities\n- 24/7 Emergency Services across 4 dedicated emergency units\n\nFor more than three decades, St. Joseph's Hospital Ghaziabad has remained a trusted center of healing, combining medical excellence with compassion, faith, and a commitment to improving the health and well-being of every patient.",
     "TPA Services": "🛡️ St. Joseph's Hospital Ghaziabad provides cashless hospitalization facilities through a wide network of leading Insurance Companies and Third-Party Administrators (TPAs). Our dedicated TPA Desk assists patients with pre-authorization, claim processing, and cashless admission procedures to ensure a smooth and hassle-free experience.\n\n**Empanelled Insurance & TPA Partners:**\nAditya Birla Health Insurance, Bharat Electronics Limited (BEL), Chola MS General Insurance, Family Health Plan Insurance TPA (FHPL), Generali Central Insurance (Former Future Generali), Good Health TPA, HDFC ERGO General Insurance, Health India Insurance TPA, ICICI Lombard General Insurance, IndusInd General Insurance, Manipal Cigna Health Insurance, Magma General Insurance, MD India TPA, Med-Save Health Insurance TPA, Navi General Insurance, Niva Bupa Health Insurance, Paramount Health Services TPA, Park Mediclaim TPA, SBI General Insurance, Star Health & Allied Insurance, Tata AIG General Insurance, Universal Sompo General Insurance, Vidal Health TPA, Volo Health Insurance TPA.\n\n**TPA Contact:**\n📧 TPA Email: tpa@stjosephshospitalghaziabad.com\n📞 TPA Help Desk: Contact Hospital TPA Desk\n\n**Cashless TPA Procedure:**\n1. Submit your Insurance Card, Aadhaar Card, and PAN Card at the TPA Desk after admission.\n2. The hospital TPA team will verify your policy and submit the cashless authorization request to your insurance company/TPA.\n3. Once approval is received, eligible expenses will be covered as per policy terms.\n4. Any non-payable items, consumables, or excluded investigations must be paid by the patient.\n5. If the insurance company declines the claim, the patient will be responsible for the full hospital bill.",
     "Contact Info": "📞 **St. Joseph's Hospital Ghaziabad – Contact Information**\n\n**Emergency & General Enquiries**\n📱 Cell No: +91 7827-908-598, +91 7827-908-595\n☎️ Phone No: 0120-2871146, 0120-2872246\n\n**Patient Enquiries**\n📧 sjhospital.tpa@gmail.com (TPA Desk)\n📧 stjosephgzb@rediffmail.com (Admin Office)\n\n**Hospital Address**\n🏥 ST. JOSEPH'S HOSPITAL\"\nMeerut Rd, Mariam Nagar, Sewa Nagar, Ghaziabad, Uttar Pradesh 201003\n\n**Office Contact**\n📧 sjhospital.tpa@gmail.com",
-    "Services": "🤲 Our Services:\n\n🏥 General Services:\n• General Medicine\n• General Surgery\n• Gynecology & Obstetrics\n• Pediatrics\n• Pediatric Surgery\n• Anesthesiology\n• ICU, NICU & PICU\n• Medical & Surgical ICU\n\n🔬 Diagnostic & Contributory Services:\n• Pathology\n• X-Ray, ECG & 2D Echo\n• Ultrasound\n• Mammography\n• CT Scan\n• EEG, EMG & NCV\n\n🩺 Speciality Services:\n• ENT\n• Orthopedics\n• Dental Care\n• Dermatology\n• Skin & VD\n• Cardiology\n• Oncology\n• Psychiatry\n\n⚕️ Super Speciality Services:\n• Uro Surgery\n• Laparoscopic Surgery\n• Plastic Surgery\n• Neuro Surgery\n• Nephrology\n• Neurology\n• Dialysis\n• Physiotherapy\n\n🚑 24/7 Emergency & Support:\n• Emergency Services\n• Pharmacy\n• Billing Services\n• Counseling\n\n👨‍⚕️ 50+ Expert Doctors | 🛏️ 100+ Beds | 🏥 NABH Accredited Hospital",
-     "Paramedical Institute": "🎓 **St. Joseph's Paramedical Institute, Ghaziabad** (est. 2020), run by the Medical Sisters of St. Joseph, provides quality healthcare education with practical training, ethical values, and compassionate care. The institute is recognized by the Uttar Pradesh State Medical Faculty, Lucknow (Letter No. 1504/71-4-2020-N-8/2016, dated 20 Nov 2020).\n\n📚 **Course Offered:** Diploma in Medical Laboratory Technology (DMLT)\n⏳ **Duration:** 2 Years\n\n✅ **Eligibility:** 10+2 (Physics, Chemistry & Biology) with minimum 40% marks, age 17 years or above.\n\n📝 **Admission Process:** Application forms are available at the institute office or can be downloaded from www.stjosephhospitalgzb.com. Admission is based on an entrance examination conducted in July.\n\n📄 **Required Documents:** 10th & 12th mark sheets/certificates, Aadhaar Card, caste/residence/income certificates (if applicable), Transfer Certificate, character certificate, medical fitness certificate, and passport-size photographs.\n\n🏥 Over 100 students have successfully completed training and are serving in hospitals and healthcare institutions. For admission details and fee information, please contact the institute office."  };
+    "Services": "🤲 Our Services:\n\n🏥 General Services:\n• General Medicine\n• General Surgery\n• Gynecology & Obstetrics\n• Pediatrics\n• Pediatric Surgery\n• Anesthesiology\n• ICU, NICU & PICU\n• Medical & Surgical ICU\n\n🔬 Diagnostic & Contributory Services:\n• Pathology\n• X-Ray, ECG & 2D Echo\n• Ultrasound\n• Mammography\n• CT Scan\n• EEG, EMG & NCV\n\n🩺 Speciality Services:\n• ENT\n• Orthopedics\n• Dental Care\n• Dermatology\n• Cardiology\n• Oncology\n• Psychiatry\n\n⚕️ Super Speciality Services:\n• Uro Surgery\n• Laparoscopic Surgery\n• Plastic Surgery\n• Neuro Surgery\n• Nephrology\n• Neurology\n• Dialysis\n• Physiotherapy\n\n🚑 24/7 Emergency & Support:\n• Emergency Services\n• Pharmacy\n• Billing Services\n• Counseling\n\n👨‍⚕️ 50+ Expert Doctors | 🛏️ 100+ Beds | 🏥 NABH Accredited Hospital",
+    "Paramedical Institute": "🎓 **St. Joseph's Paramedical Institute, Ghaziabad** (est. 2020), run by the Medical Sisters of St. Joseph, provides quality healthcare education with practical training, ethical values, and compassionate care. The institute is recognized by the Uttar Pradesh State Medical Faculty, Lucknow (Letter No. 1504/71-4-2020-N-8/2016, dated 20 Nov 2020).\n\n📚 **Course Offered:** Diploma in Medical Laboratory Technology (DMLT)\n⏳ **Duration:** 2 Years\n\n✅ **Eligibility:** 10+2 (Physics, Chemistry & Biology) with minimum 40% marks, age 17 years or above.\n\n📝 **Admission Process:** Application forms are available at the institute office or can be downloaded from www.stjosephhospitalgzb.com. Admission is based on an entrance examination conducted in July.\n\n📄 **Required Documents:** 10th & 12th mark sheets/certificates, Aadhaar Card, caste/residence/income certificates (if applicable), Transfer Certificate, character certificate, medical fitness certificate, and passport-size photographs.\n\n🏥 Over 100 students have successfully completed training and are serving in hospitals and healthcare institutions. For admission details and fee information, please contact the institute office."
+  };
   const defaultAnswer = "💜 I'm here to help with hospital-related queries. Please use the buttons above for specific information, or contact our front desk at 1800-123-HEAL.";
 
   const handleMenuItemClick = (label) => {
+    // Special case handlers
     if (label === "Take Appointment") {
       handleTakeAppointment();
       return;
@@ -549,6 +565,7 @@ const Chatbot = () => {
       handleCareers();
       return;
     }
+    // For the rest, use botAnswers
     stopAndFinalizeTyping(true);
     setShowPostMessageOptions(false);
     setShowQuickHelp(false);
@@ -623,18 +640,15 @@ const Chatbot = () => {
     border: "1px solid #e2e8f0",
   });
 
-  // Handle opening chat (hides the initial popup)
   const handleOpenChat = () => {
     setIsOpen(true);
     setShowInitialPopup(false);
     if (messages.length === 0) clearChat();
   };
 
-  // Updated toggle button JSX with initial popup
   if (!isOpen) {
     return (
       <div className="chatbot-toggle-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
-        {/* Initial popup bubble */}
         {showInitialPopup && (
           <div className="initial-popup">
             👋 Hi! I'm KALYANI. Need help?
@@ -674,7 +688,7 @@ const Chatbot = () => {
   return (
     <>
       <div className="chatbot-window" style={getChatWindowStyle()}>
-        {/* Header - Fully Responsive */}
+        {/* Header */}
         <div style={{ 
           background: "#2563eb", 
           color: "white", 
@@ -810,7 +824,7 @@ const Chatbot = () => {
           </div>
         )}
 
-        {/* Quick Help Menu */}
+        {/* Quick Help Menu - with updated items */}
         {showQuickHelp && !showDoctorTimingMenu && quickReplyButtons.length === 0 && (
           <div style={{ padding: isMobile ? "10px 12px" : "14px 18px", background: "white", borderTop: "1px solid #eef2f6" }}>
             <div style={{ fontSize: isMobile ? "0.65rem" : "0.75rem", color: "#6c757d", marginBottom: "8px", fontWeight: 500 }}>QUICK HELP</div>
@@ -821,10 +835,6 @@ const Chatbot = () => {
                   {item.label}
                 </button>
               ))}
-              <button onClick={handleDoctorsTiming} style={{ display: "flex", alignItems: "center", gap: "8px", background: "#fff", border: "1.5px solid #e0d6f5", borderRadius: "14px", padding: isMobile ? "8px 10px" : "10px 14px", fontSize: isMobile ? "0.75rem" : "0.85rem", color: "#3d1d8c", fontWeight: 600, cursor: "pointer", textAlign: "left" }}>
-                <img src={doctorsTimingIcon} alt="Doctors Timing" style={iconStyle} />
-                Doctors Timing
-              </button>
             </div>
           </div>
         )}
@@ -868,14 +878,12 @@ const Chatbot = () => {
         .chatbot-window ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
         .chatbot-window ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
         
-        /* Extra small screen adjustments */
         @media (max-width: 480px) {
           .chatbot-window button {
             font-size: 0.7rem !important;
           }
         }
 
-        /* Toggle button wrapper for tooltip */
         .chatbot-toggle-wrapper {
           position: fixed;
           left: 24px;
@@ -889,7 +897,6 @@ const Chatbot = () => {
           }
         }
 
-        /* Tooltip bubble (hover) */
         .chatbot-tooltip {
           visibility: hidden;
           opacity: 0;
@@ -929,7 +936,6 @@ const Chatbot = () => {
           bottom: 80px;
         }
 
-        /* Initial popup (appears on load) */
         .initial-popup {
           position: absolute;
           bottom: 80px;
@@ -976,7 +982,6 @@ const Chatbot = () => {
           }
         }
 
-        /* Pulse animations for highlight */
         @keyframes pulseGlow {
           0% {
             box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
@@ -997,7 +1002,6 @@ const Chatbot = () => {
           100% { transform: scale(1); }
         }
 
-        /* Responsive tooltip & popup on small screens */
         @media (max-width: 640px) {
           .chatbot-tooltip {
             font-size: 0.7rem;

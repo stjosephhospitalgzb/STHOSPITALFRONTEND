@@ -8,7 +8,7 @@ import banner8 from "../assets/hospitalimage/banner8.png";
 // --- IMPORT LOCAL SERVICE ICONS FROM ASSETS FOLDER ---
 import ambulanceIcon from "../assets/Icons/ambulance.png";
 import anesthesiologyIcon from "../assets/Icons/Anesthesiology.png";
-import audiometryIcon from "../assets/Icons/audiometry.png";
+import audiometryIcon from "../assets/Icons/audiometer.png";
 import canteenIcon from "../assets/Icons/canteen.png";
 import cardiologyIcon from "../assets/Icons/Cardiology.png";
 import ctScanIcon from "../assets/Icons/ct-scan.png";
@@ -44,6 +44,9 @@ import pulmonologyIcon from "../assets/Icons/pulmonology.png";
 import dentistryIcon from "../assets/Icons/Dental.png";
 import homeopathyIcon from "../assets/Icons/homeopathy.png";
 import ot from "../assets/Icons/ot.png";
+import ayurvedaIcon from "../assets/Icons/ayurveda.png";
+import Physiotherapy from "../assets/Icons/Physiotherapy.png";
+
 
 const defaultDeptIcon = generalMedicineIcon;
 
@@ -74,6 +77,10 @@ const departmentIconMap = {
   "Pulmonology": pulmonologyIcon || defaultDeptIcon,
   "Psychiatry": psychiatryIcon,
   "Homeopathy": homeopathyIcon || defaultDeptIcon,
+  "Ayurveda": ayurvedaIcon || defaultDeptIcon,
+  "Audiometry": audiometryIcon || defaultDeptIcon,
+    "Physiotherapy": Physiotherapy || defaultDeptIcon,
+
 };
 
 const getDeptIcon = (deptName) => {
@@ -485,6 +492,9 @@ const DEPARTMENTS = [
   { label: "Cardiology" },
   { label: "Oncology" },
   { label: "Psychiatry" },
+  { label: "Ayurveda" },
+  { label: "Audiometry" },
+  { label: "Physiotherapy" },
 ];
 
 const C = {
