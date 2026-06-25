@@ -45,7 +45,7 @@ import dentistryIcon from "../assets/Icons/Dental.png";
 import homeopathyIcon from "../assets/Icons/homeopathy.png";
 import ot from "../assets/Icons/ot.png";
 import ayurvedaIcon from "../assets/Icons/ayurveda.png";
-import Physiotherapy from "../assets/Icons/Physiotherapy.png";
+import Physiotherapy from "../assets/Icons/physiotherapy.png";
 
 
 const defaultDeptIcon = generalMedicineIcon;
