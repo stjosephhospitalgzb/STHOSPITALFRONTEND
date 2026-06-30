@@ -456,7 +456,7 @@ export default function HealthCareCareersPage() {
               </div>
               <div style={{ fontSize: "13px", color: "#475569", lineHeight: "1.6", marginBottom: "12px" }}>
                 <strong>Email:</strong> <a href="mailto:hr.sjhgzb@gmail.com" style={{ color: "#2563eb", textDecoration: "none" }}>hr.sjhgzb@gmail.com</a><br />
-                <strong>WhatsApp/Call:</strong> <a href="tel:+917827908598" style={{ color: "#2563eb", textDecoration: "none" }}>+91 7827 908 598</a>
+                <strong>Call:</strong> <a href="tel:+917827908598" style={{ color: "#2563eb", textDecoration: "none" }}>+91 7827 908 598</a>
               </div>
               <div style={{ fontSize: "12px", color: "#64748b", borderTop: "1px solid #e2e8f0", paddingTop: "12px", marginTop: "8px" }}>
                 ⚠️ Please ensure you complete <strong>both steps</strong> (form + email) for your application to be considered complete.

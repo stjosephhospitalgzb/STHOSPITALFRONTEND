@@ -47,14 +47,13 @@ import ot from "../assets/Icons/ot.png";
 import ayurvedaIcon from "../assets/Icons/ayurveda.png";
 import Physiotherapy from "../assets/Icons/physiotherapy.png";
 
-
 const defaultDeptIcon = generalMedicineIcon;
 
-// Extended icon map covering all departments
+// Extended icon map covering all departments (including new ones)
 const departmentIconMap = {
   "Cardiology": cardiologyIcon,
   "Neurology": neurologyIcon,
-  "Neurology (Neurophysician)": neurologyIcon,
+  "Neurology ": neurologyIcon,
   "Orthopedics": orthopedicsIcon,
   "Pediatrics": pediatricsIcon,
   "Gynecology": gynecologyIcon,
@@ -79,8 +78,9 @@ const departmentIconMap = {
   "Homeopathy": homeopathyIcon || defaultDeptIcon,
   "Ayurveda": ayurvedaIcon || defaultDeptIcon,
   "Audiometry": audiometryIcon || defaultDeptIcon,
-    "Physiotherapy": Physiotherapy || defaultDeptIcon,
-
+  "Physiotherapy": Physiotherapy || defaultDeptIcon,
+  "Microbiology": defaultDeptIcon,
+  "SMO": defaultDeptIcon,
 };
 
 const getDeptIcon = (deptName) => {
@@ -466,34 +466,36 @@ const IC = {
   verified: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z",
 };
 
-// ─── DEPARTMENT LIST ────────────────────────────────────────────────────
+// ─── DEPARTMENT LIST (reordered with main departments first) ──────────
 const DEPARTMENTS = [
   { label: "All Departments" },
-  { label: "General Medicine (Physician)" },
-  { label: "Gynecology" },
-  { label: "Neurology (Neurophysician)" },
-  { label: "Homeopathy" },
-  { label: "General Surgery" },
-  { label: "Radiology" },
+  { label: "General Medicine" },
+  { label: "ENT" },
   { label: "Pediatrics" },
   { label: "Orthopedics" },
+  { label: "Homeopathy" },
   { label: "Urology" },
-  { label: "Pathology" },
-  { label: "Neurosurgery" },
-  { label: "Anesthesiology" },
-  { label: "Ophthalmology" },
-  { label: "Pediatric Surgery" },
-  { label: "Plastic Surgery" },
-  { label: "Dermatology" },
-  { label: "Nephrology" },
-  { label: "ENT" },
-  { label: "Dentistry" },
-  { label: "Pulmonology" },
   { label: "Cardiology" },
-  { label: "Oncology" },
-  { label: "Psychiatry" },
+  { label: "Gynecology" },
+  { label: "Neurology" },
+  { label: "Dermatology" },
+  { label: "Radiology" },
+  { label: "Pathology" },
+  { label: "Anesthesiology" },
+  { label: "Dentistry" },
   { label: "Ayurveda" },
+  { label: "Microbiology" },
   { label: "Audiometry" },
+  { label: "SMO" },
+  { label: "Ophthalmology" },
+  { label: "Psychiatry" },
+  { label: "Oncology" },
+  { label: "Pulmonology" },
+  { label: "Nephrology" },
+  { label: "Plastic Surgery" },
+  { label: "Pediatric Surgery" },
+  { label: "Neurosurgery" },
+  { label: "General Surgery" },
   { label: "Physiotherapy" },
 ];
 
@@ -618,7 +620,7 @@ export default function Doctors() {
   const [error, setError] = useState(null);
   const [activeDept, setActiveDept] = useState("All Departments");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("Most Experienced");
+  const [sortBy, setSortBy] = useState("Most Reviews");
   const [wished, setWished] = useState({});
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [heroAnimated, setHeroAnimated] = useState(false);
@@ -642,9 +644,12 @@ export default function Doctors() {
     }
   };
 
-  // ✅ Safe filtering: use optional chaining and provide fallback empty string
+  // ✅ Improved filter: case-insensitive includes for department matching
   const filtered = doctors
-    .filter(doc => activeDept === "All Departments" || (doc.dept && doc.dept === activeDept))
+    .filter(doc => 
+      activeDept === "All Departments" || 
+      (doc.dept && doc.dept.toLowerCase().includes(activeDept.toLowerCase()))
+    )
     .filter(doc =>
       (doc.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
       (doc.dept?.toLowerCase() || "").includes(searchQuery.toLowerCase())
@@ -665,7 +670,6 @@ export default function Doctors() {
     cursor: "pointer", transition: "all .3s ease", fontFamily: "'Inter', 'Outfit', sans-serif",
   };
 
-  // External booking link function
   const openBookingLink = () => {
     window.open("http://103.47.16.55/Online_HIS/design/patientportal/onlinebooking.aspx", "_blank");
   };
@@ -675,7 +679,7 @@ export default function Doctors() {
       {/* MODAL */}
       {selectedDoctor && <DoctorModal doctor={selectedDoctor} onClose={() => setSelectedDoctor(null)} />}
 
-      {/* HERO SECTION with extra content (trust badges only) */}
+      {/* HERO SECTION */}
       <div className="hc-doctors-hero-section">
         <div style={{ position: "absolute", top: -80, left: -80, width: 360, height: 360, borderRadius: "50%", background: "radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%)", zIndex: 0 }} />
         <div style={{ position: "absolute", bottom: -60, left: 300, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 70%)", zIndex: 0 }} />
@@ -705,7 +709,6 @@ export default function Doctors() {
                 Our team of highly qualified and experienced doctors is dedicated to providing exceptional healthcare with compassion, expertise, and cutting-edge technology.
               </p>
 
-              {/* ✨ TRUST BADGES ONLY (kept) ✨ */}
               <div className="hc-badge-group">
                 <span className="hc-trust-badge">
                   <Ico d={IC.check} size={14} color="#22d3ee" /> 50+ Expert Doctors
@@ -753,21 +756,31 @@ export default function Doctors() {
 
       {/* MAIN CONTENT (filter, search, grid) */}
       <section style={{ maxWidth: 1440, margin: "0 auto", padding: "0 32px 100px" }}>
-        {/* Search Bar */}
-        <div style={{ marginBottom: 32, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>
-          <div style={{ position: "relative" }}>
-            <div style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)" }}>
-              <Ico d={IC.search} size={18} color={C.gray} />
+        {/* Search Bar + Doctor Count */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 32 }}>
+          <div style={{ maxWidth: 500, width: "100%" }}>
+            <div style={{ position: "relative" }}>
+              <div style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)" }}>
+                <Ico d={IC.search} size={18} color={C.gray} />
+              </div>
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search doctors by name or department..."
+                style={{ width: "100%", padding: "14px 20px 14px 48px", border: `1.5px solid ${C.border}`, borderRadius: 40, fontSize: 15, color: C.dark, background: C.white, outline: "none", fontFamily: "'Inter', sans-serif", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+                onFocus={e => e.target.style.borderColor = C.blue}
+                onBlur={e => e.target.style.borderColor = C.border}
+              />
             </div>
-            <input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search doctors by name or department..."
-              style={{ width: "100%", padding: "14px 20px 14px 48px", border: `1.5px solid ${C.border}`, borderRadius: 40, fontSize: 15, color: C.dark, background: C.white, outline: "none", fontFamily: "'Inter', sans-serif", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
-              onFocus={e => e.target.style.borderColor = C.blue}
-              onBlur={e => e.target.style.borderColor = C.border}
-            />
           </div>
+          {/* Doctor count */}
+          {!loading && !error && (
+            <div style={{ marginTop: 12, fontSize: 14, color: C.gray, fontWeight: 600 }}>
+              Showing {filtered.length} doctor{filtered.length !== 1 ? 's' : ''}
+              {activeDept !== "All Departments" && ` in ${activeDept}`}
+              {searchQuery && ` matching "${searchQuery}"`}
+            </div>
+          )}
         </div>
 
         {/* Sort bar */}

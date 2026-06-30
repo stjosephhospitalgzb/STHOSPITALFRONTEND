@@ -317,7 +317,7 @@ export default function Footer() {
           gap: 16,
         }}>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.4)" }}>
-            © 2026 St. Joseph's Hospital. All Rights Reserved.
+            © 2026 St. Joseph's Hospital Ghaziabad. All Rights Reserved.
           </div>
           <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>
             Designed and Developed by: IT Department, St. Joseph's Hospital, Ghaziabad.

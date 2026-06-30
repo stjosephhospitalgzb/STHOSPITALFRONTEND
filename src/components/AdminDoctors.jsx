@@ -55,7 +55,9 @@ const AdminDoctors = () => {
     "RMO",
     "SMO",
    "Ayurveda",
-   "Audiometry"
+   "Audiometry",
+   "Physiotherapy",
+   "Microbiology"
   ];
 
   useEffect(() => {

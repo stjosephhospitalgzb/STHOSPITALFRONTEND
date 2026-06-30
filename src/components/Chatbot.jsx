@@ -678,9 +678,7 @@ const Chatbot = () => {
             }} 
           />
         </button>
-        <div className="chatbot-tooltip">
-          💬 Chat with KALYANI
-        </div>
+     
       </div>
     );
   }

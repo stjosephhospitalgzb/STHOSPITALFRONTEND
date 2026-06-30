@@ -3,28 +3,19 @@ import logo from "../assets/logo.jpg";
 import welcomeVideo from "../assets/WELCOME.mp4";
 import API from "../api";
 
-const WELCOME_TEXT = "नमस्ते!  सेंट  जोसेफ हॉस्पिटल (St. Joseph's Hospital) में आपका स्वागत है। गाज़ियाबाद में स्थित यह अस्पताल मरीजों को उच्च गुणवत्ता वाली स्वास्थ्य सेवाएँ और चिकित्सा सुविधाएँ प्रदान करने के लिए तत्पर है।";
+// ─── Hindi welcome message (no animation) ──────────────────────────────────
+const WELCOME_TEXT = `नमस्ते! सेंट जोसेफ हॉस्पिटल (St. Joseph's Hospital) में आपका स्वागत है। गाज़ियाबाद में स्थित यह अस्पताल मरीजों को उच्च गुणवत्ता वाली स्वास्थ्य सेवाएँ और चिकित्सा सुविधाएँ प्रदान करने के लिए तत्पर है।`;
 
-// ─── Inject styles ──────────────────────────────────────────────────────────
+// ─── Inject styles (animation styles removed) ──────────────────────────────
 const injectStyles = () => {
   const id = 'sjh-popup-styles';
   if (document.getElementById(id)) return;
   const el = document.createElement('style');
   el.id = id;
   el.textContent = `
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&display=swap');
-
     @keyframes sjhFadeUp {
       from { opacity:0; transform:translateY(20px) scale(0.96); }
       to   { opacity:1; transform:translateY(0)    scale(1);    }
-    }
-    @keyframes sjhBlink {
-      from, to { opacity: 1; }
-      50% { opacity: 0; }
-    }
-    @keyframes charAppear {
-      from { opacity:0; transform:translateY(4px); }
-      to   { opacity:1; transform:translateY(0);   }
     }
     @keyframes bannerShimmer {
       0%   { background-position: -400px 0; }
@@ -45,10 +36,6 @@ const injectStyles = () => {
     @keyframes videoFadeIn {
       from { opacity: 0; }
       to   { opacity: 1; }
-    }
-    @keyframes sjhPulseRing {
-      0%, 100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
-      50%       { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(255,255,255,0); }
     }
     .sjh-overlay { transition: opacity 0.3s ease; }
     .sjh-card { animation: sjhFadeUp 0.44s cubic-bezier(.22,.68,0,1.12) both; }
@@ -76,23 +63,6 @@ const injectStyles = () => {
       border-radius: 0 8px 8px 0;
       pointer-events: none;
     }
-    .sjh-cursor {
-      display: inline-block;
-      width: 2px;
-      height: 1.1em;
-      background-color: #3b82f6;
-      margin-left: 2px;
-      vertical-align: text-bottom;
-      animation: sjhBlink 0.7s step-end infinite;
-    }
-    .sjh-cursor-hidden {
-      opacity: 0;
-      animation: none;
-    }
-    .sjh-char {
-      display: inline-block;
-      animation: charAppear 0.15s cubic-bezier(.22,.68,0,1.12) both;
-    }
     .sjh-pulse-dot {
       width: 8px;
       height: 8px;
@@ -106,7 +76,6 @@ const injectStyles = () => {
       animation: slideInRow 0.35s ease both;
     }
 
-    /* ── Video header styles ── */
     .sjh-video-header {
       position: relative;
       width: 100%;
@@ -121,7 +90,6 @@ const injectStyles = () => {
       display: block;
       animation: videoFadeIn 0.6s ease both;
     }
-    /* dark overlay so logo & controls remain readable */
     .sjh-video-header::after {
       content: '';
       position: absolute;
@@ -143,8 +111,6 @@ const injectStyles = () => {
       padding: 1rem 1.25rem;
       z-index: 2;
     }
-
-    /* Bottom sound bar */
     .sjh-sound-bar {
       position: absolute;
       bottom: 20px;
@@ -179,13 +145,19 @@ const injectStyles = () => {
       text-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
-    /* ── Welcome banner tweaks ── */
+    /* ─── Times New Roman & Justify ────────────────────────────── */
     .sjh-welcome-text {
-      white-space: pre-wrap;      /* preserve spaces, wrap lines */
-      word-break: break-word;     /* prevent overflow on long words */
-      line-height: 1.9;           /* more breathing */
-      word-spacing: 0.25em;       /* extra gap between words */
-      letter-spacing: 0.02em;
+      font-family: 'Times New Roman', Times, serif;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.9;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+    .sjh-doctor-name,
+    .sjh-doctor-dept,
+    .sjh-continue-btn {
+      font-family: 'Times New Roman', Times, serif !important;
     }
 
     @media (max-width: 520px) {
@@ -199,7 +171,7 @@ const injectStyles = () => {
       }
       .sjh-welcome-banner {
         padding: 0.75rem 1rem !important;
-        min-height: 140px !important;   /* increased */
+        min-height: auto !important;
       }
       .sjh-welcome-text {
         font-size: 0.85rem !important;
@@ -240,7 +212,7 @@ const injectStyles = () => {
       }
       .sjh-welcome-banner {
         padding: 0.5rem 0.75rem !important;
-        min-height: 130px !important;
+        min-height: auto !important;
       }
       .sjh-welcome-text {
         font-size: 0.8rem !important;
@@ -278,8 +250,6 @@ const injectStyles = () => {
 const WelcomePopup = () => {
   const [visible, setVisible] = useState(false);
   const [animated, setAnimated] = useState(false);
-  const [displayedChars, setDisplayedChars] = useState([]);
-  const [isComplete, setIsComplete] = useState(false);
   const [doctorsOnLeave, setDoctorsOnLeave] = useState([]);
   const videoRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -312,7 +282,6 @@ const WelcomePopup = () => {
     }
   };
 
-  // Show popup after delay
   useEffect(() => {
     const t = setTimeout(() => {
       setVisible(true);
@@ -321,7 +290,6 @@ const WelcomePopup = () => {
     return () => clearTimeout(t);
   }, []);
 
-  // Autoplay video muted
   useEffect(() => {
     if (!animated || !videoRef.current) return;
     const vid = videoRef.current;
@@ -329,27 +297,6 @@ const WelcomePopup = () => {
     setIsMuted(true);
     vid.play().catch(() => {});
   }, [animated]);
-
-  // Character typewriter
-  const splitGraphemes = (str) => {
-    const regex = /\P{M}\p{M}*/gu;
-    return str.match(regex) || [];
-  };
-
-  useEffect(() => {
-    const chars = splitGraphemes(WELCOME_TEXT);
-    let idx = 0;
-    const timer = setInterval(() => {
-      if (idx < chars.length) {
-        setDisplayedChars(prev => [...prev, chars[idx]]);
-        idx++;
-      } else {
-        clearInterval(timer);
-        setIsComplete(true);
-      }
-    }, 70);
-    return () => clearInterval(timer);
-  }, []);
 
   const toggleSound = () => {
     const vid = videoRef.current;
@@ -375,10 +322,6 @@ const WelcomePopup = () => {
   const todayStr = new Date().toLocaleDateString('en-IN', {
     weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
   });
-
-  const renderChar = (char, index) => (
-    <span key={index} className="sjh-char">{char}</span>
-  );
 
   if (!visible) return null;
 
@@ -411,7 +354,7 @@ const WelcomePopup = () => {
           boxShadow: '0 28px 70px rgba(0,0,0,0.2)',
         }}
       >
-        {/* ─── Video Header ──────────────────────────────────────── */}
+        {/* Video Header */}
         <div className="sjh-video-header">
           <video
             ref={videoRef}
@@ -422,7 +365,6 @@ const WelcomePopup = () => {
             onEnded={handleClose}
           />
 
-          {/* Logo + Close button */}
           <div className="sjh-header-controls">
             <div
               className="sjh-logo"
@@ -453,7 +395,6 @@ const WelcomePopup = () => {
             >✕</button>
           </div>
 
-          {/* ─── Bottom sound bar ────────────────────────────────── */}
           <div className="sjh-sound-bar" onClick={toggleSound}>
             <span className="icon">{isMuted ? '🔇' : '🔊'}</span>
             <span className="label">
@@ -462,8 +403,9 @@ const WelcomePopup = () => {
           </div>
         </div>
 
-        {/* ─── Body ────────────────────────────────────────────── */}
+        {/* Body */}
         <div className="sjh-body" style={{ padding: '1.25rem 1.5rem 1.75rem' }}>
+          {/* Welcome Banner – static text, no animation */}
           <div
             className="sjh-welcome-banner"
             style={{
@@ -472,9 +414,8 @@ const WelcomePopup = () => {
               borderRadius: '0 8px 8px 0',
               padding: '0.9rem 1.2rem',
               marginBottom: '1.25rem',
-              minHeight: '160px',          // enough to fit all lines
+              minHeight: 'auto',
               position: 'relative',
-              overflow: 'hidden',
             }}
           >
             <p
@@ -484,43 +425,41 @@ const WelcomePopup = () => {
                 fontSize: '0.97rem',
                 margin: 0,
                 fontWeight: 500,
-                fontFamily: "'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif",
                 textAlign: 'justify',
                 textJustify: 'inter-word',
               }}
             >
-              {displayedChars.map((char, idx) => renderChar(char, idx))}
-              <span className={isComplete ? 'sjh-cursor-hidden' : 'sjh-cursor'} />
+              {WELCOME_TEXT}
             </p>
           </div>
 
-          {/* Doctors on leave Section */}
-          <div style={{ marginBottom: '1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="sjh-pulse-dot" />
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
-                  🩺 Doctors on leave today
+          {/* Doctors on leave */}
+          {doctorsOnLeave.length > 0 && (
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span className="sjh-pulse-dot" />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                    🩺 Doctors on leave today
+                  </span>
+                </div>
+                <span style={{
+                  background: '#fef3c7',
+                  color: '#92400e',
+                  fontSize: 10, fontWeight: 600,
+                  borderRadius: 20, padding: '2px 10px',
+                  border: '1px solid #fde68a',
+                }}>
+                  {doctorsOnLeave.length} absent
                 </span>
               </div>
-              <span style={{
-                background: doctorsOnLeave.length > 0 ? '#fef3c7' : '#dcfce7',
-                color: doctorsOnLeave.length > 0 ? '#92400e' : '#15803d',
-                fontSize: 10, fontWeight: 600,
-                borderRadius: 20, padding: '2px 10px',
-                border: doctorsOnLeave.length > 0 ? '1px solid #fde68a' : '1px solid #bbf7d0',
-              }}>
-                {doctorsOnLeave.length} absent
-              </span>
-            </div>
 
-            <div style={{ fontSize: 10, color: '#9ca3af', marginBottom: 8, paddingLeft: 2, letterSpacing: '0.3px' }}>
-              📅 {todayStr} &nbsp;·&nbsp;
-            </div>
+              <div style={{ fontSize: 10, color: '#9ca3af', marginBottom: 8, paddingLeft: 2, letterSpacing: '0.3px' }}>
+                📅 {todayStr} &nbsp;·&nbsp;
+              </div>
 
-            <div style={{ border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
-              {doctorsOnLeave.length > 0 ? (
-                doctorsOnLeave.map((doc, i) => (
+              <div style={{ border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
+                {doctorsOnLeave.map((doc, i) => (
                   <div
                     key={i}
                     className="sjh-leave-row"
@@ -559,16 +498,11 @@ const WelcomePopup = () => {
                       {doc.dept}
                     </span>
                   </div>
-                ))
-              ) : (
-                <div style={{ padding: '1.5rem', textAlign: 'center', color: '#6b7280', fontSize: '0.85rem', backgroundColor: '#f8fafc' }}>
-                  😊 All Doctors are fully available today.
-                </div>
-              )}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Continue button */}
           <button
             className="sjh-continue-btn"
             onClick={handleClose}
@@ -585,7 +519,6 @@ const WelcomePopup = () => {
             Continue to portal →
           </button>
 
-          {/* Footer */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '0.75rem', gap: '0.5rem' }}>
             <span style={{ fontSize: '0.7rem', color: '#6b7280', fontWeight: 500, letterSpacing: '0.3px' }}>
               @ St. Joseph's Hospital Ghaziabad
